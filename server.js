@@ -310,6 +310,49 @@ app.delete('/api/admin/services/:id', requireAuth, (req, res) => {
     }
 });
 
+// ============================================
+// NEWSLETTER
+// ============================================
+
+app.post('/api/newsletter/subscribe', (req, res) => {
+    try {
+        const { name, email } = req.body;
+        if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+            return res.status(400).json({ error: 'Please enter a valid email address.' });
+        }
+
+        const content = readContent();
+        if (!content.newsletter) content.newsletter = { subscribers: [] };
+
+        const already = content.newsletter.subscribers.some(s => s.email === email);
+        if (already) {
+            return res.status(409).json({ error: 'This email is already subscribed.' });
+        }
+
+        content.newsletter.subscribers.push({
+            id: 'sub_' + Date.now(),
+            name: name || '',
+            email,
+            subscribedAt: new Date().toISOString()
+        });
+        writeContent(content);
+
+        res.json({ message: 'You\'re on the list. Thank you.' });
+    } catch (error) {
+        res.status(500).json({ error: 'Failed to subscribe. Please try again.' });
+    }
+});
+
+// Get subscribers (admin only)
+app.get('/api/admin/newsletter/subscribers', requireAuth, (req, res) => {
+    try {
+        const content = readContent();
+        res.json(content.newsletter?.subscribers || []);
+    } catch (error) {
+        res.status(500).json({ error: 'Failed to fetch subscribers' });
+    }
+});
+
 // Serve the main site
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'index.html'));

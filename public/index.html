@@ -715,6 +715,109 @@
             border-color: var(--color-sand);
         }
 
+        /* Newsletter Section */
+        #newsletter {
+            background: var(--color-text);
+            color: var(--color-bg);
+            max-width: none;
+            padding: 7rem 2.5rem;
+        }
+
+        .newsletter-inner {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 6rem;
+            align-items: center;
+        }
+
+        #newsletter .section-label {
+            color: var(--color-sand);
+        }
+
+        .newsletter-title {
+            font-family: var(--font-serif);
+            font-size: clamp(2rem, 4vw, 3rem);
+            font-weight: 400;
+            line-height: 1.2;
+            letter-spacing: -0.01em;
+            margin-bottom: 1.25rem;
+        }
+
+        .newsletter-body {
+            font-size: 1rem;
+            color: rgba(255, 255, 255, 0.65);
+            line-height: 1.8;
+        }
+
+        .newsletter-form {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .newsletter-form input[type="text"],
+        .newsletter-form input[type="email"] {
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            color: var(--color-bg);
+            font-family: var(--font-sans);
+            font-size: 0.95rem;
+            padding: 1rem 1.25rem;
+            outline: none;
+            transition: border-color 0.3s var(--transition-smooth);
+            width: 100%;
+        }
+
+        .newsletter-form input::placeholder {
+            color: rgba(255, 255, 255, 0.35);
+        }
+
+        .newsletter-form input:focus {
+            border-color: rgba(255, 255, 255, 0.4);
+        }
+
+        .newsletter-submit {
+            background: var(--color-bg);
+            color: var(--color-text);
+            border: none;
+            font-family: var(--font-sans);
+            font-size: 0.8rem;
+            font-weight: 500;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            padding: 1rem 2rem;
+            cursor: pointer;
+            transition: opacity 0.3s var(--transition-smooth);
+            align-self: flex-start;
+        }
+
+        .newsletter-submit:hover {
+            opacity: 0.85;
+        }
+
+        .newsletter-submit:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .newsletter-message {
+            font-size: 0.875rem;
+            margin-top: 0.5rem;
+            min-height: 1.25rem;
+        }
+
+        .newsletter-message.success { color: #a8d5a2; }
+        .newsletter-message.error   { color: #f4a0a0; }
+
+        @media (max-width: 1024px) {
+            .newsletter-inner {
+                grid-template-columns: 1fr;
+                gap: 3rem;
+            }
+        }
+
         /* Footer */
         footer {
             padding: 3rem 2.5rem;
@@ -972,6 +1075,25 @@
         </div>
     </section>
 
+    <!-- Newsletter -->
+    <section id="newsletter">
+        <div class="newsletter-inner">
+            <div class="fade-in">
+                <span class="section-label">Stay Close</span>
+                <h2 class="newsletter-title">Letters from<br><em>the practice.</em></h2>
+                <p class="newsletter-body">Occasional dispatches on writing, artist development, and curated living. No noise — only what's worth your attention.</p>
+            </div>
+            <div class="fade-in">
+                <form class="newsletter-form" id="newsletterForm">
+                    <input type="text" id="nlName" placeholder="Your name" autocomplete="name" />
+                    <input type="email" id="nlEmail" placeholder="Your email address" autocomplete="email" required />
+                    <button type="submit" class="newsletter-submit" id="nlSubmit">Subscribe</button>
+                    <p class="newsletter-message" id="nlMessage"></p>
+                </form>
+            </div>
+        </div>
+    </section>
+
     <!-- Footer -->
     <footer>
         <div class="footer-inner">
@@ -1135,6 +1257,43 @@
                     });
                 }
             });
+        });
+
+        // Newsletter form
+        document.getElementById('newsletterForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const btn = document.getElementById('nlSubmit');
+            const msg = document.getElementById('nlMessage');
+            const name = document.getElementById('nlName').value.trim();
+            const email = document.getElementById('nlEmail').value.trim();
+
+            btn.disabled = true;
+            btn.textContent = 'Subscribing...';
+            msg.className = 'newsletter-message';
+            msg.textContent = '';
+
+            try {
+                const res = await fetch('/api/newsletter/subscribe', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name, email })
+                });
+                const data = await res.json();
+                if (res.ok) {
+                    msg.className = 'newsletter-message success';
+                    msg.textContent = data.message;
+                    this.reset();
+                } else {
+                    msg.className = 'newsletter-message error';
+                    msg.textContent = data.error || 'Something went wrong.';
+                }
+            } catch {
+                msg.className = 'newsletter-message error';
+                msg.textContent = 'Could not connect. Please try again.';
+            } finally {
+                btn.disabled = false;
+                btn.textContent = 'Subscribe';
+            }
         });
 
         // Initialize
