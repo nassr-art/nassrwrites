@@ -1,0 +1,1301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin — Nassr Writes CMS</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Radley:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --color-bg: #FFFFFF;
+            --color-cream: #F1EDD8;
+            --color-text: #000000;
+            --color-text-muted: #4A4A4A;
+            --color-accent: #6B6B6B;
+            --color-border: #E0DCC8;
+            --color-success: #2D5A27;
+            --color-error: #8B2635;
+            --font-serif: 'Radley', Georgia, serif;
+            --font-sans: 'DM Sans', -apple-system, sans-serif;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: var(--font-sans);
+            background-color: var(--color-cream);
+            color: var(--color-text);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        /* Login Screen */
+        .login-screen {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+
+        .login-box {
+            background: var(--color-bg);
+            padding: 3rem;
+            max-width: 400px;
+            width: 100%;
+            border: 1px solid var(--color-border);
+        }
+
+        .login-box h1 {
+            font-family: var(--font-serif);
+            font-size: 1.75rem;
+            font-weight: 400;
+            margin-bottom: 0.5rem;
+        }
+
+        .login-box p {
+            color: var(--color-text-muted);
+            font-size: 0.9rem;
+            margin-bottom: 2rem;
+        }
+
+        /* Admin Layout */
+        .admin-layout {
+            display: none;
+            min-height: 100vh;
+        }
+
+        .admin-layout.active {
+            display: block;
+        }
+
+        /* Header */
+        .admin-header {
+            background: var(--color-bg);
+            border-bottom: 1px solid var(--color-border);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .admin-logo {
+            font-family: var(--font-serif);
+            font-size: 1.25rem;
+        }
+
+        .admin-logo span {
+            color: var(--color-text-muted);
+            font-size: 0.8rem;
+            margin-left: 0.5rem;
+            font-family: var(--font-sans);
+        }
+
+        .admin-actions {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .admin-actions a {
+            font-size: 0.8rem;
+            color: var(--color-text-muted);
+            text-decoration: none;
+        }
+
+        .admin-actions a:hover {
+            color: var(--color-text);
+        }
+
+        /* Main Content */
+        .admin-main {
+            display: flex;
+            min-height: calc(100vh - 60px);
+        }
+
+        /* Sidebar */
+        .admin-sidebar {
+            width: 240px;
+            background: var(--color-bg);
+            border-right: 1px solid var(--color-border);
+            padding: 2rem 0;
+            position: sticky;
+            top: 60px;
+            height: calc(100vh - 60px);
+            overflow-y: auto;
+        }
+
+        .sidebar-section {
+            margin-bottom: 2rem;
+        }
+
+        .sidebar-label {
+            font-size: 0.65rem;
+            font-weight: 600;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--color-accent);
+            padding: 0 1.5rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .sidebar-nav {
+            list-style: none;
+        }
+
+        .sidebar-nav li a {
+            display: block;
+            padding: 0.6rem 1.5rem;
+            font-size: 0.9rem;
+            color: var(--color-text-muted);
+            text-decoration: none;
+            border-left: 2px solid transparent;
+            transition: all 0.2s ease;
+        }
+
+        .sidebar-nav li a:hover,
+        .sidebar-nav li a.active {
+            color: var(--color-text);
+            background: var(--color-cream);
+            border-left-color: var(--color-text);
+        }
+
+        /* Content Area */
+        .admin-content {
+            flex: 1;
+            padding: 2rem 3rem;
+            max-width: 1000px;
+        }
+
+        .content-header {
+            margin-bottom: 2rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid var(--color-border);
+        }
+
+        .content-header h2 {
+            font-family: var(--font-serif);
+            font-size: 1.75rem;
+            font-weight: 400;
+            margin-bottom: 0.25rem;
+        }
+
+        .content-header p {
+            color: var(--color-text-muted);
+            font-size: 0.9rem;
+        }
+
+        /* Section Panels */
+        .section-panel {
+            display: none;
+        }
+
+        .section-panel.active {
+            display: block;
+        }
+
+        /* Forms */
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 0.75rem;
+            font-weight: 500;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            color: var(--color-accent);
+            margin-bottom: 0.5rem;
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            font-family: var(--font-sans);
+            font-size: 0.95rem;
+            border: 1px solid var(--color-border);
+            background: var(--color-bg);
+            color: var(--color-text);
+            transition: border-color 0.2s ease;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: var(--color-text);
+        }
+
+        .form-group textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+        }
+
+        /* Buttons */
+        .btn {
+            font-family: var(--font-sans);
+            font-size: 0.8rem;
+            font-weight: 500;
+            letter-spacing: 0.05em;
+            padding: 0.75rem 1.5rem;
+            border: 1px solid var(--color-text);
+            background: var(--color-text);
+            color: var(--color-bg);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn:hover {
+            background: transparent;
+            color: var(--color-text);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: var(--color-text);
+        }
+
+        .btn-secondary:hover {
+            background: var(--color-text);
+            color: var(--color-bg);
+        }
+
+        .btn-danger {
+            border-color: var(--color-error);
+            background: var(--color-error);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: transparent;
+            color: var(--color-error);
+        }
+
+        .btn-small {
+            padding: 0.5rem 1rem;
+            font-size: 0.75rem;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        /* Cards */
+        .card {
+            background: var(--color-bg);
+            border: 1px solid var(--color-border);
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+        }
+
+        .card-title {
+            font-family: var(--font-serif);
+            font-size: 1.1rem;
+            font-weight: 400;
+        }
+
+        .card-meta {
+            font-size: 0.8rem;
+            color: var(--color-text-muted);
+        }
+
+        .card-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        /* List Items */
+        .list-item {
+            background: var(--color-bg);
+            border: 1px solid var(--color-border);
+            padding: 1.25rem 1.5rem;
+            margin-bottom: 0.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: border-color 0.2s ease;
+        }
+
+        .list-item:hover {
+            border-color: var(--color-text);
+        }
+
+        .list-item-content h4 {
+            font-family: var(--font-serif);
+            font-size: 1rem;
+            font-weight: 400;
+            margin-bottom: 0.25rem;
+        }
+
+        .list-item-content p {
+            font-size: 0.85rem;
+            color: var(--color-text-muted);
+        }
+
+        .list-item-content .meta {
+            font-size: 0.75rem;
+            color: var(--color-accent);
+            margin-top: 0.25rem;
+        }
+
+        /* Add New Button */
+        .add-new-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            width: 100%;
+            padding: 1rem;
+            border: 1px dashed var(--color-border);
+            background: transparent;
+            color: var(--color-text-muted);
+            font-family: var(--font-sans);
+            font-size: 0.85rem;
+            cursor: pointer;
+            margin-bottom: 1.5rem;
+            transition: all 0.2s ease;
+        }
+
+        .add-new-btn:hover {
+            border-color: var(--color-text);
+            color: var(--color-text);
+            background: var(--color-bg);
+        }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            padding: 2rem;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal {
+            background: var(--color-bg);
+            max-width: 600px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            padding: 1.5rem 2rem;
+            border-bottom: 1px solid var(--color-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h3 {
+            font-family: var(--font-serif);
+            font-size: 1.25rem;
+            font-weight: 400;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--color-text-muted);
+            line-height: 1;
+        }
+
+        .modal-close:hover {
+            color: var(--color-text);
+        }
+
+        .modal-body {
+            padding: 2rem;
+        }
+
+        .modal-footer {
+            padding: 1.5rem 2rem;
+            border-top: 1px solid var(--color-border);
+            display: flex;
+            justify-content: flex-end;
+            gap: 1rem;
+        }
+
+        /* Toast Notifications */
+        .toast {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            padding: 1rem 1.5rem;
+            background: var(--color-text);
+            color: var(--color-bg);
+            font-size: 0.9rem;
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.3s ease;
+            z-index: 2000;
+        }
+
+        .toast.active {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .toast.success {
+            background: var(--color-success);
+        }
+
+        .toast.error {
+            background: var(--color-error);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .admin-sidebar {
+                display: none;
+            }
+
+            .admin-content {
+                padding: 1.5rem;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Login Screen -->
+    <div class="login-screen" id="loginScreen">
+        <div class="login-box">
+            <h1>Nassr Writes</h1>
+            <p>Content Management System</p>
+            <form id="loginForm">
+                <div class="form-group">
+                    <label>Username</label>
+                    <input type="text" id="loginUsername" required>
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" id="loginPassword" required>
+                </div>
+                <button type="submit" class="btn" style="width: 100%;">Sign In</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Admin Layout -->
+    <div class="admin-layout" id="adminLayout">
+        <!-- Header -->
+        <header class="admin-header">
+            <div class="admin-logo">
+                Nassr Writes <span>CMS</span>
+            </div>
+            <div class="admin-actions">
+                <a href="/" target="_blank">View Site →</a>
+                <button class="btn btn-small btn-secondary" onclick="logout()">Log Out</button>
+            </div>
+        </header>
+
+        <div class="admin-main">
+            <!-- Sidebar -->
+            <aside class="admin-sidebar">
+                <div class="sidebar-section">
+                    <div class="sidebar-label">General</div>
+                    <ul class="sidebar-nav">
+                        <li><a href="#" data-section="site" class="active">Site Settings</a></li>
+                        <li><a href="#" data-section="hero">Hero Section</a></li>
+                        <li><a href="#" data-section="about">About</a></li>
+                    </ul>
+                </div>
+                <div class="sidebar-section">
+                    <div class="sidebar-label">Content</div>
+                    <ul class="sidebar-nav">
+                        <li><a href="#" data-section="practices">Practices</a></li>
+                        <li><a href="#" data-section="writings">Writings</a></li>
+                        <li><a href="#" data-section="management">Artist Management</a></li>
+                        <li><a href="#" data-section="events">Events</a></li>
+                        <li><a href="#" data-section="contact">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="sidebar-section">
+                    <div class="sidebar-label">Account</div>
+                    <ul class="sidebar-nav">
+                        <li><a href="#" data-section="password">Change Password</a></li>
+                    </ul>
+                </div>
+            </aside>
+
+            <!-- Content -->
+            <main class="admin-content">
+                <!-- Site Settings -->
+                <div class="section-panel active" id="panel-site">
+                    <div class="content-header">
+                        <h2>Site Settings</h2>
+                        <p>Basic information about your website</p>
+                    </div>
+                    <form id="siteForm">
+                        <div class="form-group">
+                            <label>Site Title</label>
+                            <input type="text" id="siteTitle">
+                        </div>
+                        <div class="form-group">
+                            <label>Tagline</label>
+                            <input type="text" id="siteTagline">
+                        </div>
+                        <div class="form-group">
+                            <label>Meta Description</label>
+                            <textarea id="siteDescription"></textarea>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Email</label>
+                                <input type="email" id="siteEmail">
+                            </div>
+                            <div class="form-group">
+                                <label>Domain</label>
+                                <input type="text" id="siteDomain">
+                            </div>
+                        </div>
+                        <div class="btn-group">
+                            <button type="submit" class="btn">Save Changes</button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Hero Section -->
+                <div class="section-panel" id="panel-hero">
+                    <div class="content-header">
+                        <h2>Hero Section</h2>
+                        <p>The main headline and statement on your homepage</p>
+                    </div>
+                    <form id="heroForm">
+                        <div class="form-group">
+                            <label>Headline (HTML allowed for styling)</label>
+                            <textarea id="heroHeadline"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label>Statement</label>
+                            <textarea id="heroStatement"></textarea>
+                        </div>
+                        <div class="btn-group">
+                            <button type="submit" class="btn">Save Changes</button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- About Section -->
+                <div class="section-panel" id="panel-about">
+                    <div class="content-header">
+                        <h2>About</h2>
+                        <p>Your philosophy and background</p>
+                    </div>
+                    <form id="aboutForm">
+                        <div class="form-group">
+                            <label>Introduction</label>
+                            <textarea id="aboutIntro"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label>Body Paragraph 1</label>
+                            <textarea id="aboutBody1"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label>Pull Quote</label>
+                            <textarea id="aboutPullquote"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label>Body Paragraph 2</label>
+                            <textarea id="aboutBody2"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label>Portrait Image URL</label>
+                            <input type="text" id="aboutPortrait" placeholder="https://...">
+                        </div>
+                        <div class="btn-group">
+                            <button type="submit" class="btn">Save Changes</button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Practices -->
+                <div class="section-panel" id="panel-practices">
+                    <div class="content-header">
+                        <h2>Practices</h2>
+                        <p>Your three main areas of work</p>
+                    </div>
+                    <form id="practicesForm">
+                        <div class="form-group">
+                            <label>Philosophy Statement</label>
+                            <textarea id="philosophy"></textarea>
+                        </div>
+                        <div id="practicesList"></div>
+                        <div class="btn-group">
+                            <button type="submit" class="btn">Save Changes</button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Writings -->
+                <div class="section-panel" id="panel-writings">
+                    <div class="content-header">
+                        <h2>Writings</h2>
+                        <p>Essays, poems, and cultural commentary</p>
+                    </div>
+                    <button class="add-new-btn" onclick="openModal('writing')">+ Add New Writing</button>
+                    <div id="writingsList"></div>
+                </div>
+
+                <!-- Artist Management -->
+                <div class="section-panel" id="panel-management">
+                    <div class="content-header">
+                        <h2>Artist Management</h2>
+                        <p>Your approach to working with artists</p>
+                    </div>
+                    <form id="managementForm">
+                        <div class="form-group">
+                            <label>Philosophy</label>
+                            <textarea id="managementPhilosophy"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label>"This is for you if" (one per line)</label>
+                            <textarea id="forYou"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label>"This is not for you if" (one per line)</label>
+                            <textarea id="notForYou"></textarea>
+                        </div>
+                        <div class="btn-group">
+                            <button type="submit" class="btn">Save Changes</button>
+                        </div>
+                    </form>
+                    <div style="margin-top: 3rem;">
+                        <h3 style="font-family: var(--font-serif); margin-bottom: 1rem;">Services</h3>
+                        <button class="add-new-btn" onclick="openModal('service')">+ Add New Service</button>
+                        <div id="servicesList"></div>
+                    </div>
+                </div>
+
+                <!-- Events -->
+                <div class="section-panel" id="panel-events">
+                    <div class="content-header">
+                        <h2>Events</h2>
+                        <p>Curated experiences and programming</p>
+                    </div>
+                    <form id="eventsIntroForm">
+                        <div class="form-group">
+                            <label>Section Introduction</label>
+                            <textarea id="eventsIntro"></textarea>
+                        </div>
+                        <div class="btn-group">
+                            <button type="submit" class="btn">Save Introduction</button>
+                        </div>
+                    </form>
+                    <div style="margin-top: 2rem;">
+                        <button class="add-new-btn" onclick="openModal('event')">+ Add New Event</button>
+                        <div id="eventsList"></div>
+                    </div>
+                </div>
+
+                <!-- Contact -->
+                <div class="section-panel" id="panel-contact">
+                    <div class="content-header">
+                        <h2>Contact</h2>
+                        <p>Contact section content and inquiry types</p>
+                    </div>
+                    <form id="contactForm">
+                        <div class="form-group">
+                            <label>Introduction</label>
+                            <input type="text" id="contactIntro">
+                        </div>
+                        <div class="form-group">
+                            <label>Body Text</label>
+                            <textarea id="contactBody"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label>Inquiry Types (one per line)</label>
+                            <textarea id="inquiryTypes"></textarea>
+                        </div>
+                        <div class="btn-group">
+                            <button type="submit" class="btn">Save Changes</button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Password -->
+                <div class="section-panel" id="panel-password">
+                    <div class="content-header">
+                        <h2>Change Password</h2>
+                        <p>Update your admin password</p>
+                    </div>
+                    <form id="passwordForm">
+                        <div class="form-group">
+                            <label>Current Password</label>
+                            <input type="password" id="currentPassword" required>
+                        </div>
+                        <div class="form-group">
+                            <label>New Password</label>
+                            <input type="password" id="newPassword" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Confirm New Password</label>
+                            <input type="password" id="confirmPassword" required>
+                        </div>
+                        <div class="btn-group">
+                            <button type="submit" class="btn">Update Password</button>
+                        </div>
+                    </form>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 id="modalTitle">Add New</h3>
+                <button class="modal-close" onclick="closeModal()">&times;</button>
+            </div>
+            <div class="modal-body" id="modalBody"></div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+                <button class="btn" id="modalSave">Save</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast -->
+    <div class="toast" id="toast"></div>
+
+    <script>
+        // Global state
+        let content = {};
+        let currentModal = null;
+        let editingId = null;
+
+        // API calls
+        const api = {
+            async get(endpoint) {
+                const res = await fetch(endpoint);
+                return res.json();
+            },
+            async post(endpoint, data) {
+                const res = await fetch(endpoint, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                return res.json();
+            },
+            async put(endpoint, data) {
+                const res = await fetch(endpoint, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                return res.json();
+            },
+            async delete(endpoint) {
+                const res = await fetch(endpoint, { method: 'DELETE' });
+                return res.json();
+            }
+        };
+
+        // Toast notifications
+        function showToast(message, type = 'success') {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.className = `toast ${type} active`;
+            setTimeout(() => toast.classList.remove('active'), 3000);
+        }
+
+        // Auth functions
+        async function checkAuth() {
+            const status = await api.get('/api/auth/status');
+            if (status.authenticated) {
+                document.getElementById('loginScreen').style.display = 'none';
+                document.getElementById('adminLayout').classList.add('active');
+                loadContent();
+            }
+        }
+
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const username = document.getElementById('loginUsername').value;
+            const password = document.getElementById('loginPassword').value;
+            
+            const result = await api.post('/api/auth/login', { username, password });
+            if (result.success) {
+                document.getElementById('loginScreen').style.display = 'none';
+                document.getElementById('adminLayout').classList.add('active');
+                loadContent();
+            } else {
+                showToast(result.error || 'Login failed', 'error');
+            }
+        });
+
+        async function logout() {
+            await api.post('/api/auth/logout');
+            location.reload();
+        }
+
+        // Load content
+        async function loadContent() {
+            content = await api.get('/api/content');
+            populateForms();
+            renderLists();
+        }
+
+        // Populate forms
+        function populateForms() {
+            // Site
+            document.getElementById('siteTitle').value = content.site?.title || '';
+            document.getElementById('siteTagline').value = content.site?.tagline || '';
+            document.getElementById('siteDescription').value = content.site?.description || '';
+            document.getElementById('siteEmail').value = content.site?.email || '';
+            document.getElementById('siteDomain').value = content.site?.domain || '';
+
+            // Hero
+            document.getElementById('heroHeadline').value = content.hero?.headline || '';
+            document.getElementById('heroStatement').value = content.hero?.statement || '';
+
+            // About
+            document.getElementById('aboutIntro').value = content.about?.intro || '';
+            document.getElementById('aboutBody1').value = content.about?.body1 || '';
+            document.getElementById('aboutPullquote').value = content.about?.pullquote || '';
+            document.getElementById('aboutBody2').value = content.about?.body2 || '';
+            document.getElementById('aboutPortrait').value = content.about?.portraitUrl || '';
+
+            // Philosophy
+            document.getElementById('philosophy').value = content.philosophy || '';
+
+            // Management
+            document.getElementById('managementPhilosophy').value = content.management?.philosophy || '';
+            document.getElementById('forYou').value = (content.management?.forYou || []).join('\n');
+            document.getElementById('notForYou').value = (content.management?.notForYou || []).join('\n');
+
+            // Events intro
+            document.getElementById('eventsIntro').value = content.events?.intro || '';
+
+            // Contact
+            document.getElementById('contactIntro').value = content.contact?.intro || '';
+            document.getElementById('contactBody').value = content.contact?.body || '';
+            document.getElementById('inquiryTypes').value = (content.contact?.inquiryTypes || []).join('\n');
+
+            // Practices
+            renderPractices();
+        }
+
+        // Render practices
+        function renderPractices() {
+            const container = document.getElementById('practicesList');
+            container.innerHTML = (content.practices || []).map((p, i) => `
+                <div class="card">
+                    <div class="card-header">
+                        <div>
+                            <div class="card-meta">${p.number}</div>
+                            <div class="card-title">${p.title}</div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Title</label>
+                        <input type="text" value="${p.title}" onchange="updatePractice(${i}, 'title', this.value)">
+                    </div>
+                    <div class="form-group">
+                        <label>Excerpt</label>
+                        <textarea onchange="updatePractice(${i}, 'excerpt', this.value)">${p.excerpt}</textarea>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function updatePractice(index, field, value) {
+            content.practices[index][field] = value;
+        }
+
+        // Render lists
+        function renderLists() {
+            renderWritings();
+            renderServices();
+            renderEvents();
+        }
+
+        function renderWritings() {
+            const container = document.getElementById('writingsList');
+            container.innerHTML = (content.writings || []).map(w => `
+                <div class="list-item">
+                    <div class="list-item-content">
+                        <h4>${w.title}</h4>
+                        <p>${w.description}</p>
+                        <div class="meta">${w.date} · ${w.type}</div>
+                    </div>
+                    <div class="card-actions">
+                        <button class="btn btn-small btn-secondary" onclick="editWriting('${w.id}')">Edit</button>
+                        <button class="btn btn-small btn-danger" onclick="deleteWriting('${w.id}')">Delete</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function renderServices() {
+            const container = document.getElementById('servicesList');
+            container.innerHTML = (content.management?.services || []).map(s => `
+                <div class="list-item">
+                    <div class="list-item-content">
+                        <h4>${s.title}</h4>
+                        <p>${s.description}</p>
+                    </div>
+                    <div class="card-actions">
+                        <button class="btn btn-small btn-secondary" onclick="editService('${s.id}')">Edit</button>
+                        <button class="btn btn-small btn-danger" onclick="deleteService('${s.id}')">Delete</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function renderEvents() {
+            const container = document.getElementById('eventsList');
+            container.innerHTML = (content.events?.list || []).map(e => `
+                <div class="list-item">
+                    <div class="list-item-content">
+                        <h4>${e.title}</h4>
+                        <p>${e.description}</p>
+                        <div class="meta">${e.date} · ${e.venue}</div>
+                    </div>
+                    <div class="card-actions">
+                        <button class="btn btn-small btn-secondary" onclick="editEvent('${e.id}')">Edit</button>
+                        <button class="btn btn-small btn-danger" onclick="deleteEvent('${e.id}')">Delete</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Modal functions
+        function openModal(type, data = null) {
+            currentModal = type;
+            editingId = data?.id || null;
+            const modal = document.getElementById('modalOverlay');
+            const title = document.getElementById('modalTitle');
+            const body = document.getElementById('modalBody');
+
+            if (type === 'writing') {
+                title.textContent = data ? 'Edit Writing' : 'Add New Writing';
+                body.innerHTML = `
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Date</label>
+                            <input type="text" id="modalDate" value="${data?.date || ''}" placeholder="December 2024">
+                        </div>
+                        <div class="form-group">
+                            <label>Type</label>
+                            <select id="modalType">
+                                <option value="Essay" ${data?.type === 'Essay' ? 'selected' : ''}>Essay</option>
+                                <option value="Poetry" ${data?.type === 'Poetry' ? 'selected' : ''}>Poetry</option>
+                                <option value="Commentary" ${data?.type === 'Commentary' ? 'selected' : ''}>Commentary</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Title</label>
+                        <input type="text" id="modalItemTitle" value="${data?.title || ''}">
+                    </div>
+                    <div class="form-group">
+                        <label>Description</label>
+                        <textarea id="modalDescription">${data?.description || ''}</textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Link URL</label>
+                        <input type="text" id="modalLink" value="${data?.link || '#'}" placeholder="#">
+                    </div>
+                `;
+            } else if (type === 'service') {
+                title.textContent = data ? 'Edit Service' : 'Add New Service';
+                body.innerHTML = `
+                    <div class="form-group">
+                        <label>Title</label>
+                        <input type="text" id="modalItemTitle" value="${data?.title || ''}">
+                    </div>
+                    <div class="form-group">
+                        <label>Description</label>
+                        <textarea id="modalDescription">${data?.description || ''}</textarea>
+                    </div>
+                `;
+            } else if (type === 'event') {
+                title.textContent = data ? 'Edit Event' : 'Add New Event';
+                body.innerHTML = `
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Date</label>
+                            <input type="text" id="modalDate" value="${data?.date || ''}" placeholder="November 2024">
+                        </div>
+                        <div class="form-group">
+                            <label>Venue</label>
+                            <input type="text" id="modalVenue" value="${data?.venue || ''}" placeholder="Gallery Space">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Title</label>
+                        <input type="text" id="modalItemTitle" value="${data?.title || ''}">
+                    </div>
+                    <div class="form-group">
+                        <label>Description</label>
+                        <textarea id="modalDescription">${data?.description || ''}</textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Image URL (optional)</label>
+                        <input type="text" id="modalImage" value="${data?.imageUrl || ''}" placeholder="https://...">
+                    </div>
+                `;
+            }
+
+            modal.classList.add('active');
+        }
+
+        function closeModal() {
+            document.getElementById('modalOverlay').classList.remove('active');
+            currentModal = null;
+            editingId = null;
+        }
+
+        document.getElementById('modalSave').addEventListener('click', saveModal);
+
+        async function saveModal() {
+            if (currentModal === 'writing') {
+                const data = {
+                    date: document.getElementById('modalDate').value,
+                    type: document.getElementById('modalType').value,
+                    title: document.getElementById('modalItemTitle').value,
+                    description: document.getElementById('modalDescription').value,
+                    link: document.getElementById('modalLink').value
+                };
+                
+                if (editingId) {
+                    await api.put(`/api/admin/writings/${editingId}`, data);
+                    showToast('Writing updated');
+                } else {
+                    await api.post('/api/admin/writings', data);
+                    showToast('Writing added');
+                }
+            } else if (currentModal === 'service') {
+                const data = {
+                    title: document.getElementById('modalItemTitle').value,
+                    description: document.getElementById('modalDescription').value
+                };
+                
+                if (editingId) {
+                    await api.put(`/api/admin/services/${editingId}`, data);
+                    showToast('Service updated');
+                } else {
+                    await api.post('/api/admin/services', data);
+                    showToast('Service added');
+                }
+            } else if (currentModal === 'event') {
+                const data = {
+                    date: document.getElementById('modalDate').value,
+                    venue: document.getElementById('modalVenue').value,
+                    title: document.getElementById('modalItemTitle').value,
+                    description: document.getElementById('modalDescription').value,
+                    imageUrl: document.getElementById('modalImage').value
+                };
+                
+                if (editingId) {
+                    await api.put(`/api/admin/events/${editingId}`, data);
+                    showToast('Event updated');
+                } else {
+                    await api.post('/api/admin/events', data);
+                    showToast('Event added');
+                }
+            }
+
+            closeModal();
+            await loadContent();
+        }
+
+        // Edit/Delete functions
+        function editWriting(id) {
+            const writing = content.writings.find(w => w.id === id);
+            openModal('writing', writing);
+        }
+
+        async function deleteWriting(id) {
+            if (confirm('Delete this writing?')) {
+                await api.delete(`/api/admin/writings/${id}`);
+                showToast('Writing deleted');
+                await loadContent();
+            }
+        }
+
+        function editService(id) {
+            const service = content.management.services.find(s => s.id === id);
+            openModal('service', service);
+        }
+
+        async function deleteService(id) {
+            if (confirm('Delete this service?')) {
+                await api.delete(`/api/admin/services/${id}`);
+                showToast('Service deleted');
+                await loadContent();
+            }
+        }
+
+        function editEvent(id) {
+            const event = content.events.list.find(e => e.id === id);
+            openModal('event', event);
+        }
+
+        async function deleteEvent(id) {
+            if (confirm('Delete this event?')) {
+                await api.delete(`/api/admin/events/${id}`);
+                showToast('Event deleted');
+                await loadContent();
+            }
+        }
+
+        // Form submissions
+        document.getElementById('siteForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            await api.put('/api/admin/content/site', {
+                title: document.getElementById('siteTitle').value,
+                tagline: document.getElementById('siteTagline').value,
+                description: document.getElementById('siteDescription').value,
+                email: document.getElementById('siteEmail').value,
+                domain: document.getElementById('siteDomain').value
+            });
+            showToast('Site settings saved');
+        });
+
+        document.getElementById('heroForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            await api.put('/api/admin/content/hero', {
+                headline: document.getElementById('heroHeadline').value,
+                statement: document.getElementById('heroStatement').value
+            });
+            showToast('Hero section saved');
+        });
+
+        document.getElementById('aboutForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            await api.put('/api/admin/content/about', {
+                intro: document.getElementById('aboutIntro').value,
+                body1: document.getElementById('aboutBody1').value,
+                pullquote: document.getElementById('aboutPullquote').value,
+                body2: document.getElementById('aboutBody2').value,
+                portraitUrl: document.getElementById('aboutPortrait').value
+            });
+            showToast('About section saved');
+        });
+
+        document.getElementById('practicesForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            await api.put('/api/admin/content/philosophy', document.getElementById('philosophy').value);
+            await api.put('/api/admin/content/practices', content.practices);
+            showToast('Practices saved');
+        });
+
+        document.getElementById('managementForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            await api.put('/api/admin/content/management', {
+                ...content.management,
+                philosophy: document.getElementById('managementPhilosophy').value,
+                forYou: document.getElementById('forYou').value.split('\n').filter(Boolean),
+                notForYou: document.getElementById('notForYou').value.split('\n').filter(Boolean)
+            });
+            showToast('Management section saved');
+        });
+
+        document.getElementById('eventsIntroForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            await api.put('/api/admin/content/events', {
+                ...content.events,
+                intro: document.getElementById('eventsIntro').value
+            });
+            showToast('Events intro saved');
+        });
+
+        document.getElementById('contactForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            await api.put('/api/admin/content/contact', {
+                intro: document.getElementById('contactIntro').value,
+                body: document.getElementById('contactBody').value,
+                inquiryTypes: document.getElementById('inquiryTypes').value.split('\n').filter(Boolean)
+            });
+            showToast('Contact section saved');
+        });
+
+        document.getElementById('passwordForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const newPassword = document.getElementById('newPassword').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            
+            if (newPassword !== confirmPassword) {
+                showToast('Passwords do not match', 'error');
+                return;
+            }
+
+            const result = await api.post('/api/auth/change-password', {
+                currentPassword: document.getElementById('currentPassword').value,
+                newPassword: newPassword
+            });
+
+            if (result.success) {
+                showToast('Password updated');
+                document.getElementById('passwordForm').reset();
+            } else {
+                showToast(result.error || 'Failed to update password', 'error');
+            }
+        });
+
+        // Navigation
+        document.querySelectorAll('.sidebar-nav a').forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const section = link.dataset.section;
+                
+                document.querySelectorAll('.sidebar-nav a').forEach(l => l.classList.remove('active'));
+                link.classList.add('active');
+                
+                document.querySelectorAll('.section-panel').forEach(p => p.classList.remove('active'));
+                document.getElementById(`panel-${section}`).classList.add('active');
+            });
+        });
+
+        // Initialize
+        checkAuth();
+    </script>
+</body>
+</html>

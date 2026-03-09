@@ -1,0 +1,177 @@
+{
+  "site": {
+    "title": "Nassr Writes",
+    "tagline": "Writing. Artist Development. Curated Spaces.",
+    "description": "A reflective professional operating at the intersection of culture, storytelling, and community.",
+    "email": "nassrwrites@gmail.com",
+    "domain": "nassrwrites.com"
+  },
+  "hero": {
+    "headline": "Writing. Artist Development.<br><em>Curated Spaces.</em>",
+    "statement": "At the intersection of storytelling and community, I cultivate spaces where ideas take form—through words, through artists, through intentional gathering."
+  },
+  "practices": [
+    {
+      "id": "writing",
+      "number": "01",
+      "title": "Writing",
+      "excerpt": "Essays, poems, and cultural commentary that examine how we make meaning in an accelerating world. Language as a form of witnessing.",
+      "link": "#writing",
+      "linkText": "View archive →"
+    },
+    {
+      "id": "management",
+      "number": "02",
+      "title": "Artist Management",
+      "excerpt": "Long-term creative partnerships built on discernment, not hype. Strategy, positioning, and career architecture for independent artists.",
+      "link": "#management",
+      "linkText": "Learn more →"
+    },
+    {
+      "id": "events",
+      "number": "03",
+      "title": "Event Curation",
+      "excerpt": "Intentional spaces for dialogue, storytelling, and cross-disciplinary encounter. Programming that leaves room for the unexpected.",
+      "link": "#events",
+      "linkText": "Past events →"
+    }
+  ],
+  "philosophy": "Culture is not content to be optimized—it's the accumulated practice of people paying attention to each other. My work, in all its forms, is an attempt to create conditions where that attention can deepen.",
+  "about": {
+    "intro": "I've spent years working at the edges where disciplines meet—where writing becomes curation, where artist development becomes storytelling, where community becomes archive.",
+    "body1": "The thread connecting everything I do is a simple belief: that thoughtful work ripples outward in ways we can't always see. I'm interested in the slow accumulation of meaning, the conversations that happen after the event ends, the artist who finds their voice three years into our collaboration.",
+    "pullquote": "The work is always about making space—on the page, in a room, in a career—for something truer to emerge.",
+    "body2": "I approach each project with the same questions: What does this need to be? Who does it serve? And how do we make it with integrity? These aren't just professional considerations—they're the only considerations that matter.",
+    "portraitUrl": ""
+  },
+  "writings": [
+    {
+      "id": "w1",
+      "date": "December 2024",
+      "title": "On Slowness as Method",
+      "description": "An essay on resistance through deliberate pace in creative practice.",
+      "type": "Essay",
+      "link": "#"
+    },
+    {
+      "id": "w2",
+      "date": "October 2024",
+      "title": "Three Rooms",
+      "description": "A meditation on the spaces we return to, in memory and in life.",
+      "type": "Poetry",
+      "link": "#"
+    },
+    {
+      "id": "w3",
+      "date": "August 2024",
+      "title": "The Archive Problem",
+      "description": "What we lose when everything is preserved but nothing is curated.",
+      "type": "Commentary",
+      "link": "#"
+    },
+    {
+      "id": "w4",
+      "date": "May 2024",
+      "title": "Notes on Listening",
+      "description": "How attention shapes the space between performer and audience.",
+      "type": "Essay",
+      "link": "#"
+    },
+    {
+      "id": "w5",
+      "date": "February 2024",
+      "title": "What the Body Remembers",
+      "description": "A sequence of poems on inherited gesture and learned silence.",
+      "type": "Poetry",
+      "link": "#"
+    }
+  ],
+  "management": {
+    "philosophy": "I work with a small number of artists at any given time—musicians, poets, visual artists who are building something that matters more than a moment. This isn't about management in the traditional sense. It's about partnership: strategy, positioning, and the patient work of career architecture.",
+    "services": [
+      {
+        "id": "s1",
+        "title": "Strategic Positioning",
+        "description": "Defining who you are, who you're for, and how to communicate that clearly—without compromising the work itself."
+      },
+      {
+        "id": "s2",
+        "title": "Long-term Development",
+        "description": "Building sustainable creative careers that grow over decades, not just album cycles or exhibition seasons."
+      },
+      {
+        "id": "s3",
+        "title": "Industry Navigation",
+        "description": "Translating artistic vision into language institutions understand, while protecting what makes you distinct."
+      },
+      {
+        "id": "s4",
+        "title": "Collaborative Architecture",
+        "description": "Structuring the right partnerships, releases, and opportunities to amplify your work at the right time."
+      }
+    ],
+    "forYou": [
+      "You're building a body of work, not chasing trends",
+      "You value depth of relationship over transactional efficiency",
+      "You're willing to do the slow work of sustainable growth",
+      "You see your career as a craft to be developed"
+    ],
+    "notForYou": [
+      "You need immediate, aggressive scaling",
+      "You're looking for a traditional booking agent",
+      "You want someone to make decisions for you",
+      "You prioritize visibility over integrity"
+    ]
+  },
+  "events": {
+    "intro": "Every event is an argument about what matters—what deserves our attention, who should be in conversation, and how space itself can shape encounter. I curate programming that creates conditions for genuine exchange.",
+    "list": [
+      {
+        "id": "e1",
+        "date": "November 2024",
+        "venue": "Gallery Space",
+        "title": "The Listening Room",
+        "description": "An evening of poetry and improvised music exploring the space between utterance and understanding. Featuring three poets and a string quartet.",
+        "imageUrl": ""
+      },
+      {
+        "id": "e2",
+        "date": "September 2024",
+        "venue": "Cultural Center",
+        "title": "Slow Conversations",
+        "description": "A series of unhurried dialogues between practitioners across disciplines—visual artists, writers, musicians—on the nature of their work.",
+        "imageUrl": ""
+      },
+      {
+        "id": "e3",
+        "date": "June 2024",
+        "venue": "Independent Venue",
+        "title": "Night of New Work",
+        "description": "An intimate showcase of unreleased material from emerging artists, presented in an environment that honors the vulnerability of creation.",
+        "imageUrl": ""
+      },
+      {
+        "id": "e4",
+        "date": "March 2024",
+        "venue": "Library Archive",
+        "title": "Reading the Room",
+        "description": "A site-specific event responding to archival materials, blending live performance with historical document and contemporary reflection.",
+        "imageUrl": ""
+      }
+    ]
+  },
+  "contact": {
+    "intro": "The best collaborations begin with a conversation—not a pitch.",
+    "body": "If you're an artist seeking thoughtful partnership, an institution interested in programming, or a publication looking for contributors, I'd welcome hearing from you. Please share a bit about yourself and what you're working on.",
+    "inquiryTypes": [
+      "Writing & Editorial",
+      "Artist Management",
+      "Event Curation",
+      "Speaking & Panels"
+    ]
+  },
+  "admin": {
+    "username": "admin",
+    "passwordHash": "$2a$10$XQxBtMxKp0A7GZjKJ.P5S.9Y1L5/H4fZ4eLqV8xNvK2sF1yD5EqGu"
+  }
+}
