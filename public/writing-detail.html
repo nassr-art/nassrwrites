@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Writing — Nassr Writes</title>
+    <title id="pageTitle">Writing — Nassr Writes</title>
     <meta name="description" id="metaDescription" content="">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -14,7 +14,13 @@
     <nav id="navbar"></nav>
 
     <div class="writing-detail-wrap">
-        <a href="/writing" class="back-link">← Back to Archive</a>
+        <nav class="breadcrumb fade-in" id="breadcrumb">
+            <a href="/writing">Writing</a>
+            <span class="breadcrumb-sep">→</span>
+            <a id="breadcrumbCat" href="/writing"></a>
+            <span class="breadcrumb-sep">→</span>
+            <span id="breadcrumbTitle"></span>
+        </nav>
 
         <header class="writing-article-header fade-in">
             <span class="writing-type-badge" id="articleType"></span>
@@ -48,7 +54,6 @@
                 block = block.trim();
                 if (!block) return '';
 
-                // Already-block elements: headings, hr
                 if (/^#{1,3} /.test(block)) {
                     return block
                         .replace(/^### (.+)$/m, '<h3>$1</h3>')
@@ -57,13 +62,11 @@
                 }
                 if (/^---$/.test(block)) return '<hr>';
 
-                // Blockquote (may span multiple lines)
                 if (/^> /.test(block)) {
                     const inner = block.replace(/^> /gm, '').trim();
                     return `<blockquote><p>${inline(inner)}</p></blockquote>`;
                 }
 
-                // Multi-line block: join with <br> or split into <p> per line
                 const paras = block.split(/\n(?=\n)/).map(p => p.trim()).filter(Boolean);
                 if (paras.length > 1) {
                     return paras.map(p => `<p>${inline(p)}</p>`).join('');
@@ -81,18 +84,33 @@
         }
 
         initPage(function (content) {
-            const slug     = window.location.pathname.split('/').pop();
-            const writings = content.writings;
-            const idx      = writings.findIndex(w => w.slug === slug);
-            const writing  = writings[idx];
+            // URL is /writing/:category/:slug
+            const parts    = window.location.pathname.split('/').filter(Boolean);
+            const category = parts[1]; // 'essays', 'poetry', 'commentary'
+            const slug     = parts[2];
+
+            const writings = content.writings || [];
+            const catPieces = writings.filter(w => w.category === category);
+            const idx       = catPieces.findIndex(w => w.slug === slug);
+            const writing   = catPieces[idx];
 
             if (!writing) {
                 document.getElementById('articleTitle').textContent = 'Piece not found.';
                 return;
             }
 
-            document.title = `${writing.title} — ${content.site.title}`;
-            document.getElementById('metaDescription').content = writing.description || '';
+            // Breadcrumb
+            const cats = content.writingCategories || {};
+            const catLabel = cats[category]?.label || category;
+            document.getElementById('breadcrumbCat').textContent = catLabel;
+            document.getElementById('breadcrumbCat').href = `/writing/${category}`;
+            document.getElementById('breadcrumbTitle').textContent = writing.title;
+
+            // Meta
+            document.getElementById('pageTitle').textContent = `${writing.title} — ${content.site.title}`;
+            document.getElementById('metaDescription').content = writing.excerpt || writing.description || '';
+
+            // Header
             document.getElementById('articleType').textContent  = writing.type;
             document.getElementById('articleTitle').textContent = writing.title;
             document.getElementById('articleDate').textContent  = writing.date;
@@ -104,25 +122,26 @@
                 descEl.remove();
             }
 
+            // Content
             const prose = document.getElementById('articleContent');
             prose.innerHTML = writing.fullContent
                 ? renderMarkdown(writing.fullContent)
                 : '<p style="color:var(--color-text-muted);font-style:italic">Full text coming soon.</p>';
 
-            // Prev = older (higher index), Next = newer (lower index)
-            const prev = writings[idx + 1];
-            const next = writings[idx - 1];
+            // Category-scoped prev / next (prev = older = higher index)
+            const prev = catPieces[idx + 1];
+            const next = catPieces[idx - 1];
 
             const prevEl = document.getElementById('prevWriting');
             if (prev) {
-                prevEl.href = prev.link || `/writing/${prev.slug}`;
+                prevEl.href = prev.link || `/writing/${category}/${prev.slug}`;
                 document.getElementById('prevTitle').textContent = prev.title;
                 prevEl.style.display = '';
             }
 
             const nextEl = document.getElementById('nextWriting');
             if (next) {
-                nextEl.href = next.link || `/writing/${next.slug}`;
+                nextEl.href = next.link || `/writing/${category}/${next.slug}`;
                 document.getElementById('nextTitle').textContent = next.title;
                 nextEl.style.display = '';
             }

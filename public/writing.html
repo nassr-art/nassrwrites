@@ -14,12 +14,17 @@
 
     <div class="page-hero fade-in">
         <span class="page-hero-label">Literary Archive</span>
-        <h1 class="page-hero-title">Selected Writing</h1>
+        <h1 class="page-hero-title">Writing</h1>
         <p class="page-hero-subtitle">Essays, poems, and cultural commentary that examine how we make meaning in an accelerating world.</p>
     </div>
 
-    <section id="writing">
-        <div class="writing-grid" id="writingsGrid"></div>
+    <section class="writing-landing">
+        <div class="writing-cat-grid" id="categoryGrid"></div>
+
+        <div class="writing-featured fade-in" id="featuredSection">
+            <span class="writing-featured-label">Recent work</span>
+            <div class="writing-featured-list" id="featuredList"></div>
+        </div>
     </section>
 
     <footer id="footer"></footer>
@@ -27,15 +32,39 @@
     <script src="/components.js"></script>
     <script>
         initPage(function (content) {
-            document.getElementById('writingsGrid').innerHTML = content.writings.map(w => `
-                <a href="${w.link}" class="writing-item fade-in">
-                    <span class="writing-date">${w.date}</span>
-                    <div class="writing-content">
-                        <h3>${w.title}</h3>
-                        <p>${w.description}</p>
-                    </div>
-                    <span class="writing-type">${w.type}</span>
-                </a>`).join('');
+            const cats = content.writingCategories || {};
+            const writings = content.writings || [];
+
+            // Category cards
+            const catOrder = ['essays', 'poetry', 'commentary'];
+            document.getElementById('categoryGrid').innerHTML = catOrder.map((key, i) => {
+                const cat = cats[key] || { label: key, description: '' };
+                const count = writings.filter(w => w.category === key).length;
+                return `
+                <a href="/writing/${key}" class="writing-cat-card fade-in">
+                    <span class="writing-cat-number">0${i + 1}</span>
+                    <h2 class="writing-cat-label">${cat.label}</h2>
+                    <p class="writing-cat-desc">${cat.description}</p>
+                    <span class="writing-cat-count">${count} piece${count !== 1 ? 's' : ''}</span>
+                    <span class="writing-cat-link">Browse ${cat.label} →</span>
+                </a>`;
+            }).join('');
+
+            // Featured pieces
+            const featured = writings.filter(w => w.featured);
+            if (featured.length) {
+                document.getElementById('featuredList').innerHTML = featured.map(w => `
+                    <a href="${w.link}" class="writing-item fade-in">
+                        <span class="writing-date">${w.date}</span>
+                        <div class="writing-content">
+                            <h3>${w.title}</h3>
+                            <p>${w.excerpt || w.description || ''}</p>
+                        </div>
+                        <span class="writing-type">${w.type}</span>
+                    </a>`).join('');
+            } else {
+                document.getElementById('featuredSection').style.display = 'none';
+            }
         });
     </script>
 </body>

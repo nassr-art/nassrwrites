@@ -17,1316 +17,1418 @@
             --color-border: #E0DCC8;
             --color-success: #2D5A27;
             --color-error: #8B2635;
+            --color-draft: #7a5c00;
+            --color-draft-bg: #fff8e1;
             --font-serif: 'Radley', Georgia, serif;
             --font-sans: 'DM Sans', -apple-system, sans-serif;
+            --sidebar-w: 240px;
+            --header-h: 60px;
         }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: var(--font-sans); background: var(--color-cream); color: var(--color-text); line-height: 1.6; min-height: 100vh; }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        /* ── Login ─────────────────────────────── */
+        .login-screen { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 2rem; }
+        .login-box { background: var(--color-bg); padding: 3rem; max-width: 400px; width: 100%; border: 1px solid var(--color-border); }
+        .login-box h1 { font-family: var(--font-serif); font-size: 1.75rem; font-weight: 400; margin-bottom: 0.5rem; }
+        .login-box p { color: var(--color-text-muted); font-size: 0.9rem; margin-bottom: 2rem; }
 
-        body {
-            font-family: var(--font-sans);
-            background-color: var(--color-cream);
-            color: var(--color-text);
-            line-height: 1.6;
-            min-height: 100vh;
-        }
+        /* ── Admin Layout ──────────────────────── */
+        .admin-layout { display: none; min-height: 100vh; }
+        .admin-layout.active { display: block; }
 
-        /* Login Screen */
-        .login-screen {
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 2rem;
-        }
-
-        .login-box {
-            background: var(--color-bg);
-            padding: 3rem;
-            max-width: 400px;
-            width: 100%;
-            border: 1px solid var(--color-border);
-        }
-
-        .login-box h1 {
-            font-family: var(--font-serif);
-            font-size: 1.75rem;
-            font-weight: 400;
-            margin-bottom: 0.5rem;
-        }
-
-        .login-box p {
-            color: var(--color-text-muted);
-            font-size: 0.9rem;
-            margin-bottom: 2rem;
-        }
-
-        /* Admin Layout */
-        .admin-layout {
-            display: none;
-            min-height: 100vh;
-        }
-
-        .admin-layout.active {
-            display: block;
-        }
-
-        /* Header */
+        /* ── Header ────────────────────────────── */
         .admin-header {
-            background: var(--color-bg);
-            border-bottom: 1px solid var(--color-border);
-            padding: 1rem 2rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            position: sticky;
-            top: 0;
-            z-index: 100;
+            background: var(--color-bg); border-bottom: 1px solid var(--color-border);
+            padding: 0 2rem; height: var(--header-h);
+            display: flex; justify-content: space-between; align-items: center;
+            position: sticky; top: 0; z-index: 200;
         }
+        .admin-logo { font-family: var(--font-serif); font-size: 1.25rem; display: flex; align-items: center; gap: 0.75rem; }
+        .admin-logo span { color: var(--color-text-muted); font-size: 0.8rem; font-family: var(--font-sans); }
+        .admin-actions { display: flex; gap: 1rem; align-items: center; }
+        .admin-actions a { font-size: 0.8rem; color: var(--color-text-muted); text-decoration: none; }
+        .admin-actions a:hover { color: var(--color-text); }
+        .hamburger-btn { display: none; background: none; border: none; cursor: pointer; padding: 0.25rem; flex-direction: column; gap: 5px; }
+        .hamburger-btn span { display: block; width: 22px; height: 2px; background: var(--color-text); border-radius: 1px; transition: all 0.2s; }
+        .hamburger-btn.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+        .hamburger-btn.open span:nth-child(2) { opacity: 0; }
+        .hamburger-btn.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
 
-        .admin-logo {
-            font-family: var(--font-serif);
-            font-size: 1.25rem;
-        }
+        /* ── Main Layout ───────────────────────── */
+        .admin-main { display: flex; min-height: calc(100vh - var(--header-h)); }
 
-        .admin-logo span {
-            color: var(--color-text-muted);
-            font-size: 0.8rem;
-            margin-left: 0.5rem;
-            font-family: var(--font-sans);
-        }
-
-        .admin-actions {
-            display: flex;
-            gap: 1rem;
-            align-items: center;
-        }
-
-        .admin-actions a {
-            font-size: 0.8rem;
-            color: var(--color-text-muted);
-            text-decoration: none;
-        }
-
-        .admin-actions a:hover {
-            color: var(--color-text);
-        }
-
-        /* Main Content */
-        .admin-main {
-            display: flex;
-            min-height: calc(100vh - 60px);
-        }
-
-        /* Sidebar */
+        /* ── Sidebar ────────────────────────────── */
         .admin-sidebar {
-            width: 240px;
-            background: var(--color-bg);
-            border-right: 1px solid var(--color-border);
-            padding: 2rem 0;
-            position: sticky;
-            top: 60px;
-            height: calc(100vh - 60px);
-            overflow-y: auto;
+            width: var(--sidebar-w); background: var(--color-bg); border-right: 1px solid var(--color-border);
+            padding: 2rem 0; position: sticky; top: var(--header-h); height: calc(100vh - var(--header-h)); overflow-y: auto;
+            transition: transform 0.25s ease; flex-shrink: 0;
         }
+        .sidebar-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 150; }
+        .sidebar-section { margin-bottom: 2rem; }
+        .sidebar-label { font-size: 0.65rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--color-accent); padding: 0 1.5rem; margin-bottom: 0.75rem; }
+        .sidebar-nav { list-style: none; }
+        .sidebar-nav li a { display: flex; align-items: center; gap: 0.6rem; padding: 0.6rem 1.5rem; font-size: 0.9rem; color: var(--color-text-muted); text-decoration: none; border-left: 2px solid transparent; transition: all 0.15s ease; }
+        .sidebar-nav li a:hover, .sidebar-nav li a.active { color: var(--color-text); background: var(--color-cream); border-left-color: var(--color-text); }
+        .sidebar-nav li a .nav-icon { width: 16px; text-align: center; font-style: normal; opacity: 0.6; font-size: 0.9rem; }
 
-        .sidebar-section {
-            margin-bottom: 2rem;
+        /* ── Content Area ───────────────────────── */
+        .admin-content { flex: 1; padding: 2rem 3rem; max-width: 1000px; min-width: 0; }
+        .content-header { margin-bottom: 2rem; padding-bottom: 1.5rem; border-bottom: 1px solid var(--color-border); display: flex; justify-content: space-between; align-items: flex-start; }
+        .content-header-text h2 { font-family: var(--font-serif); font-size: 1.75rem; font-weight: 400; margin-bottom: 0.25rem; }
+        .content-header-text p { color: var(--color-text-muted); font-size: 0.9rem; }
+        .section-panel { display: none; }
+        .section-panel.active { display: block; }
+
+        /* ── Dashboard ─────────────────────────── */
+        .dash-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-bottom: 2.5rem; }
+        .stat-card { background: var(--color-bg); border: 1px solid var(--color-border); padding: 1.5rem; cursor: pointer; transition: border-color 0.15s; }
+        .stat-card:hover { border-color: var(--color-text); }
+        .stat-value { font-family: var(--font-serif); font-size: 2.5rem; font-weight: 400; line-height: 1; margin-bottom: 0.5rem; }
+        .stat-label { font-size: 0.8rem; color: var(--color-text-muted); letter-spacing: 0.04em; text-transform: uppercase; }
+        .stat-sub { font-size: 0.75rem; color: var(--color-text-muted); margin-top: 0.35rem; }
+        .dash-actions h3 { font-family: var(--font-serif); font-weight: 400; font-size: 1.1rem; margin-bottom: 1rem; color: var(--color-text-muted); }
+        .quick-actions { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.75rem; }
+        .quick-action-btn { display: flex; align-items: center; gap: 0.75rem; padding: 1rem 1.25rem; background: var(--color-bg); border: 1px solid var(--color-border); cursor: pointer; font-family: var(--font-sans); font-size: 0.9rem; color: var(--color-text); text-align: left; transition: all 0.15s; }
+        .quick-action-btn:hover { border-color: var(--color-text); background: var(--color-cream); }
+        .quick-action-btn .qa-icon { font-size: 1.25rem; opacity: 0.7; }
+        .quick-action-btn .qa-label { font-weight: 500; }
+        .quick-action-btn .qa-desc { font-size: 0.75rem; color: var(--color-text-muted); margin-top: 0.1rem; }
+
+        /* ── Forms ──────────────────────────────── */
+        .form-group { margin-bottom: 1.5rem; }
+        .form-group label { display: block; font-size: 0.75rem; font-weight: 500; letter-spacing: 0.05em; text-transform: uppercase; color: var(--color-accent); margin-bottom: 0.5rem; }
+        .form-group input, .form-group textarea, .form-group select {
+            width: 100%; padding: 0.75rem 1rem; font-family: var(--font-sans); font-size: 0.95rem;
+            border: 1px solid var(--color-border); background: var(--color-bg); color: var(--color-text);
+            transition: border-color 0.2s ease; -webkit-appearance: none;
         }
+        .form-group input:focus, .form-group textarea:focus, .form-group select:focus { outline: none; border-color: var(--color-text); }
+        .form-group textarea { min-height: 120px; resize: vertical; }
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+        .form-row-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem; }
 
-        .sidebar-label {
-            font-size: 0.65rem;
-            font-weight: 600;
-            letter-spacing: 0.1em;
-            text-transform: uppercase;
-            color: var(--color-accent);
-            padding: 0 1.5rem;
-            margin-bottom: 0.75rem;
-        }
+        /* ── Markdown Toolbar ───────────────────── */
+        .md-editor-wrap { border: 1px solid var(--color-border); }
+        .md-editor-wrap:focus-within { border-color: var(--color-text); }
+        .md-toolbar { display: flex; gap: 2px; padding: 0.4rem 0.5rem; background: var(--color-cream); border-bottom: 1px solid var(--color-border); flex-wrap: wrap; }
+        .md-toolbar-btn { background: none; border: 1px solid transparent; padding: 0.25rem 0.5rem; font-family: var(--font-sans); font-size: 0.8rem; color: var(--color-text-muted); cursor: pointer; border-radius: 2px; transition: all 0.15s; white-space: nowrap; }
+        .md-toolbar-btn:hover { background: var(--color-bg); border-color: var(--color-border); color: var(--color-text); }
+        .md-toolbar-sep { width: 1px; background: var(--color-border); margin: 0 4px; align-self: stretch; }
+        .md-editor-wrap textarea { border: none; width: 100%; padding: 0.75rem 1rem; font-family: monospace; font-size: 0.85rem; line-height: 1.7; resize: vertical; min-height: 300px; background: var(--color-bg); color: var(--color-text); }
+        .md-editor-wrap textarea:focus { outline: none; }
+        .md-hint { font-size: 0.72rem; color: var(--color-accent); margin-top: 0.4rem; }
 
-        .sidebar-nav {
-            list-style: none;
-        }
+        /* ── Image Preview ──────────────────────── */
+        .img-preview-wrap { margin-top: 0.75rem; display: none; }
+        .img-preview-wrap img { max-width: 200px; max-height: 140px; border: 1px solid var(--color-border); object-fit: cover; display: block; }
+        .img-preview-label { font-size: 0.72rem; color: var(--color-accent); margin-bottom: 0.35rem; }
 
-        .sidebar-nav li a {
-            display: block;
-            padding: 0.6rem 1.5rem;
-            font-size: 0.9rem;
-            color: var(--color-text-muted);
-            text-decoration: none;
-            border-left: 2px solid transparent;
-            transition: all 0.2s ease;
-        }
+        /* ── Buttons ────────────────────────────── */
+        .btn { font-family: var(--font-sans); font-size: 0.8rem; font-weight: 500; letter-spacing: 0.05em; padding: 0.75rem 1.5rem; border: 1px solid var(--color-text); background: var(--color-text); color: var(--color-bg); cursor: pointer; transition: all 0.2s ease; }
+        .btn:hover { background: transparent; color: var(--color-text); }
+        .btn-secondary { background: transparent; color: var(--color-text); }
+        .btn-secondary:hover { background: var(--color-text); color: var(--color-bg); }
+        .btn-danger { border-color: var(--color-error); background: var(--color-error); color: white; }
+        .btn-danger:hover { background: transparent; color: var(--color-error); }
+        .btn-ghost { background: none; border: 1px solid var(--color-border); color: var(--color-text-muted); }
+        .btn-ghost:hover { border-color: var(--color-text); color: var(--color-text); }
+        .btn-small { padding: 0.4rem 0.85rem; font-size: 0.72rem; }
+        .btn-group { display: flex; gap: 1rem; margin-top: 2rem; flex-wrap: wrap; }
 
-        .sidebar-nav li a:hover,
-        .sidebar-nav li a.active {
-            color: var(--color-text);
-            background: var(--color-cream);
-            border-left-color: var(--color-text);
-        }
-
-        /* Content Area */
-        .admin-content {
-            flex: 1;
-            padding: 2rem 3rem;
-            max-width: 1000px;
-        }
-
-        .content-header {
-            margin-bottom: 2rem;
-            padding-bottom: 1.5rem;
-            border-bottom: 1px solid var(--color-border);
-        }
-
-        .content-header h2 {
-            font-family: var(--font-serif);
-            font-size: 1.75rem;
-            font-weight: 400;
-            margin-bottom: 0.25rem;
-        }
-
-        .content-header p {
-            color: var(--color-text-muted);
-            font-size: 0.9rem;
-        }
-
-        /* Section Panels */
-        .section-panel {
-            display: none;
-        }
-
-        .section-panel.active {
-            display: block;
-        }
-
-        /* Forms */
-        .form-group {
-            margin-bottom: 1.5rem;
-        }
-
-        .form-group label {
-            display: block;
-            font-size: 0.75rem;
-            font-weight: 500;
-            letter-spacing: 0.05em;
-            text-transform: uppercase;
-            color: var(--color-accent);
-            margin-bottom: 0.5rem;
-        }
-
-        .form-group input,
-        .form-group textarea,
-        .form-group select {
-            width: 100%;
-            padding: 0.75rem 1rem;
-            font-family: var(--font-sans);
-            font-size: 0.95rem;
-            border: 1px solid var(--color-border);
-            background: var(--color-bg);
-            color: var(--color-text);
-            transition: border-color 0.2s ease;
-        }
-
-        .form-group input:focus,
-        .form-group textarea:focus,
-        .form-group select:focus {
-            outline: none;
-            border-color: var(--color-text);
-        }
-
-        .form-group textarea {
-            min-height: 120px;
-            resize: vertical;
-        }
-
-        .form-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 1.5rem;
-        }
-
-        /* Buttons */
-        .btn {
-            font-family: var(--font-sans);
-            font-size: 0.8rem;
-            font-weight: 500;
-            letter-spacing: 0.05em;
-            padding: 0.75rem 1.5rem;
-            border: 1px solid var(--color-text);
-            background: var(--color-text);
-            color: var(--color-bg);
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-
-        .btn:hover {
-            background: transparent;
-            color: var(--color-text);
-        }
-
-        .btn-secondary {
-            background: transparent;
-            color: var(--color-text);
-        }
-
-        .btn-secondary:hover {
-            background: var(--color-text);
-            color: var(--color-bg);
-        }
-
-        .btn-danger {
-            border-color: var(--color-error);
-            background: var(--color-error);
-            color: white;
-        }
-
-        .btn-danger:hover {
-            background: transparent;
-            color: var(--color-error);
-        }
-
-        .btn-small {
-            padding: 0.5rem 1rem;
-            font-size: 0.75rem;
-        }
-
-        .btn-group {
-            display: flex;
-            gap: 1rem;
-            margin-top: 2rem;
-        }
-
-        /* Cards */
-        .card {
-            background: var(--color-bg);
-            border: 1px solid var(--color-border);
-            padding: 1.5rem;
-            margin-bottom: 1rem;
-        }
-
-        .card-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 1rem;
-        }
-
-        .card-title {
-            font-family: var(--font-serif);
-            font-size: 1.1rem;
-            font-weight: 400;
-        }
-
-        .card-meta {
-            font-size: 0.8rem;
-            color: var(--color-text-muted);
-        }
-
-        .card-actions {
-            display: flex;
-            gap: 0.5rem;
-        }
-
-        /* List Items */
+        /* ── List Items ─────────────────────────── */
         .list-item {
-            background: var(--color-bg);
-            border: 1px solid var(--color-border);
-            padding: 1.25rem 1.5rem;
-            margin-bottom: 0.5rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            transition: border-color 0.2s ease;
+            background: var(--color-bg); border: 1px solid var(--color-border); padding: 1rem 1.25rem;
+            margin-bottom: 0.5rem; display: flex; justify-content: space-between; align-items: flex-start;
+            gap: 1rem; transition: border-color 0.15s; cursor: default;
+        }
+        .list-item:hover { border-color: #aaa8a0; }
+        .list-item.dragging { opacity: 0.4; border-style: dashed; }
+        .list-item.drag-over { border-color: var(--color-text); border-style: solid; background: var(--color-cream); }
+        .list-item-left { display: flex; align-items: flex-start; gap: 0.75rem; flex: 1; min-width: 0; }
+        .drag-handle { color: #ccc; cursor: grab; padding: 0.25rem 0; font-size: 1rem; user-select: none; flex-shrink: 0; line-height: 1.4; }
+        .drag-handle:hover { color: var(--color-text-muted); }
+        .drag-handle:active { cursor: grabbing; }
+        .list-item-content { flex: 1; min-width: 0; }
+        .list-item-content h4 { font-family: var(--font-serif); font-size: 1rem; font-weight: 400; margin-bottom: 0.2rem; display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; }
+        .list-item-content p { font-size: 0.85rem; color: var(--color-text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 500px; }
+        .list-item-content .meta { font-size: 0.72rem; color: var(--color-accent); margin-top: 0.2rem; }
+        .card-actions { display: flex; gap: 0.4rem; flex-shrink: 0; flex-wrap: wrap; align-items: center; }
+
+        /* ── Status Badges ──────────────────────── */
+        .status-badge { display: inline-block; font-size: 0.65rem; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; padding: 0.15rem 0.45rem; border-radius: 2px; vertical-align: middle; }
+        .status-badge.published { background: #e8f4e8; color: var(--color-success); }
+        .status-badge.draft { background: var(--color-draft-bg); color: var(--color-draft); }
+        .featured-badge { display: inline-block; font-size: 0.65rem; background: #e8e4d4; color: #555; padding: 0.15rem 0.45rem; border-radius: 2px; vertical-align: middle; }
+
+        /* ── Add New Button ─────────────────────── */
+        .add-new-btn { display: flex; align-items: center; justify-content: center; gap: 0.5rem; width: 100%; padding: 1rem; border: 1px dashed var(--color-border); background: transparent; color: var(--color-text-muted); font-family: var(--font-sans); font-size: 0.85rem; cursor: pointer; margin-bottom: 1.5rem; transition: all 0.2s ease; }
+        .add-new-btn:hover { border-color: var(--color-text); color: var(--color-text); background: var(--color-bg); }
+
+        /* ── Cards ──────────────────────────────── */
+        .card { background: var(--color-bg); border: 1px solid var(--color-border); padding: 1.5rem; margin-bottom: 1rem; }
+        .card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1rem; }
+        .card-title { font-family: var(--font-serif); font-size: 1.1rem; font-weight: 400; }
+        .card-meta { font-size: 0.8rem; color: var(--color-text-muted); }
+
+        /* ── Modal ──────────────────────────────── */
+        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); display: none; align-items: center; justify-content: center; z-index: 1000; padding: 1rem; overflow-y: auto; }
+        .modal-overlay.active { display: flex; align-items: flex-start; padding-top: 3vh; }
+        .modal { background: var(--color-bg); width: 100%; max-width: 720px; max-height: 92vh; overflow-y: auto; display: flex; flex-direction: column; }
+        .modal-header { padding: 1.5rem 2rem; border-bottom: 1px solid var(--color-border); display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; background: var(--color-bg); z-index: 1; }
+        .modal-header h3 { font-family: var(--font-serif); font-size: 1.25rem; font-weight: 400; }
+        .modal-close { background: none; border: none; font-size: 1.5rem; cursor: pointer; color: var(--color-text-muted); line-height: 1; padding: 0 0.25rem; }
+        .modal-close:hover { color: var(--color-text); }
+        .modal-body { padding: 2rem; flex: 1; }
+        .modal-footer { padding: 1.25rem 2rem; border-top: 1px solid var(--color-border); display: flex; justify-content: flex-end; gap: 1rem; position: sticky; bottom: 0; background: var(--color-bg); }
+
+        /* ── Confirm Dialog ─────────────────────── */
+        .confirm-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.55); display: none; align-items: center; justify-content: center; z-index: 2000; padding: 1rem; }
+        .confirm-overlay.active { display: flex; }
+        .confirm-box { background: var(--color-bg); padding: 2rem; max-width: 400px; width: 100%; border: 1px solid var(--color-border); }
+        .confirm-box h4 { font-family: var(--font-serif); font-size: 1.2rem; font-weight: 400; margin-bottom: 0.75rem; }
+        .confirm-box p { font-size: 0.9rem; color: var(--color-text-muted); margin-bottom: 1.75rem; line-height: 1.6; }
+        .confirm-actions { display: flex; gap: 0.75rem; justify-content: flex-end; }
+
+        /* ── Toast ──────────────────────────────── */
+        .toast { position: fixed; bottom: 2rem; right: 2rem; padding: 1rem 1.5rem; background: var(--color-text); color: var(--color-bg); font-size: 0.9rem; transform: translateY(120px); opacity: 0; transition: all 0.3s ease; z-index: 3000; max-width: 320px; }
+        .toast.active { transform: translateY(0); opacity: 1; }
+        .toast.success { background: var(--color-success); }
+        .toast.error { background: var(--color-error); }
+
+        /* ── Category Heading ───────────────────── */
+        .cat-heading { font-family: var(--font-serif); font-weight: 400; font-size: 1rem; color: #888; margin: 1.75rem 0 0.75rem; letter-spacing: 0.04em; padding-bottom: 0.5rem; border-bottom: 1px solid var(--color-border); }
+
+        /* ── Responsive ─────────────────────────── */
+        @media (max-width: 900px) {
+            .admin-content { padding: 1.5rem 2rem; }
+            .dash-stats { grid-template-columns: 1fr 1fr; }
         }
 
-        .list-item:hover {
-            border-color: var(--color-text);
-        }
-
-        .list-item-content h4 {
-            font-family: var(--font-serif);
-            font-size: 1rem;
-            font-weight: 400;
-            margin-bottom: 0.25rem;
-        }
-
-        .list-item-content p {
-            font-size: 0.85rem;
-            color: var(--color-text-muted);
-        }
-
-        .list-item-content .meta {
-            font-size: 0.75rem;
-            color: var(--color-accent);
-            margin-top: 0.25rem;
-        }
-
-        /* Add New Button */
-        .add-new-btn {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.5rem;
-            width: 100%;
-            padding: 1rem;
-            border: 1px dashed var(--color-border);
-            background: transparent;
-            color: var(--color-text-muted);
-            font-family: var(--font-sans);
-            font-size: 0.85rem;
-            cursor: pointer;
-            margin-bottom: 1.5rem;
-            transition: all 0.2s ease;
-        }
-
-        .add-new-btn:hover {
-            border-color: var(--color-text);
-            color: var(--color-text);
-            background: var(--color-bg);
-        }
-
-        /* Modal */
-        .modal-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.5);
-            display: none;
-            align-items: center;
-            justify-content: center;
-            z-index: 1000;
-            padding: 2rem;
-        }
-
-        .modal-overlay.active {
-            display: flex;
-        }
-
-        .modal {
-            background: var(--color-bg);
-            max-width: 600px;
-            width: 100%;
-            max-height: 90vh;
-            overflow-y: auto;
-        }
-
-        .modal-header {
-            padding: 1.5rem 2rem;
-            border-bottom: 1px solid var(--color-border);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .modal-header h3 {
-            font-family: var(--font-serif);
-            font-size: 1.25rem;
-            font-weight: 400;
-        }
-
-        .modal-close {
-            background: none;
-            border: none;
-            font-size: 1.5rem;
-            cursor: pointer;
-            color: var(--color-text-muted);
-            line-height: 1;
-        }
-
-        .modal-close:hover {
-            color: var(--color-text);
-        }
-
-        .modal-body {
-            padding: 2rem;
-        }
-
-        .modal-footer {
-            padding: 1.5rem 2rem;
-            border-top: 1px solid var(--color-border);
-            display: flex;
-            justify-content: flex-end;
-            gap: 1rem;
-        }
-
-        /* Toast Notifications */
-        .toast {
-            position: fixed;
-            bottom: 2rem;
-            right: 2rem;
-            padding: 1rem 1.5rem;
-            background: var(--color-text);
-            color: var(--color-bg);
-            font-size: 0.9rem;
-            transform: translateY(100px);
-            opacity: 0;
-            transition: all 0.3s ease;
-            z-index: 2000;
-        }
-
-        .toast.active {
-            transform: translateY(0);
-            opacity: 1;
-        }
-
-        .toast.success {
-            background: var(--color-success);
-        }
-
-        .toast.error {
-            background: var(--color-error);
-        }
-
-        /* Responsive */
         @media (max-width: 768px) {
+            .hamburger-btn { display: flex; }
             .admin-sidebar {
-                display: none;
+                position: fixed; top: var(--header-h); left: 0; height: calc(100vh - var(--header-h));
+                z-index: 160; transform: translateX(-100%);
             }
-
-            .admin-content {
-                padding: 1.5rem;
-            }
-
-            .form-row {
-                grid-template-columns: 1fr;
-            }
+            .admin-sidebar.open { transform: translateX(0); }
+            .sidebar-overlay.active { display: block; }
+            .admin-content { padding: 1.25rem; }
+            .form-row { grid-template-columns: 1fr; }
+            .form-row-3 { grid-template-columns: 1fr; }
+            .dash-stats { grid-template-columns: 1fr; }
+            .quick-actions { grid-template-columns: 1fr; }
+            .modal { max-height: 100vh; }
+            .modal-overlay.active { padding-top: 0; align-items: flex-start; }
+            .list-item-content p { max-width: 200px; }
+            .card-actions { flex-direction: column; gap: 0.3rem; }
         }
     </style>
 </head>
 <body>
-    <!-- Login Screen -->
-    <div class="login-screen" id="loginScreen">
-        <div class="login-box">
-            <h1>Nassr Writes</h1>
-            <p>Content Management System</p>
-            <form id="loginForm">
-                <div class="form-group">
-                    <label>Username</label>
-                    <input type="text" id="loginUsername" required>
-                </div>
-                <div class="form-group">
-                    <label>Password</label>
-                    <input type="password" id="loginPassword" required>
-                </div>
-                <button type="submit" class="btn" style="width: 100%;">Sign In</button>
-            </form>
-        </div>
+
+<!-- ── Login ─────────────────────────────────────────────── -->
+<div class="login-screen" id="loginScreen">
+    <div class="login-box">
+        <h1>Nassr Writes</h1>
+        <p>Content Management System</p>
+        <form id="loginForm">
+            <div class="form-group">
+                <label>Username</label>
+                <input type="text" id="loginUsername" autocomplete="username" required>
+            </div>
+            <div class="form-group">
+                <label>Password</label>
+                <input type="password" id="loginPassword" autocomplete="current-password" required>
+            </div>
+            <button type="submit" class="btn" style="width:100%">Sign In</button>
+        </form>
     </div>
+</div>
 
-    <!-- Admin Layout -->
-    <div class="admin-layout" id="adminLayout">
-        <!-- Header -->
-        <header class="admin-header">
-            <div class="admin-logo">
-                Nassr Writes <span>CMS</span>
+<!-- ── Admin Layout ───────────────────────────────────────── -->
+<div class="admin-layout" id="adminLayout">
+
+    <!-- Header -->
+    <header class="admin-header">
+        <div class="admin-logo">
+            <button class="hamburger-btn" id="hamburgerBtn" aria-label="Menu">
+                <span></span><span></span><span></span>
+            </button>
+            Nassr Writes <span>CMS</span>
+        </div>
+        <div class="admin-actions">
+            <a href="/" target="_blank">View Site →</a>
+            <button class="btn btn-small btn-secondary" onclick="logout()">Log Out</button>
+        </div>
+    </header>
+
+    <!-- Sidebar overlay (mobile) -->
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+
+    <div class="admin-main">
+        <!-- Sidebar -->
+        <aside class="admin-sidebar" id="adminSidebar">
+            <div class="sidebar-section">
+                <div class="sidebar-label">Overview</div>
+                <ul class="sidebar-nav">
+                    <li><a href="#" data-section="dashboard" class="active"><i class="nav-icon">◈</i>Dashboard</a></li>
+                </ul>
             </div>
-            <div class="admin-actions">
-                <a href="/" target="_blank">View Site →</a>
-                <button class="btn btn-small btn-secondary" onclick="logout()">Log Out</button>
+            <div class="sidebar-section">
+                <div class="sidebar-label">General</div>
+                <ul class="sidebar-nav">
+                    <li><a href="#" data-section="site"><i class="nav-icon">⚙</i>Site Settings</a></li>
+                    <li><a href="#" data-section="hero"><i class="nav-icon">◻</i>Hero Section</a></li>
+                    <li><a href="#" data-section="about"><i class="nav-icon">◉</i>About</a></li>
+                </ul>
             </div>
-        </header>
+            <div class="sidebar-section">
+                <div class="sidebar-label">Content</div>
+                <ul class="sidebar-nav">
+                    <li><a href="#" data-section="practices"><i class="nav-icon">▣</i>Practices</a></li>
+                    <li><a href="#" data-section="writings"><i class="nav-icon">✍</i>Writings</a></li>
+                    <li><a href="#" data-section="management"><i class="nav-icon">◈</i>Management</a></li>
+                    <li><a href="#" data-section="events"><i class="nav-icon">◷</i>Events</a></li>
+                    <li><a href="#" data-section="contact"><i class="nav-icon">✉</i>Contact</a></li>
+                </ul>
+            </div>
+            <div class="sidebar-section">
+                <div class="sidebar-label">Account</div>
+                <ul class="sidebar-nav">
+                    <li><a href="#" data-section="password"><i class="nav-icon">🔒</i>Change Password</a></li>
+                </ul>
+            </div>
+        </aside>
 
-        <div class="admin-main">
-            <!-- Sidebar -->
-            <aside class="admin-sidebar">
-                <div class="sidebar-section">
-                    <div class="sidebar-label">General</div>
-                    <ul class="sidebar-nav">
-                        <li><a href="#" data-section="site" class="active">Site Settings</a></li>
-                        <li><a href="#" data-section="hero">Hero Section</a></li>
-                        <li><a href="#" data-section="about">About</a></li>
-                    </ul>
-                </div>
-                <div class="sidebar-section">
-                    <div class="sidebar-label">Content</div>
-                    <ul class="sidebar-nav">
-                        <li><a href="#" data-section="practices">Practices</a></li>
-                        <li><a href="#" data-section="writings">Writings</a></li>
-                        <li><a href="#" data-section="management">Artist Management</a></li>
-                        <li><a href="#" data-section="events">Events</a></li>
-                        <li><a href="#" data-section="contact">Contact</a></li>
-                    </ul>
-                </div>
-                <div class="sidebar-section">
-                    <div class="sidebar-label">Account</div>
-                    <ul class="sidebar-nav">
-                        <li><a href="#" data-section="password">Change Password</a></li>
-                    </ul>
-                </div>
-            </aside>
+        <!-- Content -->
+        <main class="admin-content">
 
-            <!-- Content -->
-            <main class="admin-content">
-                <!-- Site Settings -->
-                <div class="section-panel active" id="panel-site">
-                    <div class="content-header">
+            <!-- Dashboard -->
+            <div class="section-panel active" id="panel-dashboard">
+                <div class="content-header">
+                    <div class="content-header-text">
+                        <h2>Dashboard</h2>
+                        <p>Overview of your site content</p>
+                    </div>
+                </div>
+                <div class="dash-stats" id="dashStats"></div>
+                <div class="dash-actions">
+                    <h3>Quick actions</h3>
+                    <div class="quick-actions">
+                        <button class="quick-action-btn" onclick="openModal('writing', null, 'essays')">
+                            <span class="qa-icon">✍</span>
+                            <div><div class="qa-label">New Essay</div><div class="qa-desc">Long-form reflection</div></div>
+                        </button>
+                        <button class="quick-action-btn" onclick="openModal('writing', null, 'poetry')">
+                            <span class="qa-icon">✦</span>
+                            <div><div class="qa-label">New Poem</div><div class="qa-desc">Poetry or verse</div></div>
+                        </button>
+                        <button class="quick-action-btn" onclick="openModal('writing', null, 'commentary')">
+                            <span class="qa-icon">◈</span>
+                            <div><div class="qa-label">New Commentary</div><div class="qa-desc">Cultural observation</div></div>
+                        </button>
+                        <button class="quick-action-btn" onclick="openModal('event')">
+                            <span class="qa-icon">◷</span>
+                            <div><div class="qa-label">New Event</div><div class="qa-desc">Add a curated event</div></div>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Site Settings -->
+            <div class="section-panel" id="panel-site">
+                <div class="content-header">
+                    <div class="content-header-text">
                         <h2>Site Settings</h2>
                         <p>Basic information about your website</p>
                     </div>
-                    <form id="siteForm">
-                        <div class="form-group">
-                            <label>Site Title</label>
-                            <input type="text" id="siteTitle">
-                        </div>
-                        <div class="form-group">
-                            <label>Tagline</label>
-                            <input type="text" id="siteTagline">
-                        </div>
-                        <div class="form-group">
-                            <label>Meta Description</label>
-                            <textarea id="siteDescription"></textarea>
-                        </div>
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label>Email</label>
-                                <input type="email" id="siteEmail">
-                            </div>
-                            <div class="form-group">
-                                <label>Domain</label>
-                                <input type="text" id="siteDomain">
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label>Mailchimp Form Action URL <small style="font-weight:400;color:#888">— paste from Mailchimp embed form code (ends in /post?u=…)</small></label>
-                            <input type="url" id="siteMailchimpUrl" placeholder="https://username.us1.list-manage.com/subscribe/post?u=…&id=…">
-                        </div>
-                        <div class="btn-group">
-                            <button type="submit" class="btn">Save Changes</button>
-                        </div>
-                    </form>
                 </div>
+                <form id="siteForm">
+                    <div class="form-group">
+                        <label>Site Title</label>
+                        <input type="text" id="siteTitle">
+                    </div>
+                    <div class="form-group">
+                        <label>Tagline</label>
+                        <input type="text" id="siteTagline">
+                    </div>
+                    <div class="form-group">
+                        <label>Meta Description</label>
+                        <textarea id="siteDescription"></textarea>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Email</label>
+                            <input type="email" id="siteEmail">
+                        </div>
+                        <div class="form-group">
+                            <label>Domain</label>
+                            <input type="text" id="siteDomain">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Mailchimp Form Action URL <small style="font-weight:400;color:#888">— paste from Mailchimp embed code (ends in /post?u=…)</small></label>
+                        <input type="url" id="siteMailchimpUrl" placeholder="https://username.us1.list-manage.com/subscribe/post?u=…&id=…">
+                    </div>
+                    <div class="btn-group">
+                        <button type="submit" class="btn">Save Changes</button>
+                    </div>
+                </form>
+            </div>
 
-                <!-- Hero Section -->
-                <div class="section-panel" id="panel-hero">
-                    <div class="content-header">
+            <!-- Hero -->
+            <div class="section-panel" id="panel-hero">
+                <div class="content-header">
+                    <div class="content-header-text">
                         <h2>Hero Section</h2>
                         <p>The main headline and statement on your homepage</p>
                     </div>
-                    <form id="heroForm">
-                        <div class="form-group">
-                            <label>Headline (HTML allowed for styling)</label>
-                            <textarea id="heroHeadline"></textarea>
-                        </div>
-                        <div class="form-group">
-                            <label>Statement</label>
-                            <textarea id="heroStatement"></textarea>
-                        </div>
-                        <div class="btn-group">
-                            <button type="submit" class="btn">Save Changes</button>
-                        </div>
-                    </form>
                 </div>
+                <form id="heroForm">
+                    <div class="form-group">
+                        <label>Headline <small style="font-weight:400;color:#888">(HTML allowed — use &lt;em&gt; for italic, &lt;br&gt; for line break)</small></label>
+                        <textarea id="heroHeadline"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Statement</label>
+                        <textarea id="heroStatement"></textarea>
+                    </div>
+                    <div class="btn-group">
+                        <button type="submit" class="btn">Save Changes</button>
+                    </div>
+                </form>
+            </div>
 
-                <!-- About Section -->
-                <div class="section-panel" id="panel-about">
-                    <div class="content-header">
+            <!-- About -->
+            <div class="section-panel" id="panel-about">
+                <div class="content-header">
+                    <div class="content-header-text">
                         <h2>About</h2>
                         <p>Your philosophy and background</p>
                     </div>
-                    <form id="aboutForm">
-                        <div class="form-group">
-                            <label>Introduction</label>
-                            <textarea id="aboutIntro"></textarea>
-                        </div>
-                        <div class="form-group">
-                            <label>Body Paragraph 1</label>
-                            <textarea id="aboutBody1"></textarea>
-                        </div>
-                        <div class="form-group">
-                            <label>Pull Quote</label>
-                            <textarea id="aboutPullquote"></textarea>
-                        </div>
-                        <div class="form-group">
-                            <label>Body Paragraph 2</label>
-                            <textarea id="aboutBody2"></textarea>
-                        </div>
-                        <div class="form-group">
-                            <label>Portrait Image URL</label>
-                            <input type="text" id="aboutPortrait" placeholder="https://...">
-                        </div>
-                        <div class="btn-group">
-                            <button type="submit" class="btn">Save Changes</button>
-                        </div>
-                    </form>
                 </div>
+                <form id="aboutForm">
+                    <div class="form-group">
+                        <label>Introduction</label>
+                        <textarea id="aboutIntro"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Body Paragraph 1</label>
+                        <textarea id="aboutBody1"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Pull Quote</label>
+                        <textarea id="aboutPullquote"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Body Paragraph 2</label>
+                        <textarea id="aboutBody2"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Portrait Image URL</label>
+                        <input type="text" id="aboutPortrait" placeholder="https://..." oninput="previewImage(this, 'aboutPortraitPreview')">
+                        <div class="img-preview-wrap" id="aboutPortraitPreview">
+                            <div class="img-preview-label">Preview</div>
+                            <img src="" alt="Portrait preview">
+                        </div>
+                    </div>
+                    <div class="btn-group">
+                        <button type="submit" class="btn">Save Changes</button>
+                    </div>
+                </form>
+            </div>
 
-                <!-- Practices -->
-                <div class="section-panel" id="panel-practices">
-                    <div class="content-header">
+            <!-- Practices -->
+            <div class="section-panel" id="panel-practices">
+                <div class="content-header">
+                    <div class="content-header-text">
                         <h2>Practices</h2>
-                        <p>Your three main areas of work</p>
+                        <p>Your three main areas of work shown on the homepage</p>
                     </div>
-                    <form id="practicesForm">
-                        <div class="form-group">
-                            <label>Philosophy Statement</label>
-                            <textarea id="philosophy"></textarea>
-                        </div>
-                        <div id="practicesList"></div>
-                        <div class="btn-group">
-                            <button type="submit" class="btn">Save Changes</button>
-                        </div>
-                    </form>
                 </div>
+                <form id="practicesForm">
+                    <div class="form-group">
+                        <label>Working Philosophy Statement</label>
+                        <textarea id="philosophy"></textarea>
+                    </div>
+                    <div id="practicesList"></div>
+                    <div class="btn-group">
+                        <button type="submit" class="btn">Save Changes</button>
+                    </div>
+                </form>
+            </div>
 
-                <!-- Writings -->
-                <div class="section-panel" id="panel-writings">
-                    <div class="content-header">
+            <!-- Writings -->
+            <div class="section-panel" id="panel-writings">
+                <div class="content-header">
+                    <div class="content-header-text">
                         <h2>Writings</h2>
-                        <p>Essays, poems, and cultural commentary</p>
+                        <p>Essays, poems, and cultural commentary — drag to reorder within each category</p>
                     </div>
-                    <button class="add-new-btn" onclick="openModal('writing')">+ Add New Writing</button>
-                    <div id="writingsList"></div>
+                    <button class="btn" onclick="openModal('writing')">+ New Writing</button>
                 </div>
+                <div id="writingsList"></div>
+            </div>
 
-                <!-- Artist Management -->
-                <div class="section-panel" id="panel-management">
-                    <div class="content-header">
+            <!-- Artist Management -->
+            <div class="section-panel" id="panel-management">
+                <div class="content-header">
+                    <div class="content-header-text">
                         <h2>Artist Management</h2>
                         <p>Your approach to working with artists</p>
                     </div>
-                    <form id="managementForm">
-                        <div class="form-group">
-                            <label>Philosophy</label>
-                            <textarea id="managementPhilosophy"></textarea>
-                        </div>
-                        <div class="form-group">
-                            <label>"This is for you if" (one per line)</label>
-                            <textarea id="forYou"></textarea>
-                        </div>
-                        <div class="form-group">
-                            <label>"This is not for you if" (one per line)</label>
-                            <textarea id="notForYou"></textarea>
-                        </div>
-                        <div class="btn-group">
-                            <button type="submit" class="btn">Save Changes</button>
-                        </div>
-                    </form>
-                    <div style="margin-top: 3rem;">
-                        <h3 style="font-family: var(--font-serif); margin-bottom: 1rem;">Services</h3>
-                        <button class="add-new-btn" onclick="openModal('service')">+ Add New Service</button>
-                        <div id="servicesList"></div>
-                    </div>
                 </div>
+                <form id="managementForm">
+                    <div class="form-group">
+                        <label>Philosophy</label>
+                        <textarea id="managementPhilosophy"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>"This is for you if" <small style="font-weight:400;color:#888">— one item per line</small></label>
+                        <textarea id="forYou"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>"This is not for you if" <small style="font-weight:400;color:#888">— one item per line</small></label>
+                        <textarea id="notForYou"></textarea>
+                    </div>
+                    <div class="btn-group">
+                        <button type="submit" class="btn">Save Changes</button>
+                    </div>
+                </form>
+                <div style="margin-top:3rem">
+                    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem">
+                        <h3 style="font-family:var(--font-serif);font-weight:400">Services</h3>
+                        <button class="btn btn-small" onclick="openModal('service')">+ Add Service</button>
+                    </div>
+                    <div id="servicesList"></div>
+                </div>
+            </div>
 
-                <!-- Events -->
-                <div class="section-panel" id="panel-events">
-                    <div class="content-header">
+            <!-- Events -->
+            <div class="section-panel" id="panel-events">
+                <div class="content-header">
+                    <div class="content-header-text">
                         <h2>Events</h2>
-                        <p>Curated experiences and programming</p>
+                        <p>Curated experiences and programming — drag to reorder</p>
                     </div>
-                    <form id="eventsIntroForm">
-                        <div class="form-group">
-                            <label>Section Introduction</label>
-                            <textarea id="eventsIntro"></textarea>
-                        </div>
-                        <div class="btn-group">
-                            <button type="submit" class="btn">Save Introduction</button>
-                        </div>
-                    </form>
-                    <div style="margin-top: 2rem;">
-                        <button class="add-new-btn" onclick="openModal('event')">+ Add New Event</button>
-                        <div id="eventsList"></div>
-                    </div>
+                    <button class="btn" onclick="openModal('event')">+ New Event</button>
                 </div>
+                <form id="eventsIntroForm" style="margin-bottom:2rem">
+                    <div class="form-group">
+                        <label>Section Introduction</label>
+                        <textarea id="eventsIntro"></textarea>
+                    </div>
+                    <div class="btn-group" style="margin-top:1rem">
+                        <button type="submit" class="btn">Save Introduction</button>
+                    </div>
+                </form>
+                <div id="eventsList"></div>
+            </div>
 
-                <!-- Contact -->
-                <div class="section-panel" id="panel-contact">
-                    <div class="content-header">
+            <!-- Contact -->
+            <div class="section-panel" id="panel-contact">
+                <div class="content-header">
+                    <div class="content-header-text">
                         <h2>Contact</h2>
                         <p>Contact section content and inquiry types</p>
                     </div>
-                    <form id="contactForm">
-                        <div class="form-group">
-                            <label>Introduction</label>
-                            <input type="text" id="contactIntro">
-                        </div>
-                        <div class="form-group">
-                            <label>Body Text</label>
-                            <textarea id="contactBody"></textarea>
-                        </div>
-                        <div class="form-group">
-                            <label>Phone Number</label>
-                            <input type="tel" id="contactPhone" placeholder="+1 234 567 8900">
-                        </div>
-                        <div class="form-group">
-                            <label>Inquiry Types (one per line)</label>
-                            <textarea id="inquiryTypes"></textarea>
-                        </div>
-                        <div class="btn-group">
-                            <button type="submit" class="btn">Save Changes</button>
-                        </div>
-                    </form>
                 </div>
+                <form id="contactForm">
+                    <div class="form-group">
+                        <label>Introduction Line</label>
+                        <input type="text" id="contactIntro">
+                    </div>
+                    <div class="form-group">
+                        <label>Body Text</label>
+                        <textarea id="contactBody"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Phone Number <small style="font-weight:400;color:#888">(optional — leave blank to hide)</small></label>
+                        <input type="tel" id="contactPhone" placeholder="+1 234 567 8900">
+                    </div>
+                    <div class="form-group">
+                        <label>Inquiry Types <small style="font-weight:400;color:#888">— one per line</small></label>
+                        <textarea id="inquiryTypes"></textarea>
+                    </div>
+                    <div class="btn-group">
+                        <button type="submit" class="btn">Save Changes</button>
+                    </div>
+                </form>
+            </div>
 
-                <!-- Password -->
-                <div class="section-panel" id="panel-password">
-                    <div class="content-header">
+            <!-- Password -->
+            <div class="section-panel" id="panel-password">
+                <div class="content-header">
+                    <div class="content-header-text">
                         <h2>Change Password</h2>
-                        <p>Update your admin password</p>
+                        <p>Update your admin login password</p>
                     </div>
-                    <form id="passwordForm">
-                        <div class="form-group">
-                            <label>Current Password</label>
-                            <input type="password" id="currentPassword" required>
-                        </div>
-                        <div class="form-group">
-                            <label>New Password</label>
-                            <input type="password" id="newPassword" required>
-                        </div>
-                        <div class="form-group">
-                            <label>Confirm New Password</label>
-                            <input type="password" id="confirmPassword" required>
-                        </div>
-                        <div class="btn-group">
-                            <button type="submit" class="btn">Update Password</button>
-                        </div>
-                    </form>
                 </div>
-            </main>
+                <form id="passwordForm" style="max-width:400px">
+                    <div class="form-group">
+                        <label>Current Password</label>
+                        <input type="password" id="currentPassword" required>
+                    </div>
+                    <div class="form-group">
+                        <label>New Password</label>
+                        <input type="password" id="newPassword" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Confirm New Password</label>
+                        <input type="password" id="confirmPassword" required>
+                    </div>
+                    <div class="btn-group">
+                        <button type="submit" class="btn">Update Password</button>
+                    </div>
+                </form>
+            </div>
+
+        </main>
+    </div>
+</div>
+
+<!-- ── Modal ──────────────────────────────────────────────── -->
+<div class="modal-overlay" id="modalOverlay">
+    <div class="modal">
+        <div class="modal-header">
+            <h3 id="modalTitle">Add New</h3>
+            <button class="modal-close" onclick="closeModal()">&times;</button>
+        </div>
+        <div class="modal-body" id="modalBody"></div>
+        <div class="modal-footer">
+            <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+            <button class="btn" id="modalSave">Save</button>
         </div>
     </div>
+</div>
 
-    <!-- Modal -->
-    <div class="modal-overlay" id="modalOverlay">
-        <div class="modal">
-            <div class="modal-header">
-                <h3 id="modalTitle">Add New</h3>
-                <button class="modal-close" onclick="closeModal()">&times;</button>
-            </div>
-            <div class="modal-body" id="modalBody"></div>
-            <div class="modal-footer">
-                <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
-                <button class="btn" id="modalSave">Save</button>
-            </div>
+<!-- ── Confirm Dialog ─────────────────────────────────────── -->
+<div class="confirm-overlay" id="confirmOverlay">
+    <div class="confirm-box">
+        <h4 id="confirmTitle">Are you sure?</h4>
+        <p id="confirmMessage">This action cannot be undone.</p>
+        <div class="confirm-actions">
+            <button class="btn btn-secondary" onclick="cancelConfirm()">Cancel</button>
+            <button class="btn btn-danger" id="confirmOkBtn">Delete</button>
         </div>
     </div>
+</div>
 
-    <!-- Toast -->
-    <div class="toast" id="toast"></div>
+<!-- ── Toast ──────────────────────────────────────────────── -->
+<div class="toast" id="toast"></div>
 
-    <script>
-        // Global state
-        let content = {};
-        let currentModal = null;
-        let editingId = null;
+<script>
+// ─── State ────────────────────────────────────────────────
+let content = {};
+let currentModal = null;
+let editingId = null;
+let confirmResolve = null;
 
-        // API calls
-        const api = {
-            async get(endpoint) {
-                const res = await fetch(endpoint);
-                return res.json();
-            },
-            async post(endpoint, data) {
-                const res = await fetch(endpoint, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(data)
-                });
-                return res.json();
-            },
-            async put(endpoint, data) {
-                const res = await fetch(endpoint, {
-                    method: 'PUT',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(data)
-                });
-                return res.json();
-            },
-            async delete(endpoint) {
-                const res = await fetch(endpoint, { method: 'DELETE' });
-                return res.json();
-            }
-        };
+// ─── API ──────────────────────────────────────────────────
+const api = {
+    async get(ep) { return (await fetch(ep)).json(); },
+    async post(ep, data) { return (await fetch(ep, { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(data) })).json(); },
+    async put(ep, data) { return (await fetch(ep, { method:'PUT', headers:{'Content-Type':'application/json'}, body:JSON.stringify(data) })).json(); },
+    async delete(ep) { return (await fetch(ep, { method:'DELETE' })).json(); }
+};
 
-        // Toast notifications
-        function showToast(message, type = 'success') {
-            const toast = document.getElementById('toast');
-            toast.textContent = message;
-            toast.className = `toast ${type} active`;
-            setTimeout(() => toast.classList.remove('active'), 3000);
-        }
+// ─── Toast ────────────────────────────────────────────────
+function showToast(msg, type = 'success') {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.className = `toast ${type} active`;
+    setTimeout(() => t.classList.remove('active'), 3500);
+}
 
-        // Auth functions
-        async function checkAuth() {
-            const status = await api.get('/api/auth/status');
-            if (status.authenticated) {
-                document.getElementById('loginScreen').style.display = 'none';
-                document.getElementById('adminLayout').classList.add('active');
-                loadContent();
-            }
-        }
+// ─── Custom Confirm ───────────────────────────────────────
+function showConfirm(title, message, okLabel = 'Delete') {
+    return new Promise(resolve => {
+        document.getElementById('confirmTitle').textContent = title;
+        document.getElementById('confirmMessage').textContent = message;
+        document.getElementById('confirmOkBtn').textContent = okLabel;
+        document.getElementById('confirmOverlay').classList.add('active');
+        confirmResolve = resolve;
+    });
+}
+function cancelConfirm() {
+    document.getElementById('confirmOverlay').classList.remove('active');
+    if (confirmResolve) { confirmResolve(false); confirmResolve = null; }
+}
+document.getElementById('confirmOkBtn').addEventListener('click', () => {
+    document.getElementById('confirmOverlay').classList.remove('active');
+    if (confirmResolve) { confirmResolve(true); confirmResolve = null; }
+});
 
-        document.getElementById('loginForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const username = document.getElementById('loginUsername').value;
-            const password = document.getElementById('loginPassword').value;
-            
-            const result = await api.post('/api/auth/login', { username, password });
-            if (result.success) {
-                document.getElementById('loginScreen').style.display = 'none';
-                document.getElementById('adminLayout').classList.add('active');
-                loadContent();
-            } else {
-                showToast(result.error || 'Login failed', 'error');
-            }
+// ─── Mobile Sidebar ───────────────────────────────────────
+const hamburgerBtn = document.getElementById('hamburgerBtn');
+hamburgerBtn.addEventListener('click', () => {
+    const sidebar = document.getElementById('adminSidebar');
+    const overlay = document.getElementById('sidebarOverlay');
+    const open = sidebar.classList.toggle('open');
+    overlay.classList.toggle('active', open);
+    hamburgerBtn.classList.toggle('open', open);
+});
+function closeSidebar() {
+    document.getElementById('adminSidebar').classList.remove('open');
+    document.getElementById('sidebarOverlay').classList.remove('active');
+    hamburgerBtn.classList.remove('open');
+}
+
+// ─── Auth ─────────────────────────────────────────────────
+async function checkAuth() {
+    const status = await api.get('/api/auth/status');
+    if (status.authenticated) {
+        document.getElementById('loginScreen').style.display = 'none';
+        document.getElementById('adminLayout').classList.add('active');
+        loadContent();
+    }
+}
+
+document.getElementById('loginForm').addEventListener('submit', async e => {
+    e.preventDefault();
+    const result = await api.post('/api/auth/login', {
+        username: document.getElementById('loginUsername').value,
+        password: document.getElementById('loginPassword').value
+    });
+    if (result.success) {
+        document.getElementById('loginScreen').style.display = 'none';
+        document.getElementById('adminLayout').classList.add('active');
+        loadContent();
+    } else {
+        showToast(result.error || 'Login failed', 'error');
+    }
+});
+
+async function logout() {
+    await api.post('/api/auth/logout');
+    location.reload();
+}
+
+// ─── Load & Populate ──────────────────────────────────────
+async function loadContent() {
+    // Use the admin endpoint so drafts are included
+    content = await api.get('/api/admin/content-full');
+    populateForms();
+    renderLists();
+    renderDashboard();
+}
+
+function populateForms() {
+    document.getElementById('siteTitle').value        = content.site?.title || '';
+    document.getElementById('siteTagline').value      = content.site?.tagline || '';
+    document.getElementById('siteDescription').value  = content.site?.description || '';
+    document.getElementById('siteEmail').value        = content.site?.email || '';
+    document.getElementById('siteDomain').value       = content.site?.domain || '';
+    document.getElementById('siteMailchimpUrl').value = content.site?.mailchimpUrl || '';
+    document.getElementById('heroHeadline').value     = content.hero?.headline || '';
+    document.getElementById('heroStatement').value    = content.hero?.statement || '';
+    document.getElementById('aboutIntro').value       = content.about?.intro || '';
+    document.getElementById('aboutBody1').value       = content.about?.body1 || '';
+    document.getElementById('aboutPullquote').value   = content.about?.pullquote || '';
+    document.getElementById('aboutBody2').value       = content.about?.body2 || '';
+    document.getElementById('aboutPortrait').value    = content.about?.portraitUrl || '';
+    previewImage(document.getElementById('aboutPortrait'), 'aboutPortraitPreview');
+    document.getElementById('philosophy').value            = content.philosophy || '';
+    document.getElementById('managementPhilosophy').value  = content.management?.philosophy || '';
+    document.getElementById('forYou').value                = (content.management?.forYou || []).join('\n');
+    document.getElementById('notForYou').value             = (content.management?.notForYou || []).join('\n');
+    document.getElementById('eventsIntro').value           = content.events?.intro || '';
+    document.getElementById('contactIntro').value          = content.contact?.intro || '';
+    document.getElementById('contactBody').value           = content.contact?.body || '';
+    document.getElementById('contactPhone').value          = content.site?.phone || '';
+    document.getElementById('inquiryTypes').value          = (content.contact?.inquiryTypes || []).join('\n');
+    renderPractices();
+}
+
+// ─── Dashboard ────────────────────────────────────────────
+async function renderDashboard() {
+    const writings   = content.writings || [];
+    const events     = content.events?.list || [];
+    const published  = writings.filter(w => w.status !== 'draft').length;
+    const drafts     = writings.filter(w => w.status === 'draft').length;
+
+    let subscribers = 0;
+    try {
+        const subs = await api.get('/api/admin/newsletter/subscribers');
+        subscribers = subs.length || 0;
+    } catch(_) {}
+
+    document.getElementById('dashStats').innerHTML = `
+        <div class="stat-card" onclick="navigate('writings')">
+            <div class="stat-value">${published}</div>
+            <div class="stat-label">Published Pieces</div>
+            ${drafts ? `<div class="stat-sub">${drafts} draft${drafts !== 1 ? 's' : ''} saved</div>` : ''}
+        </div>
+        <div class="stat-card" onclick="navigate('events')">
+            <div class="stat-value">${events.length}</div>
+            <div class="stat-label">Events</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value">${subscribers}</div>
+            <div class="stat-label">Newsletter Subscribers</div>
+        </div>`;
+}
+
+function navigate(section) {
+    document.querySelectorAll('.sidebar-nav a').forEach(l => {
+        l.classList.toggle('active', l.dataset.section === section);
+    });
+    document.querySelectorAll('.section-panel').forEach(p => p.classList.remove('active'));
+    document.getElementById(`panel-${section}`).classList.add('active');
+    closeSidebar();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// ─── Practices ────────────────────────────────────────────
+function renderPractices() {
+    document.getElementById('practicesList').innerHTML = (content.practices || []).map((p, i) => `
+        <div class="card">
+            <div class="card-header">
+                <div><div class="card-meta">${p.number}</div><div class="card-title">${p.title}</div></div>
+            </div>
+            <div class="form-group">
+                <label>Title</label>
+                <input type="text" value="${esc(p.title)}" oninput="updatePractice(${i}, 'title', this.value)">
+            </div>
+            <div class="form-group">
+                <label>Excerpt</label>
+                <textarea oninput="updatePractice(${i}, 'excerpt', this.value)">${esc(p.excerpt)}</textarea>
+            </div>
+        </div>`).join('');
+}
+function updatePractice(i, field, val) { content.practices[i][field] = val; }
+
+// ─── Image Preview ────────────────────────────────────────
+function previewImage(input, previewId) {
+    const wrap = document.getElementById(previewId);
+    if (!wrap) return;
+    const url = input.value.trim();
+    if (url) {
+        wrap.style.display = 'block';
+        wrap.querySelector('img').src = url;
+    } else {
+        wrap.style.display = 'none';
+    }
+}
+
+// ─── Markdown Toolbar ─────────────────────────────────────
+function buildMarkdownToolbar(textareaId) {
+    return `
+    <div class="md-editor-wrap">
+        <div class="md-toolbar">
+            <button type="button" class="md-toolbar-btn" title="Bold" onclick="mdInsert('${textareaId}','**','**','Bold text')"><strong>B</strong></button>
+            <button type="button" class="md-toolbar-btn" title="Italic" onclick="mdInsert('${textareaId}','*','*','Italic text')"><em>I</em></button>
+            <div class="md-toolbar-sep"></div>
+            <button type="button" class="md-toolbar-btn" title="Heading" onclick="mdInsert('${textareaId}','## ','','Heading')">H2</button>
+            <button type="button" class="md-toolbar-btn" title="Subheading" onclick="mdInsert('${textareaId}','### ','','Subheading')">H3</button>
+            <div class="md-toolbar-sep"></div>
+            <button type="button" class="md-toolbar-btn" title="Blockquote" onclick="mdInsert('${textareaId}','> ','','Quote')">❝</button>
+            <button type="button" class="md-toolbar-btn" title="Horizontal Rule" onclick="mdInsertLine('${textareaId}','---')">—</button>
+            <div class="md-toolbar-sep"></div>
+            <button type="button" class="md-toolbar-btn" title="New paragraph (blank line)" onclick="mdInsertLine('${textareaId}','')">¶</button>
+        </div>
+        <textarea id="${textareaId}" placeholder="Write in Markdown. Use ** for bold, * for italic, ## for headings, > for quotes, --- for dividers."></textarea>
+    </div>
+    <p class="md-hint">Tip: **bold** · *italic* · ## Heading · &gt; Blockquote · --- Divider</p>`;
+}
+
+function mdInsert(id, before, after, placeholder) {
+    const ta = document.getElementById(id);
+    ta.focus();
+    const start = ta.selectionStart, end = ta.selectionEnd;
+    const selected = ta.value.substring(start, end) || placeholder;
+    const insert = before + selected + after;
+    ta.setRangeText(insert, start, end, 'select');
+    ta.dispatchEvent(new Event('input'));
+}
+
+function mdInsertLine(id, text) {
+    const ta = document.getElementById(id);
+    ta.focus();
+    const pos = ta.selectionStart;
+    const insert = '\n\n' + text + '\n\n';
+    ta.setRangeText(insert, pos, pos, 'end');
+    ta.dispatchEvent(new Event('input'));
+}
+
+// ─── Render Lists ─────────────────────────────────────────
+function renderLists() {
+    renderWritings();
+    renderServices();
+    renderEvents();
+}
+
+function renderWritings() {
+    const container = document.getElementById('writingsList');
+    const writings  = content.writings || [];
+    const catOrder  = ['essays', 'poetry', 'commentary'];
+    const catLabels = { essays: 'Essays', poetry: 'Poetry', commentary: 'Commentary' };
+
+    let html = '';
+    catOrder.forEach(cat => {
+        const pieces = writings.filter(w => w.category === cat);
+        if (!pieces.length) return;
+        html += `<div class="cat-heading">${catLabels[cat]} <span style="font-family:var(--font-sans);font-size:0.75rem;color:#aaa">(${pieces.length})</span></div>
+        <div class="sortable-list" data-cat="${cat}" id="list-${cat}">`;
+        pieces.forEach(w => {
+            const urlPath = w.slug ? `/writing/${w.category}/${w.slug}` : '';
+            const status  = w.status || 'published';
+            html += `
+            <div class="list-item" draggable="true" data-id="${w.id}" data-type="writing">
+                <div class="list-item-left">
+                    <span class="drag-handle" title="Drag to reorder">⠿</span>
+                    <div class="list-item-content">
+                        <h4>${esc(w.title)}
+                            <span class="status-badge ${status}">${status}</span>
+                            ${w.featured ? '<span class="featured-badge">featured</span>' : ''}
+                        </h4>
+                        ${urlPath ? `<div class="meta" style="font-family:monospace;font-size:0.72rem">${urlPath}</div>` : ''}
+                        <p>${esc(w.excerpt || w.description || '')}</p>
+                        <div class="meta">${w.date || ''} · ${w.type || ''}</div>
+                    </div>
+                </div>
+                <div class="card-actions">
+                    <button class="btn btn-small btn-ghost" onclick="toggleStatus('${w.id}')" title="${status === 'published' ? 'Save as draft' : 'Publish'}">${status === 'published' ? 'Draft' : 'Publish'}</button>
+                    <button class="btn btn-small btn-ghost" onclick="duplicateWriting('${w.id}')" title="Duplicate">Copy</button>
+                    <button class="btn btn-small btn-secondary" onclick="editWriting('${w.id}')">Edit</button>
+                    <button class="btn btn-small btn-danger" onclick="deleteWriting('${w.id}')">Delete</button>
+                </div>
+            </div>`;
         });
+        html += '</div>';
+    });
 
-        async function logout() {
-            await api.post('/api/auth/logout');
-            location.reload();
-        }
-
-        // Load content
-        async function loadContent() {
-            content = await api.get('/api/content');
-            populateForms();
-            renderLists();
-        }
-
-        // Populate forms
-        function populateForms() {
-            // Site
-            document.getElementById('siteTitle').value = content.site?.title || '';
-            document.getElementById('siteTagline').value = content.site?.tagline || '';
-            document.getElementById('siteDescription').value = content.site?.description || '';
-            document.getElementById('siteEmail').value = content.site?.email || '';
-            document.getElementById('siteDomain').value = content.site?.domain || '';
-            document.getElementById('siteMailchimpUrl').value = content.site?.mailchimpUrl || '';
-
-            // Hero
-            document.getElementById('heroHeadline').value = content.hero?.headline || '';
-            document.getElementById('heroStatement').value = content.hero?.statement || '';
-
-            // About
-            document.getElementById('aboutIntro').value = content.about?.intro || '';
-            document.getElementById('aboutBody1').value = content.about?.body1 || '';
-            document.getElementById('aboutPullquote').value = content.about?.pullquote || '';
-            document.getElementById('aboutBody2').value = content.about?.body2 || '';
-            document.getElementById('aboutPortrait').value = content.about?.portraitUrl || '';
-
-            // Philosophy
-            document.getElementById('philosophy').value = content.philosophy || '';
-
-            // Management
-            document.getElementById('managementPhilosophy').value = content.management?.philosophy || '';
-            document.getElementById('forYou').value = (content.management?.forYou || []).join('\n');
-            document.getElementById('notForYou').value = (content.management?.notForYou || []).join('\n');
-
-            // Events intro
-            document.getElementById('eventsIntro').value = content.events?.intro || '';
-
-            // Contact
-            document.getElementById('contactIntro').value = content.contact?.intro || '';
-            document.getElementById('contactBody').value = content.contact?.body || '';
-            document.getElementById('contactPhone').value = content.site?.phone || '';
-            document.getElementById('inquiryTypes').value = (content.contact?.inquiryTypes || []).join('\n');
-
-            // Practices
-            renderPractices();
-        }
-
-        // Render practices
-        function renderPractices() {
-            const container = document.getElementById('practicesList');
-            container.innerHTML = (content.practices || []).map((p, i) => `
-                <div class="card">
-                    <div class="card-header">
-                        <div>
-                            <div class="card-meta">${p.number}</div>
-                            <div class="card-title">${p.title}</div>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label>Title</label>
-                        <input type="text" value="${p.title}" onchange="updatePractice(${i}, 'title', this.value)">
-                    </div>
-                    <div class="form-group">
-                        <label>Excerpt</label>
-                        <textarea onchange="updatePractice(${i}, 'excerpt', this.value)">${p.excerpt}</textarea>
-                    </div>
-                </div>
-            `).join('');
-        }
-
-        function updatePractice(index, field, value) {
-            content.practices[index][field] = value;
-        }
-
-        // Render lists
-        function renderLists() {
-            renderWritings();
-            renderServices();
-            renderEvents();
-        }
-
-        function renderWritings() {
-            const container = document.getElementById('writingsList');
-            container.innerHTML = (content.writings || []).map(w => `
-                <div class="list-item">
+    const uncategorised = writings.filter(w => !w.category || !catOrder.includes(w.category));
+    if (uncategorised.length) {
+        html += `<div class="cat-heading">Uncategorised</div><div class="sortable-list" id="list-uncategorised">`;
+        uncategorised.forEach(w => {
+            html += `
+            <div class="list-item" draggable="true" data-id="${w.id}" data-type="writing">
+                <div class="list-item-left">
+                    <span class="drag-handle">⠿</span>
                     <div class="list-item-content">
-                        <h4>${w.title}</h4>
-                        ${w.slug ? `<div class="meta" style="font-family:monospace;font-size:0.75rem;color:#888">/writing/${w.slug}</div>` : ''}
-                        <p>${w.description}</p>
-                        <div class="meta">${w.date} · ${w.type}</div>
-                    </div>
-                    <div class="card-actions">
-                        <button class="btn btn-small btn-secondary" onclick="editWriting('${w.id}')">Edit</button>
-                        <button class="btn btn-small btn-danger" onclick="deleteWriting('${w.id}')">Delete</button>
+                        <h4>${esc(w.title)}</h4>
+                        <p>${esc(w.description || '')}</p>
+                        <div class="meta">${w.date || ''} · ${w.type || ''}</div>
                     </div>
                 </div>
-            `).join('');
-        }
-
-        function renderServices() {
-            const container = document.getElementById('servicesList');
-            container.innerHTML = (content.management?.services || []).map(s => `
-                <div class="list-item">
-                    <div class="list-item-content">
-                        <h4>${s.title}</h4>
-                        <p>${s.description}</p>
-                    </div>
-                    <div class="card-actions">
-                        <button class="btn btn-small btn-secondary" onclick="editService('${s.id}')">Edit</button>
-                        <button class="btn btn-small btn-danger" onclick="deleteService('${s.id}')">Delete</button>
-                    </div>
+                <div class="card-actions">
+                    <button class="btn btn-small btn-secondary" onclick="editWriting('${w.id}')">Edit</button>
+                    <button class="btn btn-small btn-danger" onclick="deleteWriting('${w.id}')">Delete</button>
                 </div>
-            `).join('');
-        }
+            </div>`;
+        });
+        html += '</div>';
+    }
 
-        function renderEvents() {
-            const container = document.getElementById('eventsList');
-            container.innerHTML = (content.events?.list || []).map(e => `
-                <div class="list-item">
-                    <div class="list-item-content">
-                        <h4>${e.title}</h4>
-                        <p>${e.description}</p>
-                        <div class="meta">${e.date} · ${e.venue}</div>
-                    </div>
-                    <div class="card-actions">
-                        <button class="btn btn-small btn-secondary" onclick="editEvent('${e.id}')">Edit</button>
-                        <button class="btn btn-small btn-danger" onclick="deleteEvent('${e.id}')">Delete</button>
-                    </div>
+    if (!html) html = '<p style="color:#888;font-style:italic;padding:1rem 0">No writings yet. Use the button above to add your first piece.</p>';
+    container.innerHTML = html;
+    initDragDrop();
+}
+
+function renderServices() {
+    document.getElementById('servicesList').innerHTML = (content.management?.services || []).map(s => `
+        <div class="list-item">
+            <div class="list-item-left">
+                <div class="list-item-content">
+                    <h4>${esc(s.title)}</h4>
+                    <p>${esc(s.description)}</p>
                 </div>
-            `).join('');
-        }
+            </div>
+            <div class="card-actions">
+                <button class="btn btn-small btn-secondary" onclick="editService('${s.id}')">Edit</button>
+                <button class="btn btn-small btn-danger" onclick="deleteService('${s.id}')">Delete</button>
+            </div>
+        </div>`).join('') || '<p style="color:#888;font-style:italic;padding:1rem 0">No services yet.</p>';
+}
 
-        // Modal functions
-        function openModal(type, data = null) {
-            currentModal = type;
-            editingId = data?.id || null;
-            const modal = document.getElementById('modalOverlay');
-            const title = document.getElementById('modalTitle');
-            const body = document.getElementById('modalBody');
+function renderEvents() {
+    const el = document.getElementById('eventsList');
+    const events = content.events?.list || [];
+    if (!events.length) { el.innerHTML = '<p style="color:#888;font-style:italic;padding:1rem 0">No events yet.</p>'; return; }
+    el.innerHTML = `<div class="sortable-list" id="list-events">` + events.map(e => `
+        <div class="list-item" draggable="true" data-id="${e.id}" data-type="event">
+            <div class="list-item-left">
+                <span class="drag-handle" title="Drag to reorder">⠿</span>
+                <div class="list-item-content">
+                    <h4>${esc(e.title)}</h4>
+                    <p>${esc(e.description)}</p>
+                    <div class="meta">${e.date || ''} · ${e.venue || ''}</div>
+                </div>
+            </div>
+            <div class="card-actions">
+                <button class="btn btn-small btn-ghost" onclick="duplicateEvent('${e.id}')" title="Duplicate">Copy</button>
+                <button class="btn btn-small btn-secondary" onclick="editEvent('${e.id}')">Edit</button>
+                <button class="btn btn-small btn-danger" onclick="deleteEvent('${e.id}')">Delete</button>
+            </div>
+        </div>`).join('') + '</div>';
+    initDragDrop();
+}
+
+// ─── Drag & Drop ──────────────────────────────────────────
+let dragSrc = null;
+
+function initDragDrop() {
+    document.querySelectorAll('.list-item[draggable]').forEach(item => {
+        item.addEventListener('dragstart', e => {
+            dragSrc = item;
+            item.classList.add('dragging');
+            e.dataTransfer.effectAllowed = 'move';
+        });
+        item.addEventListener('dragend', () => {
+            item.classList.remove('dragging');
+            document.querySelectorAll('.list-item').forEach(i => i.classList.remove('drag-over'));
+            dragSrc = null;
+        });
+        item.addEventListener('dragover', e => {
+            e.preventDefault();
+            if (!dragSrc || dragSrc === item) return;
+            // Only allow within same list
+            if (dragSrc.closest('.sortable-list') !== item.closest('.sortable-list')) return;
+            e.dataTransfer.dropEffect = 'move';
+            document.querySelectorAll('.list-item').forEach(i => i.classList.remove('drag-over'));
+            item.classList.add('drag-over');
+        });
+        item.addEventListener('drop', async e => {
+            e.preventDefault();
+            if (!dragSrc || dragSrc === item) return;
+            const list = item.closest('.sortable-list');
+            if (!list || dragSrc.closest('.sortable-list') !== list) return;
+            item.classList.remove('drag-over');
+
+            const type = dragSrc.dataset.type;
+            const srcId = dragSrc.dataset.id;
+            const tgtId = item.dataset.id;
 
             if (type === 'writing') {
-                title.textContent = data ? 'Edit Writing' : 'Add New Writing';
-                body.innerHTML = `
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label>Date</label>
-                            <input type="text" id="modalDate" value="${data?.date || ''}" placeholder="December 2024">
-                        </div>
-                        <div class="form-group">
-                            <label>Type</label>
-                            <select id="modalType">
-                                <option value="Essay" ${data?.type === 'Essay' ? 'selected' : ''}>Essay</option>
-                                <option value="Poetry" ${data?.type === 'Poetry' ? 'selected' : ''}>Poetry</option>
-                                <option value="Commentary" ${data?.type === 'Commentary' ? 'selected' : ''}>Commentary</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label>Title</label>
-                        <input type="text" id="modalItemTitle" value="${data?.title || ''}">
-                    </div>
-                    <div class="form-group">
-                        <label>Description</label>
-                        <textarea id="modalDescription">${data?.description || ''}</textarea>
-                    </div>
-                    <div class="form-group">
-                        <label>Slug <small style="font-weight:400;color:#888">(auto-generated from title, used in URL)</small></label>
-                        <input type="text" id="modalSlug" value="${data?.slug || ''}" placeholder="my-piece-title">
-                    </div>
-                    <div class="form-group">
-                        <label>Full Content <small style="font-weight:400;color:#888">(Markdown supported)</small></label>
-                        <textarea id="modalFullContent" rows="12" style="font-family:monospace;font-size:0.85rem;line-height:1.6">${data?.fullContent || ''}</textarea>
-                    </div>
-                `;
-                // Auto-generate slug from title for new items
-                document.getElementById('modalItemTitle').addEventListener('input', function () {
-                    if (!editingId) {
-                        document.getElementById('modalSlug').value = this.value
-                            .toLowerCase().replace(/[^a-z0-9\s-]/g, '').replace(/\s+/g, '-').replace(/-+/g, '-').trim();
-                    }
-                });
-            } else if (type === 'service') {
-                title.textContent = data ? 'Edit Service' : 'Add New Service';
-                body.innerHTML = `
-                    <div class="form-group">
-                        <label>Title</label>
-                        <input type="text" id="modalItemTitle" value="${data?.title || ''}">
-                    </div>
-                    <div class="form-group">
-                        <label>Description</label>
-                        <textarea id="modalDescription">${data?.description || ''}</textarea>
-                    </div>
-                `;
+                await reorderWritings(srcId, tgtId, list.dataset.cat);
             } else if (type === 'event') {
-                title.textContent = data ? 'Edit Event' : 'Add New Event';
-                body.innerHTML = `
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label>Date</label>
-                            <input type="text" id="modalDate" value="${data?.date || ''}" placeholder="November 2024">
-                        </div>
-                        <div class="form-group">
-                            <label>Venue</label>
-                            <input type="text" id="modalVenue" value="${data?.venue || ''}" placeholder="Gallery Space">
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label>Title</label>
-                        <input type="text" id="modalItemTitle" value="${data?.title || ''}">
-                    </div>
-                    <div class="form-group">
-                        <label>Description</label>
-                        <textarea id="modalDescription">${data?.description || ''}</textarea>
-                    </div>
-                    <div class="form-group">
-                        <label>Image URL (optional)</label>
-                        <input type="text" id="modalImage" value="${data?.imageUrl || ''}" placeholder="https://...">
-                    </div>
-                `;
+                await reorderEvents(srcId, tgtId);
             }
+        });
+    });
+}
 
-            modal.classList.add('active');
-        }
+async function reorderWritings(srcId, tgtId, cat) {
+    const writings = content.writings || [];
+    const srcIdx = writings.findIndex(w => w.id === srcId);
+    const tgtIdx = writings.findIndex(w => w.id === tgtId);
+    if (srcIdx === -1 || tgtIdx === -1) return;
+    writings.splice(tgtIdx, 0, writings.splice(srcIdx, 1)[0]);
+    content.writings = writings;
+    await api.put('/api/admin/content/writings', writings);
+    renderWritings();
+    showToast('Order saved');
+}
 
-        function closeModal() {
-            document.getElementById('modalOverlay').classList.remove('active');
-            currentModal = null;
-            editingId = null;
-        }
+async function reorderEvents(srcId, tgtId) {
+    const list = content.events?.list || [];
+    const srcIdx = list.findIndex(e => e.id === srcId);
+    const tgtIdx = list.findIndex(e => e.id === tgtId);
+    if (srcIdx === -1 || tgtIdx === -1) return;
+    list.splice(tgtIdx, 0, list.splice(srcIdx, 1)[0]);
+    content.events.list = list;
+    await api.put('/api/admin/content/events', content.events);
+    renderEvents();
+    showToast('Order saved');
+}
 
-        document.getElementById('modalSave').addEventListener('click', saveModal);
+// ─── Status Toggle ────────────────────────────────────────
+async function toggleStatus(id) {
+    const w = content.writings.find(w => w.id === id);
+    if (!w) return;
+    const newStatus = (w.status === 'draft') ? 'published' : 'draft';
+    await api.put(`/api/admin/writings/${id}`, { ...w, status: newStatus });
+    showToast(newStatus === 'published' ? 'Published ✓' : 'Saved as draft');
+    await loadContent();
+}
 
-        async function saveModal() {
-            if (currentModal === 'writing') {
-                const slug = document.getElementById('modalSlug').value.trim();
-                const data = {
-                    date: document.getElementById('modalDate').value,
-                    type: document.getElementById('modalType').value,
-                    title: document.getElementById('modalItemTitle').value,
-                    description: document.getElementById('modalDescription').value,
-                    slug,
-                    fullContent: document.getElementById('modalFullContent').value,
-                    link: slug ? `/writing/${slug}` : '#'
-                };
-                
-                if (editingId) {
-                    await api.put(`/api/admin/writings/${editingId}`, data);
-                    showToast('Writing updated');
-                } else {
-                    await api.post('/api/admin/writings', data);
-                    showToast('Writing added');
-                }
-            } else if (currentModal === 'service') {
-                const data = {
-                    title: document.getElementById('modalItemTitle').value,
-                    description: document.getElementById('modalDescription').value
-                };
-                
-                if (editingId) {
-                    await api.put(`/api/admin/services/${editingId}`, data);
-                    showToast('Service updated');
-                } else {
-                    await api.post('/api/admin/services', data);
-                    showToast('Service added');
-                }
-            } else if (currentModal === 'event') {
-                const data = {
-                    date: document.getElementById('modalDate').value,
-                    venue: document.getElementById('modalVenue').value,
-                    title: document.getElementById('modalItemTitle').value,
-                    description: document.getElementById('modalDescription').value,
-                    imageUrl: document.getElementById('modalImage').value
-                };
-                
-                if (editingId) {
-                    await api.put(`/api/admin/events/${editingId}`, data);
-                    showToast('Event updated');
-                } else {
-                    await api.post('/api/admin/events', data);
-                    showToast('Event added');
-                }
+// ─── Duplicate ────────────────────────────────────────────
+async function duplicateWriting(id) {
+    const w = content.writings.find(w => w.id === id);
+    if (!w) return;
+    const copy = { ...w, id: undefined, title: w.title + ' (Copy)', slug: w.slug + '-copy', status: 'draft', featured: false, link: `/writing/${w.category}/${w.slug}-copy` };
+    await api.post('/api/admin/writings', copy);
+    showToast('Duplicated as draft');
+    await loadContent();
+}
+
+async function duplicateEvent(id) {
+    const e = content.events?.list.find(e => e.id === id);
+    if (!e) return;
+    await api.post('/api/admin/events', { ...e, id: undefined, title: e.title + ' (Copy)' });
+    showToast('Event duplicated');
+    await loadContent();
+}
+
+// ─── Modal ────────────────────────────────────────────────
+function openModal(type, data = null, presetCategory = null) {
+    currentModal = type;
+    editingId = data?.id || null;
+    const title = document.getElementById('modalTitle');
+    const body  = document.getElementById('modalBody');
+
+    if (type === 'writing') {
+        const cat = presetCategory || data?.category || 'essays';
+        const status = data?.status || 'published';
+        title.textContent = data ? 'Edit Writing' : 'New Writing';
+        body.innerHTML = `
+            <div class="form-row-3">
+                <div class="form-group">
+                    <label>Date</label>
+                    <input type="text" id="modalDate" value="${esc(data?.date || '')}" placeholder="December 2024">
+                </div>
+                <div class="form-group">
+                    <label>Category</label>
+                    <select id="modalCategory">
+                        <option value="essays"      ${cat === 'essays'      ? 'selected' : ''}>Essays</option>
+                        <option value="poetry"      ${cat === 'poetry'      ? 'selected' : ''}>Poetry</option>
+                        <option value="commentary"  ${cat === 'commentary'  ? 'selected' : ''}>Commentary</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Status</label>
+                    <select id="modalStatus">
+                        <option value="published" ${status === 'published' ? 'selected' : ''}>Published</option>
+                        <option value="draft"     ${status === 'draft'     ? 'selected' : ''}>Draft</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Display Type <small style="font-weight:400;color:#888">(badge shown on piece page)</small></label>
+                <select id="modalType">
+                    <option value="Essay"       ${data?.type === 'Essay'       ? 'selected' : ''}>Essay</option>
+                    <option value="Poetry"      ${data?.type === 'Poetry'      ? 'selected' : ''}>Poetry</option>
+                    <option value="Commentary"  ${data?.type === 'Commentary'  ? 'selected' : ''}>Commentary</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Title</label>
+                <input type="text" id="modalItemTitle" value="${esc(data?.title || '')}" placeholder="Give your piece a title…">
+            </div>
+            <div class="form-group">
+                <label>Excerpt <small style="font-weight:400;color:#888">Short preview shown in archive listings</small></label>
+                <textarea id="modalExcerpt" rows="2" placeholder="One or two sentences that invite the reader in…">${esc(data?.excerpt || data?.description || '')}</textarea>
+            </div>
+            <div class="form-group">
+                <label>Description <small style="font-weight:400;color:#888">Shown beneath the title on the piece page</small></label>
+                <textarea id="modalDescription" rows="2" placeholder="A little more context for what this piece contains…">${esc(data?.description || '')}</textarea>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Slug <small style="font-weight:400;color:#888">Used in the URL — auto-generated from title</small></label>
+                    <input type="text" id="modalSlug" value="${esc(data?.slug || '')}" placeholder="my-piece-title">
+                </div>
+                <div class="form-group" style="align-self:end;padding-bottom:0.5rem">
+                    <label style="display:flex;align-items:center;gap:0.5rem;cursor:pointer;text-transform:none;letter-spacing:0;font-size:0.85rem">
+                        <input type="checkbox" id="modalFeatured" ${data?.featured ? 'checked' : ''} style="width:auto;margin:0">
+                        Feature on Writing landing page
+                    </label>
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Full Content <small style="font-weight:400;color:#888">Write in Markdown</small></label>
+                ${buildMarkdownToolbar('modalFullContent')}
+            </div>`;
+
+        document.getElementById('modalFullContent').value = data?.fullContent || '';
+
+        document.getElementById('modalItemTitle').addEventListener('input', function() {
+            if (!editingId) {
+                document.getElementById('modalSlug').value = this.value
+                    .toLowerCase().replace(/[^a-z0-9\s-]/g,'').replace(/\s+/g,'-').replace(/-+/g,'-').trim();
             }
-
-            closeModal();
-            await loadContent();
-        }
-
-        // Edit/Delete functions
-        function editWriting(id) {
-            const writing = content.writings.find(w => w.id === id);
-            openModal('writing', writing);
-        }
-
-        async function deleteWriting(id) {
-            if (confirm('Delete this writing?')) {
-                await api.delete(`/api/admin/writings/${id}`);
-                showToast('Writing deleted');
-                await loadContent();
-            }
-        }
-
-        function editService(id) {
-            const service = content.management.services.find(s => s.id === id);
-            openModal('service', service);
-        }
-
-        async function deleteService(id) {
-            if (confirm('Delete this service?')) {
-                await api.delete(`/api/admin/services/${id}`);
-                showToast('Service deleted');
-                await loadContent();
-            }
-        }
-
-        function editEvent(id) {
-            const event = content.events.list.find(e => e.id === id);
-            openModal('event', event);
-        }
-
-        async function deleteEvent(id) {
-            if (confirm('Delete this event?')) {
-                await api.delete(`/api/admin/events/${id}`);
-                showToast('Event deleted');
-                await loadContent();
-            }
-        }
-
-        // Form submissions
-        document.getElementById('siteForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            await api.put('/api/admin/content/site', {
-                title: document.getElementById('siteTitle').value,
-                tagline: document.getElementById('siteTagline').value,
-                description: document.getElementById('siteDescription').value,
-                email: document.getElementById('siteEmail').value,
-                domain: document.getElementById('siteDomain').value,
-                mailchimpUrl: document.getElementById('siteMailchimpUrl').value.trim()
-            });
-            showToast('Site settings saved');
         });
 
-        document.getElementById('heroForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            await api.put('/api/admin/content/hero', {
-                headline: document.getElementById('heroHeadline').value,
-                statement: document.getElementById('heroStatement').value
-            });
-            showToast('Hero section saved');
-        });
+    } else if (type === 'service') {
+        title.textContent = data ? 'Edit Service' : 'New Service';
+        body.innerHTML = `
+            <div class="form-group">
+                <label>Title</label>
+                <input type="text" id="modalItemTitle" value="${esc(data?.title || '')}">
+            </div>
+            <div class="form-group">
+                <label>Description</label>
+                <textarea id="modalDescription">${esc(data?.description || '')}</textarea>
+            </div>`;
 
-        document.getElementById('aboutForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            await api.put('/api/admin/content/about', {
-                intro: document.getElementById('aboutIntro').value,
-                body1: document.getElementById('aboutBody1').value,
-                pullquote: document.getElementById('aboutPullquote').value,
-                body2: document.getElementById('aboutBody2').value,
-                portraitUrl: document.getElementById('aboutPortrait').value
-            });
-            showToast('About section saved');
-        });
+    } else if (type === 'event') {
+        title.textContent = data ? 'Edit Event' : 'New Event';
+        body.innerHTML = `
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Date</label>
+                    <input type="text" id="modalDate" value="${esc(data?.date || '')}" placeholder="November 2024">
+                </div>
+                <div class="form-group">
+                    <label>Venue</label>
+                    <input type="text" id="modalVenue" value="${esc(data?.venue || '')}" placeholder="Gallery Space">
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Title</label>
+                <input type="text" id="modalItemTitle" value="${esc(data?.title || '')}">
+            </div>
+            <div class="form-group">
+                <label>Description</label>
+                <textarea id="modalDescription">${esc(data?.description || '')}</textarea>
+            </div>
+            <div class="form-group">
+                <label>Image URL <small style="font-weight:400;color:#888">(optional)</small></label>
+                <input type="text" id="modalImage" value="${esc(data?.imageUrl || '')}" placeholder="https://…" oninput="previewImage(this,'modalImgPreview')">
+                <div class="img-preview-wrap" id="modalImgPreview">
+                    <div class="img-preview-label">Image preview</div>
+                    <img src="${esc(data?.imageUrl || '')}" alt="preview">
+                </div>
+            </div>`;
+        if (data?.imageUrl) {
+            setTimeout(() => {
+                const wrap = document.getElementById('modalImgPreview');
+                if (wrap) wrap.style.display = 'block';
+            }, 50);
+        }
+    }
 
-        document.getElementById('practicesForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            await api.put('/api/admin/content/philosophy', document.getElementById('philosophy').value);
-            await api.put('/api/admin/content/practices', content.practices);
-            showToast('Practices saved');
-        });
+    document.getElementById('modalOverlay').classList.add('active');
+    // Focus first input
+    setTimeout(() => { const f = body.querySelector('input,textarea,select'); if (f) f.focus(); }, 100);
+}
 
-        document.getElementById('managementForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            await api.put('/api/admin/content/management', {
-                ...content.management,
-                philosophy: document.getElementById('managementPhilosophy').value,
-                forYou: document.getElementById('forYou').value.split('\n').filter(Boolean),
-                notForYou: document.getElementById('notForYou').value.split('\n').filter(Boolean)
-            });
-            showToast('Management section saved');
-        });
+function closeModal() {
+    document.getElementById('modalOverlay').classList.remove('active');
+    currentModal = null;
+    editingId = null;
+}
 
-        document.getElementById('eventsIntroForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            await api.put('/api/admin/content/events', {
-                ...content.events,
-                intro: document.getElementById('eventsIntro').value
-            });
-            showToast('Events intro saved');
-        });
+// Close modal on overlay click
+document.getElementById('modalOverlay').addEventListener('click', e => {
+    if (e.target === e.currentTarget) closeModal();
+});
 
-        document.getElementById('contactForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            await Promise.all([
-                api.put('/api/admin/content/contact', {
-                    intro: document.getElementById('contactIntro').value,
-                    body: document.getElementById('contactBody').value,
-                    inquiryTypes: document.getElementById('inquiryTypes').value.split('\n').filter(Boolean)
-                }),
-                api.put('/api/admin/site', {
-                    phone: document.getElementById('contactPhone').value.trim()
-                })
-            ]);
-            showToast('Contact section saved');
-        });
+document.getElementById('modalSave').addEventListener('click', saveModal);
 
-        document.getElementById('passwordForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const newPassword = document.getElementById('newPassword').value;
-            const confirmPassword = document.getElementById('confirmPassword').value;
-            
-            if (newPassword !== confirmPassword) {
-                showToast('Passwords do not match', 'error');
-                return;
-            }
+async function saveModal() {
+    const saveBtn = document.getElementById('modalSave');
+    saveBtn.disabled = true;
+    saveBtn.textContent = 'Saving…';
 
-            const result = await api.post('/api/auth/change-password', {
-                currentPassword: document.getElementById('currentPassword').value,
-                newPassword: newPassword
-            });
-
-            if (result.success) {
-                showToast('Password updated');
-                document.getElementById('passwordForm').reset();
+    try {
+        if (currentModal === 'writing') {
+            const slug     = document.getElementById('modalSlug').value.trim();
+            const category = document.getElementById('modalCategory').value;
+            const data = {
+                date:        document.getElementById('modalDate').value,
+                category,
+                type:        document.getElementById('modalType').value,
+                status:      document.getElementById('modalStatus').value,
+                title:       document.getElementById('modalItemTitle').value,
+                excerpt:     document.getElementById('modalExcerpt').value,
+                description: document.getElementById('modalDescription').value,
+                slug,
+                featured:    document.getElementById('modalFeatured').checked,
+                fullContent: document.getElementById('modalFullContent').value,
+                link:        slug ? `/writing/${category}/${slug}` : '#'
+            };
+            if (editingId) {
+                await api.put(`/api/admin/writings/${editingId}`, data);
+                showToast('Writing saved ✓');
             } else {
-                showToast(result.error || 'Failed to update password', 'error');
+                await api.post('/api/admin/writings', data);
+                showToast('Writing created ✓');
             }
-        });
 
-        // Navigation
-        document.querySelectorAll('.sidebar-nav a').forEach(link => {
-            link.addEventListener('click', (e) => {
-                e.preventDefault();
-                const section = link.dataset.section;
-                
-                document.querySelectorAll('.sidebar-nav a').forEach(l => l.classList.remove('active'));
-                link.classList.add('active');
-                
-                document.querySelectorAll('.section-panel').forEach(p => p.classList.remove('active'));
-                document.getElementById(`panel-${section}`).classList.add('active');
-            });
-        });
+        } else if (currentModal === 'service') {
+            const data = {
+                title:       document.getElementById('modalItemTitle').value,
+                description: document.getElementById('modalDescription').value
+            };
+            if (editingId) {
+                await api.put(`/api/admin/services/${editingId}`, data);
+                showToast('Service saved');
+            } else {
+                await api.post('/api/admin/services', data);
+                showToast('Service added');
+            }
 
-        // Initialize
-        checkAuth();
-    </script>
+        } else if (currentModal === 'event') {
+            const data = {
+                date:        document.getElementById('modalDate').value,
+                venue:       document.getElementById('modalVenue').value,
+                title:       document.getElementById('modalItemTitle').value,
+                description: document.getElementById('modalDescription').value,
+                imageUrl:    document.getElementById('modalImage').value
+            };
+            if (editingId) {
+                await api.put(`/api/admin/events/${editingId}`, data);
+                showToast('Event saved');
+            } else {
+                await api.post('/api/admin/events', data);
+                showToast('Event added');
+            }
+        }
+
+        closeModal();
+        await loadContent();
+    } finally {
+        saveBtn.disabled = false;
+        saveBtn.textContent = 'Save';
+    }
+}
+
+// ─── Edit / Delete helpers ────────────────────────────────
+function editWriting(id) {
+    const w = content.writings.find(w => w.id === id);
+    openModal('writing', w);
+}
+
+async function deleteWriting(id) {
+    const w = content.writings.find(w => w.id === id);
+    const ok = await showConfirm('Delete writing?', `"${w?.title || 'This piece'}" will be permanently removed from your site.`, 'Yes, delete');
+    if (!ok) return;
+    await api.delete(`/api/admin/writings/${id}`);
+    showToast('Writing deleted');
+    await loadContent();
+}
+
+function editService(id) {
+    const s = content.management.services.find(s => s.id === id);
+    openModal('service', s);
+}
+
+async function deleteService(id) {
+    const ok = await showConfirm('Delete service?', 'This service entry will be removed from the management page.', 'Yes, delete');
+    if (!ok) return;
+    await api.delete(`/api/admin/services/${id}`);
+    showToast('Service deleted');
+    await loadContent();
+}
+
+function editEvent(id) {
+    const e = content.events.list.find(e => e.id === id);
+    openModal('event', e);
+}
+
+async function deleteEvent(id) {
+    const e = content.events.list.find(e => e.id === id);
+    const ok = await showConfirm('Delete event?', `"${e?.title || 'This event'}" will be permanently removed.`, 'Yes, delete');
+    if (!ok) return;
+    await api.delete(`/api/admin/events/${id}`);
+    showToast('Event deleted');
+    await loadContent();
+}
+
+// ─── Form Saves ───────────────────────────────────────────
+document.getElementById('siteForm').addEventListener('submit', async e => {
+    e.preventDefault();
+    await api.put('/api/admin/content/site', {
+        title:        document.getElementById('siteTitle').value,
+        tagline:      document.getElementById('siteTagline').value,
+        description:  document.getElementById('siteDescription').value,
+        email:        document.getElementById('siteEmail').value,
+        domain:       document.getElementById('siteDomain').value,
+        mailchimpUrl: document.getElementById('siteMailchimpUrl').value.trim()
+    });
+    showToast('Site settings saved ✓');
+});
+
+document.getElementById('heroForm').addEventListener('submit', async e => {
+    e.preventDefault();
+    await api.put('/api/admin/content/hero', {
+        headline:  document.getElementById('heroHeadline').value,
+        statement: document.getElementById('heroStatement').value
+    });
+    showToast('Hero section saved ✓');
+});
+
+document.getElementById('aboutForm').addEventListener('submit', async e => {
+    e.preventDefault();
+    await api.put('/api/admin/content/about', {
+        intro:      document.getElementById('aboutIntro').value,
+        body1:      document.getElementById('aboutBody1').value,
+        pullquote:  document.getElementById('aboutPullquote').value,
+        body2:      document.getElementById('aboutBody2').value,
+        portraitUrl: document.getElementById('aboutPortrait').value
+    });
+    showToast('About section saved ✓');
+});
+
+document.getElementById('practicesForm').addEventListener('submit', async e => {
+    e.preventDefault();
+    await Promise.all([
+        api.put('/api/admin/content/philosophy', document.getElementById('philosophy').value),
+        api.put('/api/admin/content/practices', content.practices)
+    ]);
+    showToast('Practices saved ✓');
+});
+
+document.getElementById('managementForm').addEventListener('submit', async e => {
+    e.preventDefault();
+    await api.put('/api/admin/content/management', {
+        ...content.management,
+        philosophy: document.getElementById('managementPhilosophy').value,
+        forYou:     document.getElementById('forYou').value.split('\n').filter(Boolean),
+        notForYou:  document.getElementById('notForYou').value.split('\n').filter(Boolean)
+    });
+    showToast('Management section saved ✓');
+});
+
+document.getElementById('eventsIntroForm').addEventListener('submit', async e => {
+    e.preventDefault();
+    await api.put('/api/admin/content/events', { ...content.events, intro: document.getElementById('eventsIntro').value });
+    showToast('Events intro saved ✓');
+});
+
+document.getElementById('contactForm').addEventListener('submit', async e => {
+    e.preventDefault();
+    await Promise.all([
+        api.put('/api/admin/content/contact', {
+            intro:        document.getElementById('contactIntro').value,
+            body:         document.getElementById('contactBody').value,
+            inquiryTypes: document.getElementById('inquiryTypes').value.split('\n').filter(Boolean)
+        }),
+        api.put('/api/admin/site', { phone: document.getElementById('contactPhone').value.trim() })
+    ]);
+    showToast('Contact section saved ✓');
+});
+
+document.getElementById('passwordForm').addEventListener('submit', async e => {
+    e.preventDefault();
+    const newPw  = document.getElementById('newPassword').value;
+    const confPw = document.getElementById('confirmPassword').value;
+    if (newPw !== confPw) { showToast('Passwords do not match', 'error'); return; }
+    const result = await api.post('/api/auth/change-password', {
+        currentPassword: document.getElementById('currentPassword').value,
+        newPassword: newPw
+    });
+    if (result.success) {
+        showToast('Password updated ✓');
+        document.getElementById('passwordForm').reset();
+    } else {
+        showToast(result.error || 'Failed to update password', 'error');
+    }
+});
+
+// ─── Navigation ───────────────────────────────────────────
+document.querySelectorAll('.sidebar-nav a').forEach(link => {
+    link.addEventListener('click', e => {
+        e.preventDefault();
+        navigate(link.dataset.section);
+    });
+});
+
+// ─── Utility ──────────────────────────────────────────────
+function esc(str) {
+    if (!str) return '';
+    return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+}
+
+// ─── Init ─────────────────────────────────────────────────
+checkAuth();
+</script>
 </body>
 </html>

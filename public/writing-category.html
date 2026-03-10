@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title id="pageTitle">Writing — Nassr Writes</title>
+    <meta name="description" id="metaDescription" content="">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Radley:ital@0;1&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+    <nav id="navbar"></nav>
+
+    <div class="writing-detail-wrap">
+        <nav class="breadcrumb fade-in">
+            <a href="/writing">Writing</a>
+            <span class="breadcrumb-sep">→</span>
+            <span id="breadcrumbCurrent"></span>
+        </nav>
+
+        <header class="page-hero page-hero--flush fade-in">
+            <span class="page-hero-label" id="catLabel"></span>
+            <h1 class="page-hero-title" id="catTitle"></h1>
+            <p class="page-hero-subtitle" id="catDesc"></p>
+        </header>
+
+        <div class="piece-archive" id="pieceArchive"></div>
+    </div>
+
+    <footer id="footer"></footer>
+
+    <script src="/components.js"></script>
+    <script>
+        initPage(function (content) {
+            const category = window.location.pathname.split('/').pop();
+            const cats = content.writingCategories || {};
+            const cat = cats[category];
+
+            if (!cat) {
+                document.getElementById('catTitle').textContent = 'Category not found.';
+                return;
+            }
+
+            document.getElementById('pageTitle').textContent = `${cat.label} — ${content.site.title}`;
+            document.getElementById('metaDescription').content = cat.description;
+            document.getElementById('breadcrumbCurrent').textContent = cat.label;
+            document.getElementById('catLabel').textContent = 'Archive';
+            document.getElementById('catTitle').textContent = cat.label;
+            document.getElementById('catDesc').textContent = cat.description;
+
+            const pieces = (content.writings || []).filter(w => w.category === category);
+
+            if (!pieces.length) {
+                document.getElementById('pieceArchive').innerHTML =
+                    '<p style="color:var(--color-text-muted);font-style:italic;padding:3rem 0">No pieces yet.</p>';
+                return;
+            }
+
+            document.getElementById('pieceArchive').innerHTML = pieces.map(w => `
+                <a href="${w.link}" class="piece-card fade-in">
+                    <span class="piece-card-date">${w.date}</span>
+                    <div class="piece-card-body">
+                        <h2 class="piece-card-title">${w.title}</h2>
+                        <p class="piece-card-excerpt">${w.excerpt || w.description || ''}</p>
+                    </div>
+                    <span class="piece-card-link">Read →</span>
+                </a>`).join('');
+        });
+    </script>
+</body>
+</html>

@@ -49,11 +49,14 @@ function requireAuth(req, res, next) {
 // PUBLIC API ROUTES
 // ============================================
 
-// Get all content (public, excludes admin credentials)
+// Get all content (public, excludes admin credentials and draft writings)
 app.get('/api/content', (req, res) => {
     try {
         const content = readContent();
         const { admin, ...publicContent } = content;
+        if (publicContent.writings) {
+            publicContent.writings = publicContent.writings.filter(w => w.status !== 'draft');
+        }
         res.json(publicContent);
     } catch (error) {
         res.status(500).json({ error: 'Failed to read content' });
@@ -143,6 +146,17 @@ app.post('/api/auth/change-password', requireAuth, async (req, res) => {
 // ============================================
 // ADMIN API ROUTES (Protected)
 // ============================================
+
+// Full content including drafts (admin only)
+app.get('/api/admin/content-full', requireAuth, (req, res) => {
+    try {
+        const content = readContent();
+        const { admin, ...publicContent } = content;
+        res.json(publicContent);
+    } catch (error) {
+        res.status(500).json({ error: 'Failed to read content' });
+    }
+});
 
 // Update any section
 app.put('/api/admin/content/:section', requireAuth, (req, res) => {
@@ -367,7 +381,16 @@ app.get('/subscribe', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'subscribe.html'));
 });
 
-app.get('/writing/:slug', (req, res) => {
+// Writing category archive pages (must come before /:category/:slug)
+const WRITING_CATEGORIES = ['essays', 'poetry', 'commentary'];
+WRITING_CATEGORIES.forEach(cat => {
+    app.get(`/writing/${cat}`, (req, res) => {
+        res.sendFile(path.join(__dirname, 'public', 'writing-category.html'));
+    });
+});
+
+// Individual writing piece
+app.get('/writing/:category/:slug', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'writing-detail.html'));
 });
 
