@@ -23,13 +23,92 @@ function renderNav(content) {
                     <li><a href="${l.href}"${current === l.key ? ' class="active"' : ''}>${l.label}</a></li>
                 `).join('')}
             </ul>
-            <button class="mobile-menu-btn" aria-label="Menu">
+            <button class="mobile-menu-btn" aria-label="Open menu" aria-expanded="false" aria-controls="mobileMenuOverlay">
                 <span></span><span></span>
             </button>
         </div>`;
 
     window.addEventListener('scroll', () => {
         nav.classList.toggle('scrolled', window.scrollY > 50);
+    });
+
+    _initMobileMenu(content, current);
+}
+
+function _initMobileMenu(content, current) {
+    // Remove any stale overlay from a previous render
+    const stale = document.getElementById('mobileMenuOverlay');
+    if (stale) stale.remove();
+
+    // Build overlay
+    const overlay = document.createElement('div');
+    overlay.id = 'mobileMenuOverlay';
+    overlay.className = 'mobile-menu-overlay';
+    overlay.setAttribute('aria-hidden', 'true');
+    overlay.setAttribute('role', 'dialog');
+    overlay.setAttribute('aria-label', 'Navigation menu');
+    overlay.innerHTML = `
+        <nav class="mobile-menu-nav" aria-label="Mobile navigation">
+            <ul>
+                ${NAV_LINKS.map(l => `
+                    <li><a href="${l.href}"${current === l.key ? ' class="active"' : ''}>${l.label}</a></li>
+                `).join('')}
+            </ul>
+        </nav>
+        <div class="mobile-menu-footer">
+            ${content.site?.email ? `<a href="mailto:${content.site.email}" class="mobile-menu-email">${content.site.email}</a>` : ''}
+        </div>`;
+    document.body.appendChild(overlay);
+
+    const btn = document.querySelector('.mobile-menu-btn');
+    let savedScrollY = 0;
+
+    function openMenu() {
+        savedScrollY = window.scrollY;
+        btn.classList.add('open');
+        btn.setAttribute('aria-expanded', 'true');
+        btn.setAttribute('aria-label', 'Close menu');
+        overlay.classList.add('open');
+        overlay.setAttribute('aria-hidden', 'false');
+        // Lock body scroll (iOS-safe)
+        document.body.style.position = 'fixed';
+        document.body.style.top = `-${savedScrollY}px`;
+        document.body.style.width = '100%';
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeMenu() {
+        btn.classList.remove('open');
+        btn.setAttribute('aria-expanded', 'false');
+        btn.setAttribute('aria-label', 'Open menu');
+        overlay.classList.remove('open');
+        overlay.setAttribute('aria-hidden', 'true');
+        // Restore body scroll
+        document.body.style.position = '';
+        document.body.style.top = '';
+        document.body.style.width = '';
+        document.body.style.overflow = '';
+        window.scrollTo(0, savedScrollY);
+    }
+
+    // Toggle on hamburger tap
+    btn.addEventListener('click', () => {
+        overlay.classList.contains('open') ? closeMenu() : openMenu();
+    });
+
+    // Close when a nav link is tapped
+    overlay.querySelectorAll('a').forEach(a => {
+        a.addEventListener('click', closeMenu);
+    });
+
+    // Close on Escape key
+    document.addEventListener('keydown', e => {
+        if (e.key === 'Escape' && overlay.classList.contains('open')) closeMenu();
+    });
+
+    // Close when tapping the overlay background (not a child element)
+    overlay.addEventListener('click', e => {
+        if (e.target === overlay) closeMenu();
     });
 }
 
