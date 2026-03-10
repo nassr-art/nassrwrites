@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Writing — Nassr Writes</title>
+    <meta name="description" id="metaDescription" content="">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Radley:ital@0;1&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+    <nav id="navbar"></nav>
+
+    <div class="writing-detail-wrap">
+        <a href="/writing" class="back-link">← Back to Archive</a>
+
+        <header class="writing-article-header fade-in">
+            <span class="writing-type-badge" id="articleType"></span>
+            <h1 class="writing-article-title" id="articleTitle"></h1>
+            <p class="writing-article-date" id="articleDate"></p>
+            <p class="writing-article-desc" id="articleDesc"></p>
+        </header>
+
+        <article class="prose fade-in" id="articleContent"></article>
+
+        <nav class="writing-pagination fade-in">
+            <a class="writing-pagination-item" id="prevWriting" style="display:none">
+                <span class="pagination-dir">← Previous</span>
+                <span class="pagination-title" id="prevTitle"></span>
+            </a>
+            <a class="writing-pagination-item writing-pagination-next" id="nextWriting" style="display:none">
+                <span class="pagination-dir">Next →</span>
+                <span class="pagination-title" id="nextTitle"></span>
+            </a>
+        </nav>
+    </div>
+
+    <footer id="footer"></footer>
+
+    <script src="/components.js"></script>
+    <script>
+        // Minimal markdown → HTML renderer
+        function renderMarkdown(md) {
+            const lines = md.replace(/\r\n/g, '\n').split('\n\n');
+            return lines.map(block => {
+                block = block.trim();
+                if (!block) return '';
+
+                // Already-block elements: headings, hr
+                if (/^#{1,3} /.test(block)) {
+                    return block
+                        .replace(/^### (.+)$/m, '<h3>$1</h3>')
+                        .replace(/^## (.+)$/m,  '<h2>$1</h2>')
+                        .replace(/^# (.+)$/m,   '<h1>$1</h1>');
+                }
+                if (/^---$/.test(block)) return '<hr>';
+
+                // Blockquote (may span multiple lines)
+                if (/^> /.test(block)) {
+                    const inner = block.replace(/^> /gm, '').trim();
+                    return `<blockquote><p>${inline(inner)}</p></blockquote>`;
+                }
+
+                // Multi-line block: join with <br> or split into <p> per line
+                const paras = block.split(/\n(?=\n)/).map(p => p.trim()).filter(Boolean);
+                if (paras.length > 1) {
+                    return paras.map(p => `<p>${inline(p)}</p>`).join('');
+                }
+
+                return `<p>${inline(block.replace(/\n/g, '<br>'))}</p>`;
+            }).join('\n');
+        }
+
+        function inline(text) {
+            return text
+                .replace(/\*\*\*(.+?)\*\*\*/g, '<strong><em>$1</em></strong>')
+                .replace(/\*\*(.+?)\*\*/g,      '<strong>$1</strong>')
+                .replace(/\*(.+?)\*/g,           '<em>$1</em>');
+        }
+
+        initPage(function (content) {
+            const slug     = window.location.pathname.split('/').pop();
+            const writings = content.writings;
+            const idx      = writings.findIndex(w => w.slug === slug);
+            const writing  = writings[idx];
+
+            if (!writing) {
+                document.getElementById('articleTitle').textContent = 'Piece not found.';
+                return;
+            }
+
+            document.title = `${writing.title} — ${content.site.title}`;
+            document.getElementById('metaDescription').content = writing.description || '';
+            document.getElementById('articleType').textContent  = writing.type;
+            document.getElementById('articleTitle').textContent = writing.title;
+            document.getElementById('articleDate').textContent  = writing.date;
+
+            const descEl = document.getElementById('articleDesc');
+            if (writing.description) {
+                descEl.textContent = writing.description;
+            } else {
+                descEl.remove();
+            }
+
+            const prose = document.getElementById('articleContent');
+            prose.innerHTML = writing.fullContent
+                ? renderMarkdown(writing.fullContent)
+                : '<p style="color:var(--color-text-muted);font-style:italic">Full text coming soon.</p>';
+
+            // Prev = older (higher index), Next = newer (lower index)
+            const prev = writings[idx + 1];
+            const next = writings[idx - 1];
+
+            const prevEl = document.getElementById('prevWriting');
+            if (prev) {
+                prevEl.href = prev.link || `/writing/${prev.slug}`;
+                document.getElementById('prevTitle').textContent = prev.title;
+                prevEl.style.display = '';
+            }
+
+            const nextEl = document.getElementById('nextWriting');
+            if (next) {
+                nextEl.href = next.link || `/writing/${next.slug}`;
+                document.getElementById('nextTitle').textContent = next.title;
+                nextEl.style.display = '';
+            }
+        });
+    </script>
+</body>
+</html>

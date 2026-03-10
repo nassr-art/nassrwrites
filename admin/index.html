@@ -966,6 +966,7 @@
                 <div class="list-item">
                     <div class="list-item-content">
                         <h4>${w.title}</h4>
+                        ${w.slug ? `<div class="meta" style="font-family:monospace;font-size:0.75rem;color:#888">/writing/${w.slug}</div>` : ''}
                         <p>${w.description}</p>
                         <div class="meta">${w.date} · ${w.type}</div>
                     </div>
@@ -1044,10 +1045,21 @@
                         <textarea id="modalDescription">${data?.description || ''}</textarea>
                     </div>
                     <div class="form-group">
-                        <label>Link URL</label>
-                        <input type="text" id="modalLink" value="${data?.link || '#'}" placeholder="#">
+                        <label>Slug <small style="font-weight:400;color:#888">(auto-generated from title, used in URL)</small></label>
+                        <input type="text" id="modalSlug" value="${data?.slug || ''}" placeholder="my-piece-title">
+                    </div>
+                    <div class="form-group">
+                        <label>Full Content <small style="font-weight:400;color:#888">(Markdown supported)</small></label>
+                        <textarea id="modalFullContent" rows="12" style="font-family:monospace;font-size:0.85rem;line-height:1.6">${data?.fullContent || ''}</textarea>
                     </div>
                 `;
+                // Auto-generate slug from title for new items
+                document.getElementById('modalItemTitle').addEventListener('input', function () {
+                    if (!editingId) {
+                        document.getElementById('modalSlug').value = this.value
+                            .toLowerCase().replace(/[^a-z0-9\s-]/g, '').replace(/\s+/g, '-').replace(/-+/g, '-').trim();
+                    }
+                });
             } else if (type === 'service') {
                 title.textContent = data ? 'Edit Service' : 'Add New Service';
                 body.innerHTML = `
@@ -1101,12 +1113,15 @@
 
         async function saveModal() {
             if (currentModal === 'writing') {
+                const slug = document.getElementById('modalSlug').value.trim();
                 const data = {
                     date: document.getElementById('modalDate').value,
                     type: document.getElementById('modalType').value,
                     title: document.getElementById('modalItemTitle').value,
                     description: document.getElementById('modalDescription').value,
-                    link: document.getElementById('modalLink').value
+                    slug,
+                    fullContent: document.getElementById('modalFullContent').value,
+                    link: slug ? `/writing/${slug}` : '#'
                 };
                 
                 if (editingId) {

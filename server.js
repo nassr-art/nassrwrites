@@ -363,6 +363,10 @@ Object.entries(pages).forEach(([route, file]) => {
     });
 });
 
+app.get('/writing/:slug', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'writing-detail.html'));
+});
+
 // Serve admin panel
 app.get('/admin', (req, res) => {
     res.sendFile(path.join(__dirname, 'admin', 'index.html'));
