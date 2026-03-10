@@ -43,11 +43,11 @@
                 <p class="newsletter-body">Occasional dispatches on writing, artist development, and curated living. No noise — only what's worth your attention.</p>
             </div>
             <div class="fade-in">
-                <form class="newsletter-form" id="newsletterForm">
-                    <input type="text" id="nlName" placeholder="Your name" autocomplete="name" />
-                    <input type="email" id="nlEmail" placeholder="Your email address" autocomplete="email" required />
-                    <button type="submit" class="newsletter-submit" id="nlSubmit">Subscribe</button>
-                    <p class="newsletter-message" id="nlMessage"></p>
+                <form class="newsletter-form nl-form" novalidate>
+                    <input type="text" data-nl-name placeholder="Your name" autocomplete="name" />
+                    <input type="email" placeholder="Your email address" autocomplete="email" required />
+                    <button type="submit" class="newsletter-submit">Subscribe</button>
+                    <p class="nl-message newsletter-message"></p>
                 </form>
             </div>
         </div>

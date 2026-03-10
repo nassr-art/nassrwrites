@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Subscribe — Nassr Writes</title>
+    <meta name="description" content="Occasional letters on culture and creative practice.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Radley:ital@0;1&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+    <nav id="navbar"></nav>
+
+    <div class="page-hero fade-in">
+        <span class="page-hero-label">Newsletter</span>
+        <h1 class="page-hero-title">Letters from<br><em>the practice.</em></h1>
+        <p class="page-hero-subtitle">Occasional dispatches on writing, artist development, and curated living.</p>
+    </div>
+
+    <div class="subscribe-body">
+        <div class="subscribe-context fade-in">
+            <span class="subscribe-context-label">What to expect</span>
+            <p class="subscribe-context-intro">
+                These are not newsletters in the conventional sense — not announcements, not content calendars, not curated link dumps. They are letters: personal, considered, written when there is something worth saying.
+            </p>
+
+            <p class="subscribe-what-label">Each letter might include</p>
+            <ul class="subscribe-list">
+                <li>An essay or long reflection on something I've been thinking through</li>
+                <li>Notes from a recent event, conversation, or collaboration</li>
+                <li>Observations on culture, language, and creative practice</li>
+                <li>Recommendations — a book, a record, a piece of writing — that deserves more attention</li>
+                <li>Behind-the-scenes context on current projects and partnerships</li>
+            </ul>
+
+            <p class="subscribe-frequency">Sent occasionally — perhaps once or twice a month, never more. Your attention is not taken for granted.</p>
+        </div>
+
+        <div class="subscribe-form-wrap fade-in">
+            <h2 class="subscribe-form-heading">Stay in<br><em>correspondence.</em></h2>
+            <form class="subscribe-form nl-form" novalidate>
+                <input type="text" data-nl-name placeholder="Your name (optional)" autocomplete="name">
+                <input type="email" placeholder="Your email address" autocomplete="email" required>
+                <button type="submit">Subscribe</button>
+                <p class="nl-message"></p>
+            </form>
+        </div>
+    </div>
+
+    <footer id="footer"></footer>
+
+    <script src="/components.js"></script>
+    <script>
+        initPage(function (content) {
+            // No dynamic content needed — all static on this page
+        });
+    </script>
+</body>
+</html>

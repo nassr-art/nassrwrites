@@ -592,6 +592,10 @@
                                 <input type="text" id="siteDomain">
                             </div>
                         </div>
+                        <div class="form-group">
+                            <label>Mailchimp Form Action URL <small style="font-weight:400;color:#888">— paste from Mailchimp embed form code (ends in /post?u=…)</small></label>
+                            <input type="url" id="siteMailchimpUrl" placeholder="https://username.us1.list-manage.com/subscribe/post?u=…&id=…">
+                        </div>
                         <div class="btn-group">
                             <button type="submit" class="btn">Save Changes</button>
                         </div>
@@ -893,6 +897,7 @@
             document.getElementById('siteDescription').value = content.site?.description || '';
             document.getElementById('siteEmail').value = content.site?.email || '';
             document.getElementById('siteDomain').value = content.site?.domain || '';
+            document.getElementById('siteMailchimpUrl').value = content.site?.mailchimpUrl || '';
 
             // Hero
             document.getElementById('heroHeadline').value = content.hero?.headline || '';
@@ -1214,7 +1219,8 @@
                 tagline: document.getElementById('siteTagline').value,
                 description: document.getElementById('siteDescription').value,
                 email: document.getElementById('siteEmail').value,
-                domain: document.getElementById('siteDomain').value
+                domain: document.getElementById('siteDomain').value,
+                mailchimpUrl: document.getElementById('siteMailchimpUrl').value.trim()
             });
             showToast('Site settings saved');
         });

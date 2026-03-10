@@ -363,6 +363,10 @@ Object.entries(pages).forEach(([route, file]) => {
     });
 });
 
+app.get('/subscribe', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'subscribe.html'));
+});
+
 app.get('/writing/:slug', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'writing-detail.html'));
 });
