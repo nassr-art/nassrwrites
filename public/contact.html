@@ -48,8 +48,16 @@
                 phoneEl.style.display = '';
             }
 
+            const email = content.site.email || '';
             document.getElementById('inquiryList').innerHTML =
-                content.contact.inquiryTypes.map(type => `<div class="inquiry-item">${type}</div>`).join('');
+                content.contact.inquiryTypes.map(type => {
+                    const subject = encodeURIComponent(type + ' Inquiry');
+                    const href    = email ? `mailto:${email}?subject=${subject}` : '#';
+                    return `<a href="${href}" class="inquiry-item">
+                        <span>${type}</span>
+                        <span class="inquiry-arrow">↗</span>
+                    </a>`;
+                }).join('');
         });
     </script>
 </body>
