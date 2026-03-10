@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Artist Management — Nassr Writes</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Radley:ital@0;1&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+    <nav id="navbar"></nav>
+
+    <section id="management">
+        <div class="management-inner">
+            <div class="section-header fade-in">
+                <span class="section-label">Artist Development</span>
+                <h1 class="section-title">Selective Collaboration</h1>
+            </div>
+
+            <p class="management-philosophy fade-in" id="managementPhilosophy"></p>
+
+            <div class="management-grid fade-in" id="servicesGrid"></div>
+
+            <div class="alignment-section fade-in">
+                <div class="alignment-col">
+                    <h4>This is for you if</h4>
+                    <ul id="forYouList"></ul>
+                </div>
+                <div class="alignment-col">
+                    <h4>This is not for you if</h4>
+                    <ul id="notForYouList"></ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer id="footer"></footer>
+
+    <script src="/components.js"></script>
+    <script>
+        initPage(function (content) {
+            document.getElementById('managementPhilosophy').textContent = content.management.philosophy;
+
+            document.getElementById('servicesGrid').innerHTML = content.management.services.map(s => `
+                <div class="management-card">
+                    <h3>${s.title}</h3>
+                    <p>${s.description}</p>
+                </div>`).join('');
+
+            document.getElementById('forYouList').innerHTML =
+                content.management.forYou.map(item => `<li>${item}</li>`).join('');
+
+            document.getElementById('notForYouList').innerHTML =
+                content.management.notForYou.map(item => `<li>${item}</li>`).join('');
+        });
+    </script>
+</body>
+</html>

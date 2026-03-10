@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact — Nassr Writes</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Radley:ital@0;1&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+    <nav id="navbar"></nav>
+
+    <section id="contact">
+        <div class="contact-inner">
+            <div class="contact-text fade-in">
+                <p class="contact-intro" id="contactIntro"></p>
+                <p class="contact-body" id="contactBody"></p>
+                <a href="" class="contact-email" id="contactEmail"></a>
+            </div>
+            <div class="inquiry-types fade-in">
+                <h3>Inquiry Types</h3>
+                <div class="inquiry-list" id="inquiryList"></div>
+            </div>
+        </div>
+    </section>
+
+    <footer id="footer"></footer>
+
+    <script src="/components.js"></script>
+    <script>
+        initPage(function (content) {
+            document.getElementById('contactIntro').textContent  = content.contact.intro;
+            document.getElementById('contactBody').textContent   = content.contact.body;
+            document.getElementById('contactEmail').textContent  = content.site.email;
+            document.getElementById('contactEmail').href         = `mailto:${content.site.email}`;
+
+            document.getElementById('inquiryList').innerHTML =
+                content.contact.inquiryTypes.map(type => `<div class="inquiry-item">${type}</div>`).join('');
+        });
+    </script>
+</body>
+</html>

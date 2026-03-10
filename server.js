@@ -353,9 +353,14 @@ app.get('/api/admin/newsletter/subscribers', requireAuth, (req, res) => {
     }
 });
 
-// Serve the main site
-app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'index.html'));
+// Serve pages
+const pages = { '/': 'index', '/about': 'about', '/writing': 'writing',
+    '/management': 'management', '/events': 'events', '/contact': 'contact' };
+
+Object.entries(pages).forEach(([route, file]) => {
+    app.get(route, (req, res) => {
+        res.sendFile(path.join(__dirname, 'public', `${file}.html`));
+    });
 });
 
 // Serve admin panel

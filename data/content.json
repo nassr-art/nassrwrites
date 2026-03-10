@@ -16,7 +16,7 @@
       "number": "01",
       "title": "Writing",
       "excerpt": "Essays, poems, and cultural commentary that examine how we make meaning in an accelerating world. Language as a form of witnessing.",
-      "link": "#writing",
+      "link": "/writing",
       "linkText": "View archive →"
     },
     {
@@ -24,7 +24,7 @@
       "number": "02",
       "title": "Artist Management",
       "excerpt": "Long-term creative partnerships built on discernment, not hype. Strategy, positioning, and career architecture for independent artists.",
-      "link": "#management",
+      "link": "/management",
       "linkText": "Learn more →"
     },
     {
@@ -32,7 +32,7 @@
       "number": "03",
       "title": "Event Curation",
       "excerpt": "Intentional spaces for dialogue, storytelling, and cross-disciplinary encounter. Programming that leaves room for the unexpected.",
-      "link": "#events",
+      "link": "/events",
       "linkText": "Past events →"
     }
   ],

@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Writing — Nassr Writes</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Radley:ital@0;1&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+    <nav id="navbar"></nav>
+
+    <div class="page-hero fade-in">
+        <span class="page-hero-label">Literary Archive</span>
+        <h1 class="page-hero-title">Selected Writing</h1>
+        <p class="page-hero-subtitle">Essays, poems, and cultural commentary that examine how we make meaning in an accelerating world.</p>
+    </div>
+
+    <section id="writing">
+        <div class="writing-grid" id="writingsGrid"></div>
+    </section>
+
+    <footer id="footer"></footer>
+
+    <script src="/components.js"></script>
+    <script>
+        initPage(function (content) {
+            document.getElementById('writingsGrid').innerHTML = content.writings.map(w => `
+                <a href="${w.link}" class="writing-item fade-in">
+                    <span class="writing-date">${w.date}</span>
+                    <div class="writing-content">
+                        <h3>${w.title}</h3>
+                        <p>${w.description}</p>
+                    </div>
+                    <span class="writing-type">${w.type}</span>
+                </a>`).join('');
+        });
+    </script>
+</body>
+</html>

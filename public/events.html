@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Events — Nassr Writes</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Radley:ital@0;1&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+    <nav id="navbar"></nav>
+
+    <div class="page-hero fade-in">
+        <span class="page-hero-label">Curatorial Practice</span>
+        <h1 class="page-hero-title">Intentional Experiences</h1>
+        <p class="page-hero-subtitle" id="eventsIntro"></p>
+    </div>
+
+    <section id="events">
+        <div class="events-grid" id="eventsGrid"></div>
+    </section>
+
+    <footer id="footer"></footer>
+
+    <script src="/components.js"></script>
+    <script>
+        initPage(function (content) {
+            document.getElementById('eventsIntro').textContent = content.events.intro;
+
+            document.getElementById('eventsGrid').innerHTML = content.events.list.map(e => `
+                <div class="event-card fade-in">
+                    <div class="event-image">
+                        ${e.imageUrl ? `<img src="${e.imageUrl}" alt="${e.title}">` : 'Documentary Photo'}
+                    </div>
+                    <div class="event-info">
+                        <span class="event-meta">${e.date} · ${e.venue}</span>
+                        <h3 class="event-title">${e.title}</h3>
+                        <p class="event-description">${e.description}</p>
+                    </div>
+                </div>`).join('');
+        });
+    </script>
+</body>
+</html>
