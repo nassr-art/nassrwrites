@@ -747,6 +747,10 @@
                             <textarea id="contactBody"></textarea>
                         </div>
                         <div class="form-group">
+                            <label>Phone Number</label>
+                            <input type="tel" id="contactPhone" placeholder="+1 234 567 8900">
+                        </div>
+                        <div class="form-group">
                             <label>Inquiry Types (one per line)</label>
                             <textarea id="inquiryTypes"></textarea>
                         </div>
@@ -915,6 +919,7 @@
             // Contact
             document.getElementById('contactIntro').value = content.contact?.intro || '';
             document.getElementById('contactBody').value = content.contact?.body || '';
+            document.getElementById('contactPhone').value = content.site?.phone || '';
             document.getElementById('inquiryTypes').value = (content.contact?.inquiryTypes || []).join('\n');
 
             // Practices
@@ -1249,11 +1254,16 @@
 
         document.getElementById('contactForm').addEventListener('submit', async (e) => {
             e.preventDefault();
-            await api.put('/api/admin/content/contact', {
-                intro: document.getElementById('contactIntro').value,
-                body: document.getElementById('contactBody').value,
-                inquiryTypes: document.getElementById('inquiryTypes').value.split('\n').filter(Boolean)
-            });
+            await Promise.all([
+                api.put('/api/admin/content/contact', {
+                    intro: document.getElementById('contactIntro').value,
+                    body: document.getElementById('contactBody').value,
+                    inquiryTypes: document.getElementById('inquiryTypes').value.split('\n').filter(Boolean)
+                }),
+                api.put('/api/admin/site', {
+                    phone: document.getElementById('contactPhone').value.trim()
+                })
+            ]);
             showToast('Contact section saved');
         });
 

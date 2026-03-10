@@ -17,7 +17,10 @@
             <div class="contact-text fade-in">
                 <p class="contact-intro" id="contactIntro"></p>
                 <p class="contact-body" id="contactBody"></p>
-                <a href="" class="contact-email" id="contactEmail"></a>
+                <div class="contact-links">
+                    <a href="" class="contact-link" id="contactEmail"></a>
+                    <a href="" class="contact-link" id="contactPhone" style="display:none"></a>
+                </div>
             </div>
             <div class="inquiry-types fade-in">
                 <h3>Inquiry Types</h3>
@@ -33,8 +36,17 @@
         initPage(function (content) {
             document.getElementById('contactIntro').textContent  = content.contact.intro;
             document.getElementById('contactBody').textContent   = content.contact.body;
-            document.getElementById('contactEmail').textContent  = content.site.email;
-            document.getElementById('contactEmail').href         = `mailto:${content.site.email}`;
+
+            const emailEl = document.getElementById('contactEmail');
+            emailEl.textContent = content.site.email;
+            emailEl.href        = `mailto:${content.site.email}`;
+
+            const phoneEl = document.getElementById('contactPhone');
+            if (content.site.phone) {
+                phoneEl.textContent  = content.site.phone;
+                phoneEl.href         = `tel:${content.site.phone.replace(/\s/g, '')}`;
+                phoneEl.style.display = '';
+            }
 
             document.getElementById('inquiryList').innerHTML =
                 content.contact.inquiryTypes.map(type => `<div class="inquiry-item">${type}</div>`).join('');
