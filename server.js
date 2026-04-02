@@ -73,8 +73,12 @@ app.get('/api/content/:section', (req, res) => {
             return res.status(403).json({ error: 'Access denied' });
         }
         
-        if (content[section]) {
-            res.json(content[section]);
+        if (content[section] !== undefined) {
+            let data = content[section];
+            if (section === 'writings' && Array.isArray(data)) {
+                data = data.filter(w => w.status !== 'draft');
+            }
+            res.json(data);
         } else {
             res.status(404).json({ error: 'Section not found' });
         }

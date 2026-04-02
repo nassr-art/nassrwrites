@@ -124,9 +124,17 @@
 
             // Content
             const prose = document.getElementById('articleContent');
-            prose.innerHTML = writing.fullContent
-                ? renderMarkdown(writing.fullContent)
-                : '<p style="color:var(--color-text-muted);font-style:italic">Full text coming soon.</p>';
+            if (writing.fullContent) {
+                prose.innerHTML = renderMarkdown(writing.fullContent);
+            } else {
+                prose.innerHTML = `
+                    <p style="color:var(--color-text-muted);font-style:italic;margin-bottom:1.5rem">
+                        This piece hasn't been published in full yet.
+                    </p>
+                    <a href="/writing/${category}" style="font-size:0.9rem;color:var(--color-text);text-decoration:underline;text-underline-offset:3px">
+                        ← Back to ${catLabel}
+                    </a>`;
+            }
 
             // Category-scoped prev / next (prev = older = higher index)
             const prev = catPieces[idx + 1];

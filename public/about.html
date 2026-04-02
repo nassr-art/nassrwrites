@@ -21,7 +21,7 @@
     <section id="about">
         <div class="about-inner">
             <div class="about-portrait fade-in">
-                <div class="portrait-placeholder" id="aboutPortrait">Portrait</div>
+                <div class="portrait-placeholder" id="aboutPortrait"></div>
             </div>
             <div class="about-content fade-in">
                 <p class="about-intro" id="aboutIntro"></p>
@@ -42,6 +42,8 @@
             if (content.about.portraitUrl) {
                 document.getElementById('aboutPortrait').innerHTML =
                     `<img src="${content.about.portraitUrl}" alt="Portrait">`;
+            } else {
+                document.querySelector('.about-portrait').style.display = 'none';
             }
             document.getElementById('aboutIntro').textContent    = content.about.intro;
             document.getElementById('aboutBody1').textContent    = content.about.body1;
