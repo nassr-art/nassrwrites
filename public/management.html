@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Artist Management — Nassr Writes</title>
+  <meta name="description" content="Long-term creative partnerships built on discernment, not hype. Strategy, positioning, and career architecture for independent artists.">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Artist Management — Nassr Writes">
+  <meta property="og:description" content="Long-term creative partnerships built on discernment, not hype.">
+  <link rel="alternate" type="application/rss+xml" title="Nassr Writes" href="/feed.xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Radley:ital@0;1&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <nav id="navbar"></nav>
+
+  <div class="page-wrapper">
+    <header class="page-hero">
+      <div class="page-hero-inner">
+        <span class="page-kicker">Practice</span>
+        <h1 class="page-title">Artist<br>Management.</h1>
+        <p class="page-subtitle">Long-term creative partnerships built on discernment, not hype.</p>
+      </div>
+    </header>
+
+    <section class="management-section">
+      <div class="management-inner">
+        <p class="management-philosophy fade-in" id="managementPhilosophy"></p>
+
+        <div class="section-label fade-in">Services</div>
+        <div class="services-grid" id="servicesGrid"></div>
+
+        <div style="margin-top:5rem;">
+          <div class="section-label fade-in">Is this for you?</div>
+          <div class="fit-section fade-in">
+            <div class="fit-col">
+              <div class="fit-heading">This is for you if</div>
+              <ul class="fit-list" id="forYouList"></ul>
+            </div>
+            <div class="fit-col not">
+              <div class="fit-heading">This is not for you if</div>
+              <ul class="fit-list" id="notForYouList"></ul>
+            </div>
+          </div>
+        </div>
+
+        <div style="margin-top:5rem;padding-top:4rem;border-top:1px solid var(--border);" class="fade-in">
+          <p style="font-family:var(--font-serif);font-size:1.1rem;font-style:italic;color:var(--text-muted);margin-bottom:1.5rem;">
+            If you're building something that matters, I'd welcome a conversation.
+          </p>
+          <a href="/contact" style="display:inline-block;padding:0.9rem 2.5rem;background:var(--text);color:var(--bg);font-size:0.78rem;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;transition:background 0.25s;">
+            Get in touch
+          </a>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <footer id="footer"></footer>
+
+  <script src="/components.js"></script>
+  <script>
+    initPage(function(content) {
+      const mgmt = content.management || {};
+
+      document.getElementById('managementPhilosophy').textContent = mgmt.philosophy || '';
+
+      const servicesGrid = document.getElementById('servicesGrid');
+      servicesGrid.innerHTML = (mgmt.services || []).map(s => `
+        <div class="service-card fade-in">
+          <h3 class="service-title">${s.title}</h3>
+          <p class="service-description">${s.description}</p>
+        </div>
+      `).join('');
+
+      const forYouList = document.getElementById('forYouList');
+      forYouList.innerHTML = (mgmt.forYou || []).map(item => `
+        <li class="fit-item">${item}</li>
+      `).join('');
+
+      const notForYouList = document.getElementById('notForYouList');
+      notForYouList.innerHTML = (mgmt.notForYou || []).map(item => `
+        <li class="fit-item">${item}</li>
+      `).join('');
+    });
+  </script>
+</body>
+</html>

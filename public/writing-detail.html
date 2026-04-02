@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nassr Writes</title>
+  <meta name="description" content="">
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="">
+  <meta property="og:description" content="">
+  <link rel="alternate" type="application/rss+xml" title="Nassr Writes" href="/feed.xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Radley:ital@0;1&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <nav id="navbar"></nav>
+
+  <div class="page-wrapper">
+    <header class="article-header">
+      <div class="article-header-inner">
+        <a class="article-back" id="articleBack" href="/writing">← Writing</a>
+        <span class="article-type-badge" id="articleType"></span>
+        <h1 class="article-title" id="articleTitle"></h1>
+        <div class="article-meta">
+          <span class="article-date" id="articleDate"></span>
+          <span class="article-meta-sep"></span>
+          <span class="article-read-time" id="articleReadTime"></span>
+          <button class="copy-link-btn" type="button">Copy link</button>
+        </div>
+      </div>
+    </header>
+
+    <div class="article-body-wrap">
+      <div class="article-body" id="articleBody"></div>
+    </div>
+
+    <nav class="article-nav" id="articleNav" aria-label="Article navigation"></nav>
+  </div>
+
+  <footer id="footer"></footer>
+
+  <script src="/components.js"></script>
+  <script>
+    // ─── Lightweight Markdown renderer ─────────────────────────
+    function renderMarkdown(md) {
+      if (!md) return '';
+
+      // Escape HTML first (basic safety)
+      const escape = s => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+
+      const lines = md.split('\n');
+      let html = '';
+      let i = 0;
+
+      while (i < lines.length) {
+        const line = lines[i];
+
+        // Blank line
+        if (line.trim() === '') {
+          i++;
+          continue;
+        }
+
+        // Horizontal rule
+        if (/^---+$/.test(line.trim())) {
+          html += '<hr>';
+          i++;
+          continue;
+        }
+
+        // H2 heading
+        if (/^## /.test(line)) {
+          html += `<h2>${inline(line.replace(/^## /, ''))}</h2>`;
+          i++;
+          continue;
+        }
+
+        // H3 heading
+        if (/^### /.test(line)) {
+          html += `<h3>${inline(line.replace(/^### /, ''))}</h3>`;
+          i++;
+          continue;
+        }
+
+        // Blockquote
+        if (/^> /.test(line)) {
+          let bq = '';
+          while (i < lines.length && /^> /.test(lines[i])) {
+            bq += inline(lines[i].replace(/^> /, '')) + ' ';
+            i++;
+          }
+          html += `<blockquote><p>${bq.trim()}</p></blockquote>`;
+          continue;
+        }
+
+        // Bold poem section header (e.g. **I.** or **Inheritance**)
+        if (/^\*\*[^*]+\*\*$/.test(line.trim())) {
+          html += `<p class="poem-section-head">${inline(line.trim())}</p>`;
+          i++;
+          continue;
+        }
+
+        // Collect paragraph (non-blank, non-special lines)
+        let paraLines = [];
+        while (i < lines.length && lines[i].trim() !== '' && !/^(## |### |> |---+$)/.test(lines[i])) {
+          paraLines.push(lines[i]);
+          i++;
+        }
+        if (paraLines.length) {
+          const isPoetry = paraLines.some(l => l !== l.trim() && !l.startsWith(' ') === false) ||
+            (paraLines.length > 1 && paraLines.every(l => l.length < 60));
+          const content = paraLines.map(l => inline(l)).join('<br>');
+          html += `<p>${content}</p>`;
+        }
+      }
+
+      return html;
+    }
+
+    // Inline formatting: **bold**, *italic*, `code`
+    function inline(text) {
+      return text
+        .replace(/`([^`]+)`/g, '<code>$1</code>')
+        .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
+        .replace(/\*([^*]+)\*/g, '<em>$1</em>');
+    }
+
+    // ─── Get slug from URL ──────────────────────────────────────
+    function getSlugFromPath() {
+      const parts = window.location.pathname.split('/').filter(Boolean);
+      // /writing/:category/:slug
+      return parts.length >= 3 ? parts[2] : null;
+    }
+
+    function getCategoryFromPath() {
+      const parts = window.location.pathname.split('/').filter(Boolean);
+      return parts.length >= 2 ? parts[1] : null;
+    }
+
+    initPage(function(content) {
+      const slug     = getSlugFromPath();
+      const category = getCategoryFromPath();
+      const writings = content.writings || [];
+
+      const writing = writings.find(w => w.slug === slug);
+
+      if (!writing) {
+        document.getElementById('articleTitle').textContent = 'Piece not found.';
+        document.getElementById('articleBody').innerHTML = '<p style="color:var(--text-faint);">This piece could not be found.</p>';
+        return;
+      }
+
+      // Update page meta
+      document.title = `${writing.title} — Nassr Writes`;
+      document.querySelector('meta[name="description"]').setAttribute('content', writing.excerpt || writing.description || '');
+      document.querySelector('meta[property="og:title"]').setAttribute('content', writing.title);
+      document.querySelector('meta[property="og:description"]').setAttribute('content', writing.excerpt || '');
+
+      // Populate header
+      document.getElementById('articleType').textContent = writing.type || '';
+      document.getElementById('articleTitle').textContent = writing.title;
+      document.getElementById('articleDate').textContent = writing.date || '';
+      const rt = writing.readingTime || readingTime(writing.fullContent || '');
+      document.getElementById('articleReadTime').textContent = `${rt} min read`;
+
+      // Back link
+      const backLink = document.getElementById('articleBack');
+      if (category) {
+        backLink.href = `/writing/${category}`;
+        backLink.textContent = `← ${category.charAt(0).toUpperCase() + category.slice(1)}`;
+      }
+
+      // Render content
+      const bodyEl = document.getElementById('articleBody');
+      bodyEl.innerHTML = renderMarkdown(writing.fullContent || writing.description || '');
+
+      // Prev / Next navigation within category
+      const catWritings = writings.filter(w => w.category === writing.category && w.status !== 'draft');
+      const idx = catWritings.findIndex(w => w.slug === slug);
+      const prev = idx > 0 ? catWritings[idx - 1] : null;
+      const next = idx < catWritings.length - 1 ? catWritings[idx + 1] : null;
+
+      const navEl = document.getElementById('articleNav');
+      navEl.innerHTML = `
+        <div class="article-nav-item prev">
+          ${prev ? `
+            <span class="article-nav-label">Previous</span>
+            <a href="${prev.link}"><span class="article-nav-title">${prev.title}</span></a>
+          ` : ''}
+        </div>
+        <div class="article-nav-item next">
+          ${next ? `
+            <span class="article-nav-label">Next</span>
+            <a href="${next.link}"><span class="article-nav-title">${next.title}</span></a>
+          ` : ''}
+        </div>`;
+    });
+  </script>
+</body>
+</html>

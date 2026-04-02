@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Events — Nassr Writes</title>
+  <meta name="description" content="Intentional spaces for dialogue, storytelling, and cross-disciplinary encounter. Programming that leaves room for the unexpected.">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Events — Nassr Writes">
+  <meta property="og:description" content="Intentional spaces for dialogue, storytelling, and cross-disciplinary encounter.">
+  <link rel="alternate" type="application/rss+xml" title="Nassr Writes" href="/feed.xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Radley:ital@0;1&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <nav id="navbar"></nav>
+
+  <div class="page-wrapper">
+    <header class="page-hero">
+      <div class="page-hero-inner">
+        <span class="page-kicker">Practice</span>
+        <h1 class="page-title">Event<br>Curation.</h1>
+        <p class="page-subtitle" id="eventsIntroShort">Intentional spaces for dialogue, storytelling, and cross-disciplinary encounter.</p>
+      </div>
+    </header>
+
+    <section class="events-section">
+      <div class="events-inner">
+        <p class="events-intro fade-in" id="eventsIntro"></p>
+        <div class="events-list" id="eventsList"></div>
+      </div>
+    </section>
+  </div>
+
+  <footer id="footer"></footer>
+
+  <script src="/components.js"></script>
+  <script>
+    initPage(function(content) {
+      const eventsData = content.events || {};
+
+      document.getElementById('eventsIntro').textContent = eventsData.intro || '';
+
+      const eventsList = document.getElementById('eventsList');
+      const list = eventsData.list || [];
+
+      if (!list.length) {
+        eventsList.innerHTML = '<p style="color:var(--text-faint);padding:3rem 0;font-style:italic;">No past events recorded yet.</p>';
+        return;
+      }
+
+      eventsList.innerHTML = list.map(e => `
+        <article class="event-item fade-in">
+          <div class="event-date-col">
+            <div class="event-date">${e.date || ''}</div>
+            <div class="event-venue">${e.venue || ''}</div>
+          </div>
+          <div class="event-content">
+            <h2 class="event-title">${e.title}</h2>
+            <p class="event-description">${e.description || ''}</p>
+          </div>
+        </article>
+      `).join('');
+    });
+  </script>
+</body>
+</html>

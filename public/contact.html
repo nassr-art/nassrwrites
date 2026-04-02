@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Contact — Nassr Writes</title>
+  <meta name="description" content="Get in touch to discuss writing, artist management, event curation, or speaking.">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Contact — Nassr Writes">
+  <meta property="og:description" content="The best collaborations begin with a conversation, not a pitch.">
+  <link rel="alternate" type="application/rss+xml" title="Nassr Writes" href="/feed.xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Radley:ital@0;1&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <nav id="navbar"></nav>
+
+  <div class="page-wrapper">
+    <header class="page-hero">
+      <div class="page-hero-inner">
+        <span class="page-kicker">Contact</span>
+        <h1 class="page-title">Let's talk.</h1>
+      </div>
+    </header>
+
+    <section class="contact-section">
+      <div class="contact-inner">
+        <div class="contact-info fade-in">
+          <p class="contact-info-intro" id="contactIntro"></p>
+          <p class="contact-info-body" id="contactBody"></p>
+          <a class="contact-email-link" id="contactEmail" href="#"></a>
+        </div>
+
+        <div class="contact-form-wrap fade-in">
+          <div class="inquiry-types" id="inquiryTypes">
+            <span class="inquiry-types-label">I'm writing about</span>
+            <div class="inquiry-type-btns" id="inquiryBtns"></div>
+          </div>
+
+          <form class="contact-form" id="contactForm" novalidate>
+            <div class="form-group">
+              <label class="form-label" for="contactName">Name</label>
+              <input class="form-input" type="text" id="contactName" name="name" placeholder="Your name" autocomplete="name">
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="contactEmail2">Email</label>
+              <input class="form-input" type="email" id="contactEmail2" name="email" placeholder="your@email.com" autocomplete="email" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="contactMessage">Message</label>
+              <textarea class="form-input" id="contactMessage" name="message" placeholder="Tell me a bit about yourself and what you're working on." rows="6" required></textarea>
+            </div>
+            <input type="hidden" id="contactType" name="type" value="">
+            <button class="form-submit" type="submit">Send message</button>
+            <p id="contactFormMsg" style="font-size:0.82rem;margin-top:0.75rem;min-height:1.2em;"></p>
+          </form>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <footer id="footer"></footer>
+
+  <script src="/components.js"></script>
+  <script>
+    let selectedType = '';
+
+    initPage(function(content) {
+      const contact = content.contact || {};
+      const site    = content.site || {};
+
+      document.getElementById('contactIntro').textContent = contact.intro || '';
+      document.getElementById('contactBody').textContent  = contact.body  || '';
+
+      const emailEl = document.getElementById('contactEmail');
+      if (site.email) {
+        emailEl.textContent = site.email;
+        emailEl.href = `mailto:${site.email}`;
+      } else {
+        emailEl.style.display = 'none';
+      }
+
+      // Inquiry type buttons
+      const btnsEl = document.getElementById('inquiryBtns');
+      (contact.inquiryTypes || []).forEach(type => {
+        const btn = document.createElement('button');
+        btn.className = 'inquiry-btn';
+        btn.type = 'button';
+        btn.textContent = type;
+        btn.addEventListener('click', () => {
+          document.querySelectorAll('.inquiry-btn').forEach(b => b.classList.remove('selected'));
+          if (selectedType === type) {
+            selectedType = '';
+            document.getElementById('contactType').value = '';
+          } else {
+            btn.classList.add('selected');
+            selectedType = type;
+            document.getElementById('contactType').value = type;
+          }
+        });
+        btnsEl.appendChild(btn);
+      });
+
+      // Contact form — builds mailto
+      document.getElementById('contactForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const name    = document.getElementById('contactName').value.trim();
+        const email   = document.getElementById('contactEmail2').value.trim();
+        const message = document.getElementById('contactMessage').value.trim();
+        const type    = selectedType;
+        const msgEl   = document.getElementById('contactFormMsg');
+
+        if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+          msgEl.style.color = '#C4292B';
+          msgEl.textContent = 'Please enter a valid email address.';
+          return;
+        }
+        if (!message) {
+          msgEl.style.color = '#C4292B';
+          msgEl.textContent = 'Please include a message.';
+          return;
+        }
+
+        const subject = type ? `${type} — ${name || 'New enquiry'}` : `Enquiry from ${name || 'website'}`;
+        const body    = `From: ${name || 'Anonymous'}\nEmail: ${email}\nType: ${type || 'General'}\n\n${message}`;
+        const mailto  = `mailto:${site.email || ''}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+        window.location.href = mailto;
+
+        msgEl.style.color = '#2D7D46';
+        msgEl.textContent = 'Opening your email client…';
+      });
+    });
+  </script>
+</body>
+</html>

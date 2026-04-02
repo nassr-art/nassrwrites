@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>About — Nassr Writes</title>
+  <meta name="description" content="About Nassr — writer, artist manager, and event curator working at the intersection of culture, storytelling, and community.">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="About — Nassr Writes">
+  <meta property="og:description" content="Working at the intersection of culture, storytelling, and community.">
+  <link rel="alternate" type="application/rss+xml" title="Nassr Writes" href="/feed.xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Radley:ital@0;1&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <nav id="navbar"></nav>
+
+  <div class="page-wrapper">
+    <header class="page-hero">
+      <div class="page-hero-inner">
+        <span class="page-kicker">About</span>
+        <h1 class="page-title">A reflective<br>practitioner.</h1>
+      </div>
+    </header>
+
+    <section class="about-section">
+      <div class="about-inner">
+        <div class="about-portrait-wrap fade-in" id="portraitWrap">
+          <div class="about-portrait" id="portraitEl">
+            <div class="about-portrait-placeholder" id="portraitPlaceholder">Portrait</div>
+          </div>
+        </div>
+        <div class="about-prose">
+          <p class="about-intro fade-in" id="aboutIntro"></p>
+          <p class="about-body fade-in" id="aboutBody1"></p>
+          <blockquote class="about-pullquote fade-in" id="aboutPullquote"></blockquote>
+          <p class="about-body fade-in" id="aboutBody2"></p>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <footer id="footer"></footer>
+
+  <script src="/components.js"></script>
+  <script>
+    initPage(function(content) {
+      const about = content.about || {};
+
+      document.getElementById('aboutIntro').textContent = about.intro || '';
+      document.getElementById('aboutBody1').textContent = about.body1 || '';
+      document.getElementById('aboutPullquote').textContent = about.pullquote || '';
+      document.getElementById('aboutBody2').textContent = about.body2 || '';
+
+      if (about.portraitUrl) {
+        document.getElementById('portraitPlaceholder').remove();
+        const img = document.createElement('img');
+        img.src = about.portraitUrl;
+        img.alt = content.site?.title || 'Portrait';
+        img.loading = 'lazy';
+        document.getElementById('portraitEl').appendChild(img);
+      }
+    });
+  </script>
+</body>
+</html>

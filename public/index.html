@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nassr Writes</title>
+  <meta name="description" content="Writing. Artist Development. Curated Spaces. A reflective professional operating at the intersection of culture, storytelling, and community.">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Nassr Writes">
+  <meta property="og:description" content="Writing. Artist Development. Curated Spaces.">
+  <meta property="og:url" content="https://nassrwrites.com">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Nassr Writes">
+  <meta name="twitter:description" content="Writing. Artist Development. Curated Spaces.">
+  <link rel="alternate" type="application/rss+xml" title="Nassr Writes" href="/feed.xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Radley:ital@0;1&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <nav id="navbar"></nav>
+
+  <div class="page-wrapper">
+    <!-- Hero -->
+    <section class="hero" id="hero">
+      <div class="hero-inner">
+        <h1 class="hero-headline" id="heroHeadline">Writing. Artist Development.<br><em>Curated Spaces.</em></h1>
+        <p class="hero-statement" id="heroStatement"></p>
+        <div class="hero-scroll">
+          <span class="hero-scroll-line"></span>
+          <span>Scroll</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Practices -->
+    <section class="practices-section" id="practicesSection">
+      <div class="practices-grid" id="practicesGrid"></div>
+    </section>
+
+    <!-- Philosophy -->
+    <section class="philosophy-section" id="philosophySection">
+      <p class="philosophy-text fade-in" id="philosophyText"></p>
+    </section>
+
+    <!-- Newsletter -->
+    <section class="newsletter-section" id="newsletterSection">
+      <div class="newsletter-inner">
+        <div class="newsletter-copy fade-in">
+          <h2>Letters on culture<br>and craft.</h2>
+          <p>Occasional dispatches on writing, creative practice, and the work of paying attention. No noise. No frequency promises.</p>
+        </div>
+        <div class="fade-in" data-delay="2">
+          <form class="nl-form" novalidate>
+            <div class="nl-input-row">
+              <input type="email" placeholder="Your email address" autocomplete="email" required>
+              <button type="submit">Subscribe</button>
+            </div>
+            <p class="nl-message"></p>
+          </form>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <footer id="footer"></footer>
+
+  <script src="/components.js"></script>
+  <script>
+    initPage(function(content) {
+      // Hero
+      document.getElementById('heroHeadline').innerHTML = content.hero.headline;
+      document.getElementById('heroStatement').textContent = content.hero.statement;
+
+      // Practices grid
+      const grid = document.getElementById('practicesGrid');
+      grid.innerHTML = (content.practices || []).map(p => `
+        <article class="practice-tile fade-in">
+          <div class="practice-number">${p.number}</div>
+          <h2 class="practice-title">${p.title}</h2>
+          <p class="practice-excerpt">${p.excerpt}</p>
+          <a href="${p.link}" class="practice-link">${p.linkText}</a>
+        </article>
+      `).join('');
+
+      // Philosophy
+      document.getElementById('philosophyText').textContent = content.philosophy;
+
+      // Page title
+      if (content.site?.title) document.title = content.site.title;
+    });
+  </script>
+</body>
+</html>

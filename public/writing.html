@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Writing — Nassr Writes</title>
+  <meta name="description" content="Essays, poetry, and cultural commentary by Nassr. Writing as a form of witnessing.">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Writing — Nassr Writes">
+  <meta property="og:description" content="Essays, poetry, and cultural commentary.">
+  <link rel="alternate" type="application/rss+xml" title="Nassr Writes" href="/feed.xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Radley:ital@0;1&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <nav id="navbar"></nav>
+
+  <div class="page-wrapper">
+    <header class="page-hero">
+      <div class="page-hero-inner">
+        <span class="page-kicker">Archive</span>
+        <h1 class="page-title">Writing.</h1>
+        <p class="page-subtitle">Essays, poems, and cultural commentary—language as a form of witnessing.</p>
+      </div>
+    </header>
+
+    <section class="writing-section">
+      <div class="writing-inner">
+        <div class="category-tabs" id="categoryTabs">
+          <button class="category-tab active" data-cat="all">All</button>
+          <button class="category-tab" data-cat="essays">Essays</button>
+          <button class="category-tab" data-cat="poetry">Poetry</button>
+          <button class="category-tab" data-cat="commentary">Commentary</button>
+        </div>
+        <div class="writing-list" id="writingList"></div>
+      </div>
+    </section>
+  </div>
+
+  <footer id="footer"></footer>
+
+  <script src="/components.js"></script>
+  <script>
+    let allWritings = [];
+    let activeCategory = 'all';
+
+    function renderWritings(writings) {
+      const list = document.getElementById('writingList');
+      if (!writings.length) {
+        list.innerHTML = '<p style="color:var(--text-faint);padding:3rem 0;font-style:italic;">No pieces in this category yet.</p>';
+        return;
+      }
+      list.innerHTML = writings.map(w => {
+        const rt = w.readingTime || readingTime(w.fullContent || w.description || '');
+        return `
+          <article class="writing-card fade-in" onclick="window.location='${w.link}'">
+            <div class="writing-date">${w.date || ''}</div>
+            <div class="writing-meta">
+              <h2 class="writing-card-title">${w.title}</h2>
+              <p class="writing-card-excerpt">${w.excerpt || w.description || ''}</p>
+              <div class="writing-card-footer">
+                <span class="type-badge">${w.type || w.category || ''}</span>
+                <span class="reading-time">${rt} min read</span>
+              </div>
+            </div>
+            <div class="writing-arrow">→</div>
+          </article>`;
+      }).join('');
+      // Re-init fade animations for newly rendered cards
+      document.querySelectorAll('.fade-in:not(.visible)').forEach((el, i) => {
+        setTimeout(() => el.classList.add('visible'), i * 60);
+      });
+    }
+
+    function filterAndRender() {
+      const filtered = activeCategory === 'all'
+        ? allWritings
+        : allWritings.filter(w => (w.category || '').toLowerCase() === activeCategory);
+      renderWritings(filtered);
+    }
+
+    initPage(function(content) {
+      allWritings = (content.writings || []).filter(w => w.status !== 'draft');
+
+      document.getElementById('categoryTabs').addEventListener('click', e => {
+        const tab = e.target.closest('.category-tab');
+        if (!tab) return;
+        document.querySelectorAll('.category-tab').forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+        activeCategory = tab.dataset.cat;
+        filterAndRender();
+      });
+
+      filterAndRender();
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Subscribe — Nassr Writes</title>
+  <meta name="description" content="Occasional letters on culture and creative practice. No noise, no algorithm — just the work.">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Subscribe — Nassr Writes">
+  <meta property="og:description" content="Occasional letters on culture and creative practice.">
+  <link rel="alternate" type="application/rss+xml" title="Nassr Writes" href="/feed.xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Radley:ital@0;1&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <nav id="navbar"></nav>
+
+  <div class="page-wrapper">
+    <section class="subscribe-section">
+      <div class="subscribe-inner fade-in">
+        <span class="subscribe-kicker">Newsletter</span>
+        <h1 class="subscribe-title">Letters on culture<br>and craft.</h1>
+        <p class="subscribe-body">
+          Occasional dispatches on writing, artist development, and the slow work of paying attention.
+          No frequency promises. No content marketing. Just the work, and what surrounds it.
+        </p>
+
+        <form class="nl-form subscribe-form" novalidate>
+          <input
+            class="subscribe-name-input"
+            type="text"
+            data-nl-name
+            placeholder="Your first name (optional)"
+            autocomplete="given-name"
+          >
+          <div class="nl-input-row">
+            <input type="email" placeholder="Your email address" autocomplete="email" required>
+            <button type="submit">Subscribe</button>
+          </div>
+          <p class="nl-message" style="margin-top:0.75rem;text-align:center;"></p>
+        </form>
+
+        <p style="margin-top:2rem;font-size:0.75rem;color:var(--text-faint);text-align:center;">
+          No spam. Unsubscribe anytime. Your email is never shared.
+        </p>
+      </div>
+    </section>
+  </div>
+
+  <footer id="footer"></footer>
+
+  <script src="/components.js"></script>
+  <script>
+    initPage(function(content) {
+      if (content.site?.title) {
+        document.title = 'Subscribe — ' + content.site.title;
+      }
+    });
+  </script>
+</body>
+</html>
