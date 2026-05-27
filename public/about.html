@@ -5,42 +5,55 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>About — Nassr Writes</title>
   <meta name="description" content="About Nassr — writer, artist manager, and event curator working at the intersection of culture, storytelling, and community.">
+  <meta name="theme-color" content="#0D0C0A">
   <meta property="og:type" content="website">
   <meta property="og:title" content="About — Nassr Writes">
   <meta property="og:description" content="Working at the intersection of culture, storytelling, and community.">
   <link rel="alternate" type="application/rss+xml" title="Nassr Writes" href="/feed.xml">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Radley:ital@0;1&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT,WONK@0,9..144,400..700,0..100,0..1;1,9..144,400..700,0..100,0..1&family=Newsreader:ital,opsz,wght@0,6..72,400..600;1,6..72,400..600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/styles.css">
 </head>
 <body>
-  <nav id="navbar"></nav>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <nav id="navbar" aria-label="Primary"></nav>
 
-  <div class="page-wrapper">
+  <main id="main">
     <header class="page-hero">
-      <div class="page-hero-inner">
-        <span class="page-kicker">About</span>
-        <h1 class="page-title">A reflective<br>practitioner.</h1>
+      <div class="container">
+        <p class="page-eyebrow fade-in">About</p>
+        <h1 class="page-title fade-in" style="--fade-delay:80ms">A reflective<br><em>practitioner.</em></h1>
+        <p class="page-intro fade-in" id="aboutIntro" style="--fade-delay:160ms"></p>
       </div>
     </header>
 
     <section class="about-section">
-      <div class="about-inner">
-        <div class="about-portrait-wrap fade-in" id="portraitWrap">
-          <div class="about-portrait" id="portraitEl">
-            <div class="about-portrait-placeholder" id="portraitPlaceholder">Portrait</div>
+      <div class="prose-container">
+        <article class="prose fade-in" id="aboutProse"></article>
+      </div>
+    </section>
+
+    <section class="newsletter-section">
+      <div class="container">
+        <div class="newsletter-inner">
+          <div class="newsletter-copy fade-in">
+            <h2>Stay in the <em>conversation.</em></h2>
+            <p>Letters on writing, creative practice, and the slow work of attention.</p>
           </div>
-        </div>
-        <div class="about-prose">
-          <p class="about-intro fade-in" id="aboutIntro"></p>
-          <p class="about-body fade-in" id="aboutBody1"></p>
-          <blockquote class="about-pullquote fade-in" id="aboutPullquote"></blockquote>
-          <p class="about-body fade-in" id="aboutBody2"></p>
+          <div class="fade-in" style="--fade-delay:120ms">
+            <form class="nl-form" novalidate aria-label="Subscribe to newsletter">
+              <div class="nl-input-row">
+                <input type="email" placeholder="Your email address" autocomplete="email" aria-label="Email address" required>
+                <button type="submit">Subscribe</button>
+              </div>
+              <p class="nl-message" aria-live="polite"></p>
+            </form>
+          </div>
         </div>
       </div>
     </section>
-  </div>
+  </main>
 
   <footer id="footer"></footer>
 
@@ -48,20 +61,16 @@
   <script>
     initPage(function(content) {
       const about = content.about || {};
-
       document.getElementById('aboutIntro').textContent = about.intro || '';
-      document.getElementById('aboutBody1').textContent = about.body1 || '';
-      document.getElementById('aboutPullquote').textContent = about.pullquote || '';
-      document.getElementById('aboutBody2').textContent = about.body2 || '';
 
-      if (about.portraitUrl) {
-        document.getElementById('portraitPlaceholder').remove();
-        const img = document.createElement('img');
-        img.src = about.portraitUrl;
-        img.alt = content.site?.title || 'Portrait';
-        img.loading = 'lazy';
-        document.getElementById('portraitEl').appendChild(img);
+      const prose = document.getElementById('aboutProse');
+      const parts = [];
+      if (about.body1) parts.push(`<p>${about.body1}</p>`);
+      if (about.pullquote) {
+        parts.push(`<div class="pullquote"><p class="pullquote-text">${about.pullquote}</p></div>`);
       }
+      if (about.body2) parts.push(`<p>${about.body2}</p>`);
+      prose.innerHTML = parts.join('');
     });
   </script>
 </body>

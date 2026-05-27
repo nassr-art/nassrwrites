@@ -5,59 +5,65 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Artist Management — Nassr Writes</title>
   <meta name="description" content="Long-term creative partnerships built on discernment, not hype. Strategy, positioning, and career architecture for independent artists.">
+  <meta name="theme-color" content="#0D0C0A">
   <meta property="og:type" content="website">
   <meta property="og:title" content="Artist Management — Nassr Writes">
   <meta property="og:description" content="Long-term creative partnerships built on discernment, not hype.">
   <link rel="alternate" type="application/rss+xml" title="Nassr Writes" href="/feed.xml">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Radley:ital@0;1&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT,WONK@0,9..144,400..700,0..100,0..1;1,9..144,400..700,0..100,0..1&family=Newsreader:ital,opsz,wght@0,6..72,400..600;1,6..72,400..600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/styles.css">
 </head>
 <body>
-  <nav id="navbar"></nav>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <nav id="navbar" aria-label="Primary"></nav>
 
-  <div class="page-wrapper">
+  <main id="main">
     <header class="page-hero">
-      <div class="page-hero-inner">
-        <span class="page-kicker">Practice</span>
-        <h1 class="page-title">Artist<br>Management.</h1>
-        <p class="page-subtitle">Long-term creative partnerships built on discernment, not hype.</p>
+      <div class="container">
+        <p class="page-eyebrow fade-in">The Practice — II</p>
+        <h1 class="page-title fade-in" style="--fade-delay:80ms">Artist<br><em>Management.</em></h1>
+        <p class="page-intro fade-in" style="--fade-delay:160ms" id="managementPhilosophy"></p>
       </div>
     </header>
 
-    <section class="management-section">
-      <div class="management-inner">
-        <p class="management-philosophy fade-in" id="managementPhilosophy"></p>
-
-        <div class="section-label fade-in">Services</div>
+    <section class="services-section">
+      <div class="container">
+        <div class="section-head fade-in">
+          <h2><em>Services</em></h2>
+          <span class="meta">Four arrangements</span>
+        </div>
         <div class="services-grid" id="servicesGrid"></div>
+      </div>
+    </section>
 
-        <div style="margin-top:5rem;">
-          <div class="section-label fade-in">Is this for you?</div>
-          <div class="fit-section fade-in">
-            <div class="fit-col">
-              <div class="fit-heading">This is for you if</div>
-              <ul class="fit-list" id="forYouList"></ul>
-            </div>
-            <div class="fit-col not">
-              <div class="fit-heading">This is not for you if</div>
-              <ul class="fit-list" id="notForYouList"></ul>
-            </div>
+    <section class="fit-section">
+      <div class="container">
+        <div class="section-head fade-in">
+          <h2>Is this <em>for you?</em></h2>
+          <span class="meta">A short test</span>
+        </div>
+        <div class="fit-grid">
+          <div class="fit-col fade-in">
+            <h3>Yes, <em>if</em></h3>
+            <ul id="forYouList"></ul>
+          </div>
+          <div class="fit-col no fade-in" style="--fade-delay:80ms">
+            <h3>No, <em>if</em></h3>
+            <ul id="notForYouList"></ul>
           </div>
         </div>
 
-        <div style="margin-top:5rem;padding-top:4rem;border-top:1px solid var(--border);" class="fade-in">
-          <p style="font-family:var(--font-serif);font-size:1.1rem;font-style:italic;color:var(--text-muted);margin-bottom:1.5rem;">
+        <div class="fade-in" style="margin-top: var(--s-9); padding-top: var(--s-7); border-top: 1px solid var(--rule); text-align: center;">
+          <p style="font-family: var(--font-display); font-style: italic; font-size: clamp(1.5rem, 3vw, 2rem); font-variation-settings: 'opsz' 96, 'SOFT' 100, 'WONK' 1; line-height: 1.32; color: var(--paper-strong); max-width: 36ch; margin: 0 auto var(--s-6);">
             If you're building something that matters, I'd welcome a conversation.
           </p>
-          <a href="/contact" style="display:inline-block;padding:0.9rem 2.5rem;background:var(--text);color:var(--bg);font-size:0.78rem;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;transition:background 0.25s;">
-            Get in touch
-          </a>
+          <a href="/contact" class="btn-primary">Get in touch →</a>
         </div>
       </div>
     </section>
-  </div>
+  </main>
 
   <footer id="footer"></footer>
 
@@ -65,26 +71,19 @@
   <script>
     initPage(function(content) {
       const mgmt = content.management || {};
-
       document.getElementById('managementPhilosophy').textContent = mgmt.philosophy || '';
 
-      const servicesGrid = document.getElementById('servicesGrid');
-      servicesGrid.innerHTML = (mgmt.services || []).map(s => `
-        <div class="service-card fade-in">
+      const sg = document.getElementById('servicesGrid');
+      sg.innerHTML = (mgmt.services || []).map((s, i) => `
+        <article class="service">
+          <div class="service-num">${String(i + 1).padStart(2, '0')}</div>
           <h3 class="service-title">${s.title}</h3>
-          <p class="service-description">${s.description}</p>
-        </div>
+          <p class="service-desc">${s.description}</p>
+        </article>
       `).join('');
 
-      const forYouList = document.getElementById('forYouList');
-      forYouList.innerHTML = (mgmt.forYou || []).map(item => `
-        <li class="fit-item">${item}</li>
-      `).join('');
-
-      const notForYouList = document.getElementById('notForYouList');
-      notForYouList.innerHTML = (mgmt.notForYou || []).map(item => `
-        <li class="fit-item">${item}</li>
-      `).join('');
+      document.getElementById('forYouList').innerHTML = (mgmt.forYou || []).map(item => `<li>${item}</li>`).join('');
+      document.getElementById('notForYouList').innerHTML = (mgmt.notForYou || []).map(item => `<li>${item}</li>`).join('');
     });
   </script>
 </body>

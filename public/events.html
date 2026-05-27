@@ -5,34 +5,48 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Events — Nassr Writes</title>
   <meta name="description" content="Intentional spaces for dialogue, storytelling, and cross-disciplinary encounter. Programming that leaves room for the unexpected.">
+  <meta name="theme-color" content="#0D0C0A">
   <meta property="og:type" content="website">
   <meta property="og:title" content="Events — Nassr Writes">
   <meta property="og:description" content="Intentional spaces for dialogue, storytelling, and cross-disciplinary encounter.">
   <link rel="alternate" type="application/rss+xml" title="Nassr Writes" href="/feed.xml">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Radley:ital@0;1&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT,WONK@0,9..144,400..700,0..100,0..1;1,9..144,400..700,0..100,0..1&family=Newsreader:ital,opsz,wght@0,6..72,400..600;1,6..72,400..600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/styles.css">
 </head>
 <body>
-  <nav id="navbar"></nav>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <nav id="navbar" aria-label="Primary"></nav>
 
-  <div class="page-wrapper">
+  <main id="main">
     <header class="page-hero">
-      <div class="page-hero-inner">
-        <span class="page-kicker">Practice</span>
-        <h1 class="page-title">Event<br>Curation.</h1>
-        <p class="page-subtitle" id="eventsIntroShort">Intentional spaces for dialogue, storytelling, and cross-disciplinary encounter.</p>
+      <div class="container">
+        <p class="page-eyebrow fade-in">The Practice — III</p>
+        <h1 class="page-title fade-in" style="--fade-delay:80ms">Curated<br><em>Spaces.</em></h1>
+        <p class="page-intro fade-in" style="--fade-delay:160ms" id="eventsIntro"></p>
       </div>
     </header>
 
     <section class="events-section">
-      <div class="events-inner">
-        <p class="events-intro fade-in" id="eventsIntro"></p>
+      <div class="container">
+        <div class="section-head fade-in">
+          <h2><em>Past programming</em></h2>
+          <span class="meta" id="eventsCount"></span>
+        </div>
         <div class="events-list" id="eventsList"></div>
       </div>
     </section>
-  </div>
+
+    <section class="fit-section" style="border-top: 1px solid var(--rule);">
+      <div class="container" style="text-align: center;">
+        <p class="fade-in" style="font-family: var(--font-display); font-style: italic; font-size: clamp(1.5rem, 3vw, 2rem); font-variation-settings: 'opsz' 96, 'SOFT' 100, 'WONK' 1; line-height: 1.32; color: var(--paper-strong); max-width: 40ch; margin: 0 auto var(--s-6);">
+          Have a space in mind? An idea that needs the right gathering?
+        </p>
+        <a href="/contact" class="btn-primary fade-in">Propose a project →</a>
+      </div>
+    </section>
+  </main>
 
   <footer id="footer"></footer>
 
@@ -40,26 +54,25 @@
   <script>
     initPage(function(content) {
       const eventsData = content.events || {};
-
       document.getElementById('eventsIntro').textContent = eventsData.intro || '';
 
-      const eventsList = document.getElementById('eventsList');
       const list = eventsData.list || [];
+      document.getElementById('eventsCount').textContent = list.length ? `${list.length} ${list.length === 1 ? 'event' : 'events'}` : '';
 
+      const eventsList = document.getElementById('eventsList');
       if (!list.length) {
-        eventsList.innerHTML = '<p style="color:var(--text-faint);padding:3rem 0;font-style:italic;">No past events recorded yet.</p>';
+        eventsList.innerHTML = `<p style="color:var(--paper-faint); font-style:italic; padding: var(--s-7) 0;">No past events recorded yet.</p>`;
         return;
       }
-
       eventsList.innerHTML = list.map(e => `
-        <article class="event-item fade-in">
-          <div class="event-date-col">
-            <div class="event-date">${e.date || ''}</div>
-            <div class="event-venue">${e.venue || ''}</div>
+        <article class="event">
+          <div class="event-meta">
+            <span class="event-date">${e.date || ''}</span>
+            <span class="event-venue">${e.venue || ''}</span>
           </div>
-          <div class="event-content">
-            <h2 class="event-title">${e.title}</h2>
-            <p class="event-description">${e.description || ''}</p>
+          <div>
+            <h3 class="event-title">${e.title}</h3>
+            <p class="event-desc">${e.description || ''}</p>
           </div>
         </article>
       `).join('');

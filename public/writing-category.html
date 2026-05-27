@@ -5,102 +5,79 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Writing — Nassr Writes</title>
   <meta name="description" content="Writing archive by category — Nassr Writes.">
+  <meta name="theme-color" content="#0D0C0A">
   <meta property="og:type" content="website">
   <meta property="og:title" content="Writing — Nassr Writes">
   <link rel="alternate" type="application/rss+xml" title="Nassr Writes" href="/feed.xml">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Radley:ital@0;1&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT,WONK@0,9..144,400..700,0..100,0..1;1,9..144,400..700,0..100,0..1&family=Newsreader:ital,opsz,wght@0,6..72,400..600;1,6..72,400..600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/styles.css">
 </head>
 <body>
-  <nav id="navbar"></nav>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <nav id="navbar" aria-label="Primary"></nav>
 
-  <div class="page-wrapper">
+  <main id="main">
     <header class="page-hero">
-      <div class="page-hero-inner">
-        <a href="/writing" class="page-kicker" style="display:inline-flex;align-items:center;gap:0.4rem;transition:color 0.2s;">← Writing archive</a>
-        <h1 class="page-title" id="catPageTitle">Writing.</h1>
+      <div class="container">
+        <p class="page-eyebrow fade-in">
+          <a href="/writing" style="color:var(--paper-muted); border-bottom: 1px solid var(--rule-strong); transition: color var(--t-fast);">← Archive</a>
+        </p>
+        <h1 class="page-title fade-in" id="catPageTitle" style="--fade-delay:80ms"></h1>
+        <p class="page-intro fade-in" id="catDescBody" style="--fade-delay:160ms"></p>
       </div>
     </header>
 
-    <section class="writing-section">
-      <div class="writing-inner">
-        <div class="category-description" id="catDescription" style="display:none;">
-          <p class="category-title" id="catDescTitle"></p>
-          <p id="catDescBody"></p>
-        </div>
-
-        <div class="category-tabs" id="categoryTabs">
-          <a href="/writing" class="category-tab">All</a>
-          <a href="/writing/essays" class="category-tab" data-cat="essays">Essays</a>
-          <a href="/writing/poetry" class="category-tab" data-cat="poetry">Poetry</a>
-          <a href="/writing/commentary" class="category-tab" data-cat="commentary">Commentary</a>
-        </div>
-
+    <section class="archive-section">
+      <div class="container">
         <div class="writing-list" id="writingList"></div>
       </div>
     </section>
-  </div>
+  </main>
 
   <footer id="footer"></footer>
 
   <script src="/components.js"></script>
   <script>
-    // Derive current category from URL
     const pathParts = window.location.pathname.split('/').filter(Boolean);
-    const currentCat = pathParts[pathParts.length - 1]; // essays | poetry | commentary
-
-    function renderWritings(writings) {
-      const list = document.getElementById('writingList');
-      if (!writings.length) {
-        list.innerHTML = '<p style="color:var(--text-faint);padding:3rem 0;font-style:italic;">No pieces in this category yet.</p>';
-        return;
-      }
-      list.innerHTML = writings.map(w => {
-        const rt = w.readingTime || readingTime(w.fullContent || w.description || '');
-        return `
-          <article class="writing-card fade-in" onclick="window.location='${w.link}'">
-            <div class="writing-date">${w.date || ''}</div>
-            <div class="writing-meta">
-              <h2 class="writing-card-title">${w.title}</h2>
-              <p class="writing-card-excerpt">${w.excerpt || w.description || ''}</p>
-              <div class="writing-card-footer">
-                <span class="type-badge">${w.type || w.category || ''}</span>
-                <span class="reading-time">${rt} min read</span>
-              </div>
-            </div>
-            <div class="writing-arrow">→</div>
-          </article>`;
-      }).join('');
-      document.querySelectorAll('.fade-in:not(.visible)').forEach((el, i) => {
-        setTimeout(() => el.classList.add('visible'), i * 60);
-      });
-    }
-
-    // Activate correct tab
-    document.querySelectorAll('.category-tab[data-cat]').forEach(tab => {
-      if (tab.dataset.cat === currentCat) tab.classList.add('active');
-    });
+    const currentCat = pathParts[pathParts.length - 1];
 
     initPage(function(content) {
       const cats = content.writingCategories || {};
       const catData = cats[currentCat];
 
       if (catData) {
-        document.getElementById('catPageTitle').textContent = catData.label + '.';
+        document.getElementById('catPageTitle').innerHTML = `<em>${catData.label}.</em>`;
         document.title = catData.label + ' — Nassr Writes';
-        if (catData.description) {
-          document.getElementById('catDescTitle').textContent = catData.label;
-          document.getElementById('catDescBody').textContent = catData.description;
-          document.getElementById('catDescription').style.display = 'block';
-        }
+        document.getElementById('catDescBody').textContent = catData.description || '';
+      } else {
+        document.getElementById('catPageTitle').textContent = 'Not found';
       }
 
       const writings = (content.writings || []).filter(w =>
         w.status !== 'draft' && (w.category || '').toLowerCase() === currentCat
       );
-      renderWritings(writings);
+
+      const list = document.getElementById('writingList');
+      if (!writings.length) {
+        list.innerHTML = `<p style="color:var(--paper-faint); font-style:italic; padding: var(--s-7) 0;">No pieces in this category yet.</p>`;
+        return;
+      }
+      list.innerHTML = writings.map(w => {
+        const rt = w.readingTime || readingTime(w.fullContent || w.description || '');
+        return `
+          <article class="writing-item">
+            <a class="writing-link" href="${w.link}">
+              <span class="writing-date">${w.date || ''}</span>
+              <div>
+                <h3 class="writing-title">${w.title}${w.featured ? '<span class="writing-featured-flag" aria-label="Featured">✦</span>' : ''}</h3>
+                <p class="writing-excerpt">${w.excerpt || w.description || ''}</p>
+              </div>
+              <span class="writing-read">${rt} min</span>
+            </a>
+          </article>`;
+      }).join('');
     });
   </script>
 </body>

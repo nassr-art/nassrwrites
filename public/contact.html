@@ -5,61 +5,67 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Contact — Nassr Writes</title>
   <meta name="description" content="Get in touch to discuss writing, artist management, event curation, or speaking.">
+  <meta name="theme-color" content="#0D0C0A">
   <meta property="og:type" content="website">
   <meta property="og:title" content="Contact — Nassr Writes">
   <meta property="og:description" content="The best collaborations begin with a conversation, not a pitch.">
   <link rel="alternate" type="application/rss+xml" title="Nassr Writes" href="/feed.xml">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Radley:ital@0;1&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT,WONK@0,9..144,400..700,0..100,0..1;1,9..144,400..700,0..100,0..1&family=Newsreader:ital,opsz,wght@0,6..72,400..600;1,6..72,400..600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/styles.css">
 </head>
 <body>
-  <nav id="navbar"></nav>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <nav id="navbar" aria-label="Primary"></nav>
 
-  <div class="page-wrapper">
+  <main id="main">
     <header class="page-hero">
-      <div class="page-hero-inner">
-        <span class="page-kicker">Contact</span>
-        <h1 class="page-title">Let's talk.</h1>
+      <div class="container">
+        <p class="page-eyebrow fade-in">Contact</p>
+        <h1 class="page-title fade-in" style="--fade-delay:80ms">Let's <em>talk.</em></h1>
+        <p class="page-intro fade-in" id="contactIntro" style="--fade-delay:160ms"></p>
       </div>
     </header>
 
-    <section class="contact-section">
-      <div class="contact-inner">
-        <div class="contact-info fade-in">
-          <p class="contact-info-intro" id="contactIntro"></p>
-          <p class="contact-info-body" id="contactBody"></p>
-          <a class="contact-email-link" id="contactEmail" href="#"></a>
-        </div>
+    <section class="form-block">
+      <div class="container">
+        <div class="prose-container" style="padding:0;">
+          <article class="prose fade-in" style="margin-bottom: var(--s-7);">
+            <p id="contactBody" style="font-size:1.25rem; color:var(--paper-muted);"></p>
+            <p style="font-family:var(--font-ui); font-size:var(--t-xs); letter-spacing:0.14em; text-transform:uppercase; color:var(--paper-faint); margin-top:var(--s-5);">Or write directly:</p>
+            <p style="margin-top:var(--s-2);">
+              <a id="contactEmail" href="#" style="font-family:var(--font-display); font-style:italic; font-size:var(--t-xl); color:var(--paper-strong); border-bottom:1px solid var(--rule-strong);"></a>
+            </p>
+          </article>
 
-        <div class="contact-form-wrap fade-in">
-          <div class="inquiry-types" id="inquiryTypes">
-            <span class="inquiry-types-label">I'm writing about</span>
-            <div class="inquiry-type-btns" id="inquiryBtns"></div>
-          </div>
-
-          <form class="contact-form" id="contactForm" novalidate>
-            <div class="form-group">
-              <label class="form-label" for="contactName">Name</label>
-              <input class="form-input" type="text" id="contactName" name="name" placeholder="Your name" autocomplete="name">
+          <form class="form-grid fade-in" id="contactForm" novalidate aria-label="Contact form" style="--fade-delay:80ms; padding-top: var(--s-6); border-top: 1px solid var(--rule);">
+            <div class="form-field">
+              <label>I'm writing about</label>
+              <div class="inquiry-buttons" id="inquiryBtns"></div>
+              <input type="hidden" id="contactType" name="type" value="">
             </div>
-            <div class="form-group">
-              <label class="form-label" for="contactEmail2">Email</label>
-              <input class="form-input" type="email" id="contactEmail2" name="email" placeholder="your@email.com" autocomplete="email" required>
+            <div class="form-field">
+              <label for="contactName">Name</label>
+              <input type="text" id="contactName" name="name" placeholder="Your name" autocomplete="name">
             </div>
-            <div class="form-group">
-              <label class="form-label" for="contactMessage">Message</label>
-              <textarea class="form-input" id="contactMessage" name="message" placeholder="Tell me a bit about yourself and what you're working on." rows="6" required></textarea>
+            <div class="form-field">
+              <label for="contactEmail2">Email</label>
+              <input type="email" id="contactEmail2" name="email" placeholder="your@email.com" autocomplete="email" required>
             </div>
-            <input type="hidden" id="contactType" name="type" value="">
-            <button class="form-submit" type="submit">Send message</button>
-            <p id="contactFormMsg" style="font-size:0.82rem;margin-top:0.75rem;min-height:1.2em;"></p>
+            <div class="form-field">
+              <label for="contactMessage">Message</label>
+              <textarea id="contactMessage" name="message" placeholder="Tell me a bit about yourself and what you're working on." rows="6" required></textarea>
+            </div>
+            <div>
+              <button type="submit" class="btn-primary">Send message →</button>
+            </div>
+            <p class="form-message" id="contactFormMsg" aria-live="polite"></p>
           </form>
         </div>
       </div>
     </section>
-  </div>
+  </main>
 
   <footer id="footer"></footer>
 
@@ -86,16 +92,15 @@
       const btnsEl = document.getElementById('inquiryBtns');
       (contact.inquiryTypes || []).forEach(type => {
         const btn = document.createElement('button');
-        btn.className = 'inquiry-btn';
         btn.type = 'button';
         btn.textContent = type;
         btn.addEventListener('click', () => {
-          document.querySelectorAll('.inquiry-btn').forEach(b => b.classList.remove('selected'));
+          document.querySelectorAll('#inquiryBtns button').forEach(b => b.classList.remove('active'));
           if (selectedType === type) {
             selectedType = '';
             document.getElementById('contactType').value = '';
           } else {
-            btn.classList.add('selected');
+            btn.classList.add('active');
             selectedType = type;
             document.getElementById('contactType').value = type;
           }
@@ -103,7 +108,7 @@
         btnsEl.appendChild(btn);
       });
 
-      // Contact form — builds mailto
+      // Form → mailto handoff
       document.getElementById('contactForm').addEventListener('submit', function(e) {
         e.preventDefault();
         const name    = document.getElementById('contactName').value.trim();
@@ -113,12 +118,12 @@
         const msgEl   = document.getElementById('contactFormMsg');
 
         if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-          msgEl.style.color = '#C4292B';
+          msgEl.className = 'form-message error';
           msgEl.textContent = 'Please enter a valid email address.';
           return;
         }
         if (!message) {
-          msgEl.style.color = '#C4292B';
+          msgEl.className = 'form-message error';
           msgEl.textContent = 'Please include a message.';
           return;
         }
@@ -128,7 +133,7 @@
         const mailto  = `mailto:${site.email || ''}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
         window.location.href = mailto;
 
-        msgEl.style.color = '#2D7D46';
+        msgEl.className = 'form-message success';
         msgEl.textContent = 'Opening your email client…';
       });
     });

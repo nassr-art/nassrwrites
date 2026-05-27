@@ -5,49 +5,51 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Subscribe — Nassr Writes</title>
   <meta name="description" content="Occasional letters on culture and creative practice. No noise, no algorithm — just the work.">
+  <meta name="theme-color" content="#0D0C0A">
   <meta property="og:type" content="website">
   <meta property="og:title" content="Subscribe — Nassr Writes">
   <meta property="og:description" content="Occasional letters on culture and creative practice.">
   <link rel="alternate" type="application/rss+xml" title="Nassr Writes" href="/feed.xml">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Radley:ital@0;1&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT,WONK@0,9..144,400..700,0..100,0..1;1,9..144,400..700,0..100,0..1&family=Newsreader:ital,opsz,wght@0,6..72,400..600;1,6..72,400..600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/styles.css">
 </head>
 <body>
-  <nav id="navbar"></nav>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <nav id="navbar" aria-label="Primary"></nav>
 
-  <div class="page-wrapper">
-    <section class="subscribe-section">
-      <div class="subscribe-inner fade-in">
-        <span class="subscribe-kicker">Newsletter</span>
-        <h1 class="subscribe-title">Letters on culture<br>and craft.</h1>
-        <p class="subscribe-body">
+  <main id="main">
+    <section class="page-hero" style="border-bottom: 0;">
+      <div class="container" style="max-width: 720px;">
+        <p class="page-eyebrow fade-in">The Letters</p>
+        <h1 class="page-title fade-in" style="--fade-delay:80ms">Letters on culture<br>and <em>craft.</em></h1>
+        <p class="page-intro fade-in" style="--fade-delay:160ms">
           Occasional dispatches on writing, artist development, and the slow work of paying attention.
           No frequency promises. No content marketing. Just the work, and what surrounds it.
         </p>
 
-        <form class="nl-form subscribe-form" novalidate>
-          <input
-            class="subscribe-name-input"
-            type="text"
-            data-nl-name
-            placeholder="Your first name (optional)"
-            autocomplete="given-name"
-          >
-          <div class="nl-input-row">
-            <input type="email" placeholder="Your email address" autocomplete="email" required>
-            <button type="submit">Subscribe</button>
+        <form class="nl-form fade-in" novalidate aria-label="Subscribe to newsletter" style="--fade-delay:240ms; margin-top: var(--s-8); max-width: 540px;">
+          <div class="form-field" style="margin-bottom: var(--s-4);">
+            <label for="subName">Name <span style="text-transform:none; letter-spacing:0; color:var(--paper-faint); font-family:var(--font-prose); font-style:italic;">(optional)</span></label>
+            <input type="text" id="subName" data-nl-name placeholder="Your first name" autocomplete="given-name">
           </div>
-          <p class="nl-message" style="margin-top:0.75rem;text-align:center;"></p>
+          <div class="form-field">
+            <label for="subEmail">Email</label>
+            <input type="email" id="subEmail" placeholder="your@email.com" autocomplete="email" required aria-required="true">
+          </div>
+          <div style="margin-top: var(--s-5);">
+            <button type="submit" class="btn-primary">Subscribe →</button>
+          </div>
+          <p class="nl-message" aria-live="polite"></p>
         </form>
 
-        <p style="margin-top:2rem;font-size:0.75rem;color:var(--text-faint);text-align:center;">
-          No spam. Unsubscribe anytime. Your email is never shared.
+        <p class="fade-in" style="--fade-delay:320ms; margin-top: var(--s-7); font-family: var(--font-ui); font-size: var(--t-xs); letter-spacing: 0.1em; text-transform: uppercase; color: var(--paper-faint);">
+          No spam · Unsubscribe anytime · Email never shared
         </p>
       </div>
     </section>
-  </div>
+  </main>
 
   <footer id="footer"></footer>
 

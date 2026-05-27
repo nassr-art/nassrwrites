@@ -3,8 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Nassr Writes</title>
-  <meta name="description" content="Writing. Artist Development. Curated Spaces. A reflective professional operating at the intersection of culture, storytelling, and community.">
+  <title>Nassr Writes — Writing. Artist Development. Curated Spaces.</title>
+  <meta name="description" content="Writing, artist development, and curated spaces at the intersection of culture, storytelling, and community.">
+  <meta name="theme-color" content="#0D0C0A">
   <meta property="og:type" content="website">
   <meta property="og:title" content="Nassr Writes">
   <meta property="og:description" content="Writing. Artist Development. Curated Spaces.">
@@ -15,54 +16,75 @@
   <link rel="alternate" type="application/rss+xml" title="Nassr Writes" href="/feed.xml">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Radley:ital@0;1&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT,WONK@0,9..144,400..700,0..100,0..1;1,9..144,400..700,0..100,0..1&family=Newsreader:ital,opsz,wght@0,6..72,400..600;1,6..72,400..600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/styles.css">
 </head>
 <body>
-  <nav id="navbar"></nav>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <nav id="navbar" aria-label="Primary"></nav>
 
-  <div class="page-wrapper">
+  <main id="main">
     <!-- Hero -->
-    <section class="hero" id="hero">
-      <div class="hero-inner">
-        <h1 class="hero-headline" id="heroHeadline">Writing. Artist Development.<br><em>Curated Spaces.</em></h1>
-        <p class="hero-statement" id="heroStatement"></p>
-        <div class="hero-scroll">
-          <span class="hero-scroll-line"></span>
-          <span>Scroll</span>
-        </div>
+    <section class="hero">
+      <div class="container">
+        <p class="hero-eyebrow fade-in">An ongoing practice in three movements</p>
+        <h1 class="hero-headline fade-in" id="heroHeadline" style="--fade-delay:80ms">Writing. Artist Development.<br><em>Curated Spaces.</em></h1>
+        <p class="hero-statement fade-in" id="heroStatement" style="--fade-delay:160ms"></p>
+        <p class="hero-meta fade-in" style="--fade-delay:240ms"><span id="heroLocale">A reflective practice — est. 2020</span></p>
       </div>
     </section>
 
     <!-- Practices -->
-    <section class="practices-section" id="practicesSection">
-      <div class="practices-grid" id="practicesGrid"></div>
+    <section class="practices-section">
+      <div class="container">
+        <p class="practices-eyebrow fade-in">§ The Practice</p>
+        <div class="practices-list" id="practicesList"></div>
+      </div>
     </section>
 
     <!-- Philosophy -->
-    <section class="philosophy-section" id="philosophySection">
-      <p class="philosophy-text fade-in" id="philosophyText"></p>
+    <section class="philosophy-section">
+      <div class="container">
+        <span class="philosophy-mark" aria-hidden="true"></span>
+        <p class="philosophy-text fade-in" id="philosophyText"></p>
+      </div>
     </section>
 
-    <!-- Newsletter -->
-    <section class="newsletter-section" id="newsletterSection">
-      <div class="newsletter-inner">
-        <div class="newsletter-copy fade-in">
-          <h2>Letters on culture<br>and craft.</h2>
-          <p>Occasional dispatches on writing, creative practice, and the work of paying attention. No noise. No frequency promises.</p>
+    <!-- Selected writing -->
+    <section class="selected-section" id="selectedSection">
+      <div class="container">
+        <div class="section-head fade-in">
+          <h2>Selected <em>Writing</em></h2>
+          <span class="meta">Essays · Poetry · Commentary</span>
         </div>
-        <div class="fade-in" data-delay="2">
-          <form class="nl-form" novalidate>
-            <div class="nl-input-row">
-              <input type="email" placeholder="Your email address" autocomplete="email" required>
-              <button type="submit">Subscribe</button>
-            </div>
-            <p class="nl-message"></p>
-          </form>
+        <div class="selected-list" id="selectedList"></div>
+        <div class="selected-cta fade-in">
+          <a href="/writing" class="btn-link">Visit the archive</a>
         </div>
       </div>
     </section>
-  </div>
+
+    <!-- Newsletter -->
+    <section class="newsletter-section">
+      <div class="container">
+        <div class="newsletter-inner">
+          <div class="newsletter-copy fade-in">
+            <h2>Letters on culture<br>and <em>craft.</em></h2>
+            <p>Occasional dispatches on writing, creative practice, and the work of paying attention. No noise. No frequency promises.</p>
+          </div>
+          <div class="fade-in" style="--fade-delay:120ms">
+            <form class="nl-form" novalidate aria-label="Subscribe to newsletter">
+              <div class="nl-input-row">
+                <input type="email" placeholder="Your email address" autocomplete="email" aria-label="Email address" required>
+                <button type="submit">Subscribe</button>
+              </div>
+              <p class="nl-message" aria-live="polite"></p>
+            </form>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
 
   <footer id="footer"></footer>
 
@@ -70,25 +92,51 @@
   <script>
     initPage(function(content) {
       // Hero
-      document.getElementById('heroHeadline').innerHTML = content.hero.headline;
-      document.getElementById('heroStatement').textContent = content.hero.statement;
+      if (content.hero?.headline) {
+        document.getElementById('heroHeadline').innerHTML = content.hero.headline;
+      }
+      document.getElementById('heroStatement').textContent = content.hero?.statement || '';
 
-      // Practices grid
-      const grid = document.getElementById('practicesGrid');
-      grid.innerHTML = (content.practices || []).map(p => `
-        <article class="practice-tile fade-in">
-          <div class="practice-number">${p.number}</div>
-          <h2 class="practice-title">${p.title}</h2>
-          <p class="practice-excerpt">${p.excerpt}</p>
-          <a href="${p.link}" class="practice-link">${p.linkText}</a>
+      // Practices
+      const list = document.getElementById('practicesList');
+      list.innerHTML = (content.practices || []).map(p => `
+        <article class="practice">
+          <div class="practice-number">${(p.number || '').replace(/^0/, '')}</div>
+          <div class="practice-body">
+            <h2 class="practice-title">${p.title}</h2>
+            <p class="practice-excerpt">${p.excerpt}</p>
+          </div>
+          <a href="${p.link}" class="practice-link">${(p.linkText || 'Learn more').replace(/\s*→\s*$/, '')}</a>
         </article>
       `).join('');
 
       // Philosophy
-      document.getElementById('philosophyText').textContent = content.philosophy;
+      document.getElementById('philosophyText').textContent = content.philosophy || '';
 
-      // Page title
-      if (content.site?.title) document.title = content.site.title;
+      // Selected writing (3 most recent published)
+      const writings = (content.writings || []).filter(w => w.status !== 'draft').slice(0, 3);
+      const selectedList = document.getElementById('selectedList');
+      const selectedSection = document.getElementById('selectedSection');
+      if (writings.length === 0) {
+        selectedSection.style.display = 'none';
+      } else {
+        selectedList.innerHTML = writings.map(w => `
+          <div class="selected-item">
+            <a class="selected-link" href="${w.link}">
+              <span class="selected-meta">
+                <span>${w.date || ''}</span>
+                <span class="dot" aria-hidden="true"></span>
+                <span>${w.type || w.category || ''}</span>
+              </span>
+              <h3 class="selected-title">${w.title}</h3>
+              <span class="selected-read">${w.readingTime || readingTime(w.fullContent || w.description || '')} min</span>
+            </a>
+          </div>
+        `).join('');
+      }
+
+      // Page title from site title
+      if (content.site?.title) document.title = `${content.site.title} — Writing. Artist Development. Curated Spaces.`;
     });
   </script>
 </body>

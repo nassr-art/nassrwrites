@@ -5,95 +5,104 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Writing — Nassr Writes</title>
   <meta name="description" content="Essays, poetry, and cultural commentary by Nassr. Writing as a form of witnessing.">
+  <meta name="theme-color" content="#0D0C0A">
   <meta property="og:type" content="website">
   <meta property="og:title" content="Writing — Nassr Writes">
   <meta property="og:description" content="Essays, poetry, and cultural commentary.">
   <link rel="alternate" type="application/rss+xml" title="Nassr Writes" href="/feed.xml">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Radley:ital@0;1&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT,WONK@0,9..144,400..700,0..100,0..1;1,9..144,400..700,0..100,0..1&family=Newsreader:ital,opsz,wght@0,6..72,400..600;1,6..72,400..600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/styles.css">
 </head>
 <body>
-  <nav id="navbar"></nav>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <nav id="navbar" aria-label="Primary"></nav>
 
-  <div class="page-wrapper">
+  <main id="main">
     <header class="page-hero">
-      <div class="page-hero-inner">
-        <span class="page-kicker">Archive</span>
-        <h1 class="page-title">Writing.</h1>
-        <p class="page-subtitle">Essays, poems, and cultural commentary—language as a form of witnessing.</p>
+      <div class="container">
+        <p class="page-eyebrow fade-in">The Archive</p>
+        <h1 class="page-title fade-in" style="--fade-delay:80ms"><em>Writing.</em></h1>
+        <p class="page-intro fade-in" style="--fade-delay:160ms">
+          Essays, poems, and cultural commentary — language as a form of witnessing.
+        </p>
       </div>
     </header>
 
-    <section class="writing-section">
-      <div class="writing-inner">
-        <div class="category-tabs" id="categoryTabs">
-          <button class="category-tab active" data-cat="all">All</button>
-          <button class="category-tab" data-cat="essays">Essays</button>
-          <button class="category-tab" data-cat="poetry">Poetry</button>
-          <button class="category-tab" data-cat="commentary">Commentary</button>
-        </div>
-        <div class="writing-list" id="writingList"></div>
+    <section class="archive-section">
+      <div class="container">
+        <p class="practices-eyebrow fade-in">§ By form</p>
+        <div class="archive-categories" id="archiveCategories"></div>
+
+        <p class="practices-eyebrow fade-in" style="margin-top: var(--s-9);">§ Recent work</p>
+        <div id="archiveGroups"></div>
       </div>
     </section>
-  </div>
+  </main>
 
   <footer id="footer"></footer>
 
   <script src="/components.js"></script>
   <script>
-    let allWritings = [];
-    let activeCategory = 'all';
-
-    function renderWritings(writings) {
-      const list = document.getElementById('writingList');
-      if (!writings.length) {
-        list.innerHTML = '<p style="color:var(--text-faint);padding:3rem 0;font-style:italic;">No pieces in this category yet.</p>';
-        return;
-      }
-      list.innerHTML = writings.map(w => {
-        const rt = w.readingTime || readingTime(w.fullContent || w.description || '');
-        return `
-          <article class="writing-card fade-in" onclick="window.location='${w.link}'">
-            <div class="writing-date">${w.date || ''}</div>
-            <div class="writing-meta">
-              <h2 class="writing-card-title">${w.title}</h2>
-              <p class="writing-card-excerpt">${w.excerpt || w.description || ''}</p>
-              <div class="writing-card-footer">
-                <span class="type-badge">${w.type || w.category || ''}</span>
-                <span class="reading-time">${rt} min read</span>
-              </div>
-            </div>
-            <div class="writing-arrow">→</div>
-          </article>`;
-      }).join('');
-      // Re-init fade animations for newly rendered cards
-      document.querySelectorAll('.fade-in:not(.visible)').forEach((el, i) => {
-        setTimeout(() => el.classList.add('visible'), i * 60);
-      });
-    }
-
-    function filterAndRender() {
-      const filtered = activeCategory === 'all'
-        ? allWritings
-        : allWritings.filter(w => (w.category || '').toLowerCase() === activeCategory);
-      renderWritings(filtered);
-    }
-
     initPage(function(content) {
-      allWritings = (content.writings || []).filter(w => w.status !== 'draft');
+      const categories = content.writingCategories || {};
+      const writings = (content.writings || []).filter(w => w.status !== 'draft');
 
-      document.getElementById('categoryTabs').addEventListener('click', e => {
-        const tab = e.target.closest('.category-tab');
-        if (!tab) return;
-        document.querySelectorAll('.category-tab').forEach(t => t.classList.remove('active'));
-        tab.classList.add('active');
-        activeCategory = tab.dataset.cat;
-        filterAndRender();
+      // Category cards
+      const catEl = document.getElementById('archiveCategories');
+      const order = ['essays', 'poetry', 'commentary'];
+      catEl.innerHTML = order.filter(k => categories[k]).map((key, i) => {
+        const cat = categories[key];
+        const count = writings.filter(w => (w.category || '').toLowerCase() === key).length;
+        return `
+          <a href="/writing/${key}" class="archive-cat">
+            <div class="archive-cat-num">${String(i + 1).padStart(2, '0')}</div>
+            <h2 class="archive-cat-title">${cat.label}</h2>
+            <p class="archive-cat-desc">${cat.description || ''}</p>
+            <p class="archive-cat-desc" style="margin-top:var(--s-4); color:var(--paper-faint);">${count} ${count === 1 ? 'piece' : 'pieces'}</p>
+          </a>`;
+      }).join('');
+
+      // Grouped writings
+      const groupsEl = document.getElementById('archiveGroups');
+      const byCat = {};
+      writings.forEach(w => {
+        const k = (w.category || 'other').toLowerCase();
+        (byCat[k] = byCat[k] || []).push(w);
       });
 
-      filterAndRender();
+      groupsEl.innerHTML = order.filter(k => byCat[k]).map(key => {
+        const cat = categories[key] || { label: key };
+        const items = byCat[key];
+        return `
+          <div class="archive-group">
+            <div class="archive-group-head">
+              <h2><em>${cat.label}</em></h2>
+              <span class="count">${items.length} ${items.length === 1 ? 'piece' : 'pieces'}</span>
+            </div>
+            <div class="writing-list">
+              ${items.map(w => {
+                const rt = w.readingTime || readingTime(w.fullContent || w.description || '');
+                return `
+                  <article class="writing-item">
+                    <a class="writing-link" href="${w.link}">
+                      <span class="writing-date">${w.date || ''}</span>
+                      <div>
+                        <h3 class="writing-title">${w.title}${w.featured ? '<span class="writing-featured-flag" aria-label="Featured">✦</span>' : ''}</h3>
+                        <p class="writing-excerpt">${w.excerpt || w.description || ''}</p>
+                      </div>
+                      <span class="writing-read">${rt} min</span>
+                    </a>
+                  </article>`;
+              }).join('')}
+            </div>
+          </div>`;
+      }).join('');
+
+      if (!writings.length) {
+        groupsEl.innerHTML = `<p style="color:var(--paper-faint); font-style:italic; padding: var(--s-7) 0;">No pieces published yet.</p>`;
+      }
     });
   </script>
 </body>
