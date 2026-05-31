@@ -81,7 +81,7 @@
         .section-panel.active { display: block; }
 
         /* ── Dashboard ─────────────────────────── */
-        .dash-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-bottom: 2.5rem; }
+        .dash-stats { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 1rem; margin-bottom: 2.5rem; }
         .stat-card { background: var(--color-bg); border: 1px solid var(--color-border); padding: 1.5rem; cursor: pointer; transition: border-color 0.15s; }
         .stat-card:hover { border-color: var(--color-text); }
         .stat-value { font-family: var(--font-serif); font-size: 2.5rem; font-weight: 400; line-height: 1; margin-bottom: 0.5rem; }
@@ -288,6 +288,8 @@
                 <ul class="sidebar-nav">
                     <li><a href="#" data-section="practices"><i class="nav-icon">▣</i>Practices</a></li>
                     <li><a href="#" data-section="writings"><i class="nav-icon">✍</i>Writings</a></li>
+                    <li><a href="#" data-section="projects"><i class="nav-icon">◧</i>Projects</a></li>
+                    <li><a href="#" data-section="blog"><i class="nav-icon">✦</i>Blog Posts</a></li>
                     <li><a href="#" data-section="management"><i class="nav-icon">◈</i>Management</a></li>
                     <li><a href="#" data-section="events"><i class="nav-icon">◷</i>Events</a></li>
                     <li><a href="#" data-section="contact"><i class="nav-icon">✉</i>Contact</a></li>
@@ -471,6 +473,30 @@
                 <div id="writingsList"></div>
             </div>
 
+            <!-- Projects -->
+            <div class="section-panel" id="panel-projects">
+                <div class="content-header">
+                    <div class="content-header-text">
+                        <h2>Projects</h2>
+                        <p>Portfolio projects — visible at /projects</p>
+                    </div>
+                    <button class="btn" onclick="openModal('project')">+ New Project</button>
+                </div>
+                <div id="projectsList"></div>
+            </div>
+
+            <!-- Blog Posts -->
+            <div class="section-panel" id="panel-blog">
+                <div class="content-header">
+                    <div class="content-header-text">
+                        <h2>Blog Posts</h2>
+                        <p>Articles and updates — visible at /blog</p>
+                    </div>
+                    <button class="btn" onclick="openModal('post')">+ New Post</button>
+                </div>
+                <div id="postsList"></div>
+            </div>
+
             <!-- Artist Management -->
             <div class="section-panel" id="panel-management">
                 <div class="content-header">
@@ -621,6 +647,8 @@
 <script>
 // ─── State ────────────────────────────────────────────────
 let content = {};
+let projects = [];
+let posts = [];
 let currentModal = null;
 let editingId = null;
 let confirmResolve = null;
@@ -692,16 +720,26 @@ async function checkAuth() {
 
 document.getElementById('loginForm').addEventListener('submit', async e => {
     e.preventDefault();
-    const result = await api.post('/api/auth/login', {
-        username: document.getElementById('loginUsername').value,
-        password: document.getElementById('loginPassword').value
-    });
-    if (result.success) {
-        document.getElementById('loginScreen').style.display = 'none';
-        document.getElementById('adminLayout').classList.add('active');
-        loadContent();
-    } else {
-        showToast(result.error || 'Login failed', 'error');
+    const btn = e.target.querySelector('button[type=submit]');
+    btn.disabled = true;
+    btn.textContent = 'Signing in…';
+    try {
+        const result = await api.post('/api/auth/login', {
+            username: document.getElementById('loginUsername').value,
+            password: document.getElementById('loginPassword').value
+        });
+        if (result.success) {
+            document.getElementById('loginScreen').style.display = 'none';
+            document.getElementById('adminLayout').classList.add('active');
+            loadContent();
+        } else {
+            showToast(result.error || 'Login failed', 'error');
+        }
+    } catch (err) {
+        showToast('Network error — please try again', 'error');
+    } finally {
+        btn.disabled = false;
+        btn.textContent = 'Sign In';
     }
 });
 
@@ -712,8 +750,11 @@ async function logout() {
 
 // ─── Load & Populate ──────────────────────────────────────
 async function loadContent() {
-    // Use the admin endpoint so drafts are included
-    content = await api.get('/api/admin/content-full');
+    [content, projects, posts] = await Promise.all([
+        api.get('/api/admin/content-full'),
+        api.get('/api/admin/projects'),
+        api.get('/api/admin/posts'),
+    ]);
     populateForms();
     renderLists();
     renderDashboard();
@@ -759,11 +800,23 @@ async function renderDashboard() {
         subscribers = subs.length || 0;
     } catch(_) {}
 
+    const pubPosts = posts.filter(p => p.status !== 'draft').length;
+    const draftPosts = posts.filter(p => p.status === 'draft').length;
+
     document.getElementById('dashStats').innerHTML = `
         <div class="stat-card" onclick="navigate('writings')">
             <div class="stat-value">${published}</div>
             <div class="stat-label">Published Pieces</div>
             ${drafts ? `<div class="stat-sub">${drafts} draft${drafts !== 1 ? 's' : ''} saved</div>` : ''}
+        </div>
+        <div class="stat-card" onclick="navigate('projects')">
+            <div class="stat-value">${projects.length}</div>
+            <div class="stat-label">Projects</div>
+        </div>
+        <div class="stat-card" onclick="navigate('blog')">
+            <div class="stat-value">${pubPosts}</div>
+            <div class="stat-label">Blog Posts</div>
+            ${draftPosts ? `<div class="stat-sub">${draftPosts} draft${draftPosts !== 1 ? 's' : ''}</div>` : ''}
         </div>
         <div class="stat-card" onclick="navigate('events')">
             <div class="stat-value">${events.length}</div>
@@ -771,7 +824,7 @@ async function renderDashboard() {
         </div>
         <div class="stat-card">
             <div class="stat-value">${subscribers}</div>
-            <div class="stat-label">Newsletter Subscribers</div>
+            <div class="stat-label">Subscribers</div>
         </div>`;
 }
 
@@ -862,6 +915,8 @@ function renderLists() {
     renderWritings();
     renderServices();
     renderEvents();
+    renderProjects();
+    renderPosts();
 }
 
 function renderWritings() {
@@ -969,6 +1024,70 @@ function renderEvents() {
             </div>
         </div>`).join('') + '</div>';
     initDragDrop();
+}
+
+// ─── Projects ─────────────────────────────────────────────
+function renderProjects() {
+    const el = document.getElementById('projectsList');
+    if (!projects.length) { el.innerHTML = '<p style="color:#888;font-style:italic;padding:1rem 0">No projects yet. Use the button above to add one.</p>'; return; }
+    el.innerHTML = projects.map(p => `
+        <div class="list-item">
+            <div class="list-item-left">
+                <div class="list-item-content">
+                    <h4>${esc(p.title)}</h4>
+                    <p>${esc(p.excerpt || '')}</p>
+                    <div class="meta">/projects/${esc(p.slug)}${p.url ? ` · <a href="${esc(p.url)}" target="_blank" style="color:inherit">${esc(p.url)}</a>` : ''}</div>
+                </div>
+            </div>
+            <div class="card-actions">
+                <a href="/projects/${esc(p.slug)}" target="_blank" class="btn btn-small btn-ghost">View</a>
+                <button class="btn btn-small btn-secondary" onclick="editProject('${p.id}')">Edit</button>
+                <button class="btn btn-small btn-danger" onclick="deleteProject('${p.id}')">Delete</button>
+            </div>
+        </div>`).join('');
+}
+
+function editProject(id) { openModal('project', projects.find(p => p.id === id)); }
+
+async function deleteProject(id) {
+    const p = projects.find(p => p.id === id);
+    const ok = await showConfirm('Delete project?', `"${p?.title || 'This project'}" will be permanently removed.`, 'Yes, delete');
+    if (!ok) return;
+    await api.delete(`/api/admin/projects/${id}`);
+    showToast('Project deleted');
+    await loadContent();
+}
+
+// ─── Blog Posts ────────────────────────────────────────────
+function renderPosts() {
+    const el = document.getElementById('postsList');
+    if (!posts.length) { el.innerHTML = '<p style="color:#888;font-style:italic;padding:1rem 0">No posts yet. Use the button above to add one.</p>'; return; }
+    el.innerHTML = posts.map(p => `
+        <div class="list-item">
+            <div class="list-item-left">
+                <div class="list-item-content">
+                    <h4>${esc(p.title)} <span class="status-badge ${p.status || 'published'}">${p.status || 'published'}</span></h4>
+                    <p>${esc(p.excerpt || '')}</p>
+                    <div class="meta">/blog/${esc(p.slug)}</div>
+                </div>
+            </div>
+            <div class="card-actions">
+                ${(p.status || 'published') === 'published' ? `<a href="/blog/${esc(p.slug)}" target="_blank" class="btn btn-small btn-ghost">View</a>` : ''}
+                <button class="btn btn-small btn-secondary" onclick="editPost('${p.id}')">Edit</button>
+                <button class="btn btn-small btn-danger" onclick="deletePost('${p.id}')">Delete</button>
+            </div>
+        </div>`).join('');
+}
+
+function editPost(id) { openModal('post', posts.find(p => p.id === id)); }
+
+async function deletePost(id) {
+    const p = posts.find(p => p.id === id);
+    const ok = await showConfirm('Delete post?', `"${p?.title || 'This post'}" will be permanently removed.`, 'Yes, delete');
+    if (!ok) return;
+    await api.delete(`/api/admin/posts/${id}`);
+    showToast('Post deleted');
+    await loadContent();
 }
 
 // ─── Drag & Drop ──────────────────────────────────────────
@@ -1146,6 +1265,65 @@ function openModal(type, data = null, presetCategory = null) {
             }
         });
 
+    } else if (type === 'project') {
+        title.textContent = data ? 'Edit Project' : 'New Project';
+        body.innerHTML = `
+            <div class="form-group">
+                <label>Title <small style="font-weight:400;color:#888">(required)</small></label>
+                <input type="text" id="modalItemTitle" value="${esc(data?.title || '')}" placeholder="Project title…">
+            </div>
+            <div class="form-group">
+                <label>Excerpt <small style="font-weight:400;color:#888">Short description shown in listings</small></label>
+                <textarea id="modalExcerpt" rows="2" placeholder="One or two sentences…">${esc(data?.excerpt || '')}</textarea>
+            </div>
+            <div class="form-group">
+                <label>Content <small style="font-weight:400;color:#888">Write in Markdown (required)</small></label>
+                ${buildMarkdownToolbar('modalFullContent')}
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>External URL <small style="font-weight:400;color:#888">(optional — live project link)</small></label>
+                    <input type="url" id="modalUrl" value="${esc(data?.url || '')}" placeholder="https://…">
+                </div>
+                <div class="form-group">
+                    <label>Image URL <small style="font-weight:400;color:#888">(optional)</small></label>
+                    <input type="text" id="modalImage" value="${esc(data?.imageUrl || '')}" placeholder="https://… or /uploads/…" oninput="previewImage(this,'modalImgPreview')">
+                </div>
+            </div>
+            <div class="img-preview-wrap" id="modalImgPreview">
+                <div class="img-preview-label">Image preview</div>
+                <img src="${esc(data?.imageUrl || '')}" alt="preview">
+            </div>`;
+        document.getElementById('modalFullContent').value = data?.content || '';
+        if (data?.imageUrl) setTimeout(() => { const w = document.getElementById('modalImgPreview'); if (w) w.style.display = 'block'; }, 50);
+
+    } else if (type === 'post') {
+        const status = data?.status || 'published';
+        title.textContent = data ? 'Edit Post' : 'New Post';
+        body.innerHTML = `
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Title <small style="font-weight:400;color:#888">(required)</small></label>
+                    <input type="text" id="modalItemTitle" value="${esc(data?.title || '')}" placeholder="Post title…">
+                </div>
+                <div class="form-group">
+                    <label>Status</label>
+                    <select id="modalStatus">
+                        <option value="published" ${status === 'published' ? 'selected' : ''}>Published</option>
+                        <option value="draft"     ${status === 'draft'     ? 'selected' : ''}>Draft</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Excerpt <small style="font-weight:400;color:#888">Preview shown in blog listing</small></label>
+                <textarea id="modalExcerpt" rows="2" placeholder="One or two sentences…">${esc(data?.excerpt || '')}</textarea>
+            </div>
+            <div class="form-group">
+                <label>Content <small style="font-weight:400;color:#888">Write in Markdown (required)</small></label>
+                ${buildMarkdownToolbar('modalFullContent')}
+            </div>`;
+        document.getElementById('modalFullContent').value = data?.content || '';
+
     } else if (type === 'service') {
         title.textContent = data ? 'Edit Service' : 'New Service';
         body.innerHTML = `
@@ -1241,6 +1419,37 @@ async function saveModal() {
             } else {
                 await api.post('/api/admin/writings', data);
                 showToast('Writing created ✓');
+            }
+
+        } else if (currentModal === 'project') {
+            const data = {
+                title:    document.getElementById('modalItemTitle').value,
+                excerpt:  document.getElementById('modalExcerpt').value,
+                content:  document.getElementById('modalFullContent').value,
+                url:      document.getElementById('modalUrl').value,
+                imageUrl: document.getElementById('modalImage').value,
+            };
+            if (editingId) {
+                await api.put(`/api/admin/projects/${editingId}`, data);
+                showToast('Project saved ✓');
+            } else {
+                await api.post('/api/admin/projects', data);
+                showToast('Project created ✓');
+            }
+
+        } else if (currentModal === 'post') {
+            const data = {
+                title:   document.getElementById('modalItemTitle').value,
+                excerpt: document.getElementById('modalExcerpt').value,
+                content: document.getElementById('modalFullContent').value,
+                status:  document.getElementById('modalStatus').value,
+            };
+            if (editingId) {
+                await api.put(`/api/admin/posts/${editingId}`, data);
+                showToast('Post saved ✓');
+            } else {
+                await api.post('/api/admin/posts', data);
+                showToast('Post created ✓');
             }
 
         } else if (currentModal === 'service') {

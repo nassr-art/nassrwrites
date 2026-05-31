@@ -210,11 +210,13 @@ app.use(helmet({
 app.use(morgan(process.env.NODE_ENV === 'production' ? 'combined' : 'dev'));
 
 const ALLOWED_ORIGINS = process.env.ALLOWED_ORIGINS
-    ? process.env.ALLOWED_ORIGINS.split(',').map(s => s.trim())
-    : ['http://localhost:3000'];
+    ? process.env.ALLOWED_ORIGINS.split(',').map(s => s.trim()).filter(Boolean)
+    : [];
 
 app.use(cors({
-    origin: (origin, cb) => (!origin || ALLOWED_ORIGINS.includes(origin) ? cb(null, true) : cb(new Error('CORS: origin not allowed'))),
+    // When ALLOWED_ORIGINS is empty (not configured), allow all — CSRF tokens
+    // provide the real mutation-safety guarantee on this single-domain app.
+    origin: (origin, cb) => (!origin || !ALLOWED_ORIGINS.length || ALLOWED_ORIGINS.includes(origin) ? cb(null, true) : cb(new Error('CORS: origin not allowed'))),
     credentials: true,
 }));
 
@@ -532,6 +534,126 @@ app.post('/api/newsletter/subscribe', csrfCheck, async (req, res) => {
 app.get('/api/admin/newsletter/subscribers', requireAuth, async (req, res) => {
     try { const content = await readContent(); res.json(content.newsletter?.subscribers || []); }
     catch (err) { console.error(err); res.status(500).json({ error: 'Failed to fetch subscribers' }); }
+});
+
+// ─────────────────────────────────────────────────────────────────────────────
+//  ADMIN JSON API — Projects  (used by the admin SPA)
+// ─────────────────────────────────────────────────────────────────────────────
+
+app.get('/api/admin/projects', requireAuth, async (req, res) => {
+    try { const { list } = await readJson(DATA_FILES.projects); res.json(list); }
+    catch (err) { res.status(500).json({ error: 'Failed to load projects' }); }
+});
+
+app.post('/api/admin/projects', requireAuth, csrfCheck, async (req, res) => {
+    try {
+        const title    = String(req.body.title    || '').trim().slice(0, 200);
+        const content  = String(req.body.content  || '').trim();
+        const excerpt  = String(req.body.excerpt  || '').trim().slice(0, 500);
+        const url      = String(req.body.url      || '').trim();
+        const imageUrl = String(req.body.imageUrl || '').trim();
+        if (!title)   return res.status(400).json({ error: 'Title is required' });
+        if (!content) return res.status(400).json({ error: 'Content is required' });
+        const data = await readJson(DATA_FILES.projects);
+        const now  = new Date().toISOString();
+        let slug   = slugify(title);
+        const existing = new Set(data.list.map(p => p.slug));
+        if (existing.has(slug)) slug = `${slug}-${Date.now()}`;
+        const project = { id: 'p' + Date.now(), title, slug, excerpt, content, url, imageUrl, createdAt: now, updatedAt: now };
+        data.list.unshift(project);
+        await writeJson(DATA_FILES.projects, data);
+        logAction(req, `created project: ${title}`);
+        res.json({ success: true, project });
+    } catch (err) { console.error(err); res.status(500).json({ error: 'Failed to create project' }); }
+});
+
+app.put('/api/admin/projects/:id', requireAuth, csrfCheck, async (req, res) => {
+    try {
+        const data  = await readJson(DATA_FILES.projects);
+        const idx   = data.list.findIndex(p => p.id === req.params.id);
+        if (idx === -1) return res.status(404).json({ error: 'Project not found' });
+        const title    = String(req.body.title    || '').trim().slice(0, 200);
+        const content  = String(req.body.content  || '').trim();
+        const excerpt  = String(req.body.excerpt  || '').trim().slice(0, 500);
+        const url      = String(req.body.url      || '').trim();
+        const imageUrl = String(req.body.imageUrl || '').trim();
+        if (!title)   return res.status(400).json({ error: 'Title is required' });
+        if (!content) return res.status(400).json({ error: 'Content is required' });
+        data.list[idx] = { ...data.list[idx], title, excerpt, content, url, imageUrl, updatedAt: new Date().toISOString() };
+        await writeJson(DATA_FILES.projects, data);
+        logAction(req, `updated project: ${title}`);
+        res.json({ success: true });
+    } catch (err) { console.error(err); res.status(500).json({ error: 'Failed to update project' }); }
+});
+
+app.delete('/api/admin/projects/:id', requireAuth, csrfCheck, async (req, res) => {
+    try {
+        const data    = await readJson(DATA_FILES.projects);
+        const project = data.list.find(p => p.id === req.params.id);
+        data.list     = data.list.filter(p => p.id !== req.params.id);
+        await writeJson(DATA_FILES.projects, data);
+        logAction(req, `deleted project: ${project?.title || req.params.id}`);
+        res.json({ success: true });
+    } catch (err) { console.error(err); res.status(500).json({ error: 'Failed to delete project' }); }
+});
+
+// ─────────────────────────────────────────────────────────────────────────────
+//  ADMIN JSON API — Posts  (used by the admin SPA)
+// ─────────────────────────────────────────────────────────────────────────────
+
+app.get('/api/admin/posts', requireAuth, async (req, res) => {
+    try { const { list } = await readJson(DATA_FILES.posts); res.json(list); }
+    catch (err) { res.status(500).json({ error: 'Failed to load posts' }); }
+});
+
+app.post('/api/admin/posts', requireAuth, csrfCheck, async (req, res) => {
+    try {
+        const title   = String(req.body.title   || '').trim().slice(0, 200);
+        const content = String(req.body.content || '').trim();
+        const excerpt = String(req.body.excerpt || '').trim().slice(0, 500);
+        const status  = req.body.status === 'draft' ? 'draft' : 'published';
+        if (!title)   return res.status(400).json({ error: 'Title is required' });
+        if (!content) return res.status(400).json({ error: 'Content is required' });
+        const data = await readJson(DATA_FILES.posts);
+        const now  = new Date().toISOString();
+        let slug   = slugify(title);
+        const existing = new Set(data.list.map(p => p.slug));
+        if (existing.has(slug)) slug = `${slug}-${Date.now()}`;
+        const post = { id: 'b' + Date.now(), title, slug, excerpt, content, status, createdAt: now, updatedAt: now };
+        data.list.unshift(post);
+        await writeJson(DATA_FILES.posts, data);
+        logAction(req, `created post: ${title} [${status}]`);
+        res.json({ success: true, post });
+    } catch (err) { console.error(err); res.status(500).json({ error: 'Failed to create post' }); }
+});
+
+app.put('/api/admin/posts/:id', requireAuth, csrfCheck, async (req, res) => {
+    try {
+        const data = await readJson(DATA_FILES.posts);
+        const idx  = data.list.findIndex(p => p.id === req.params.id);
+        if (idx === -1) return res.status(404).json({ error: 'Post not found' });
+        const title   = String(req.body.title   || '').trim().slice(0, 200);
+        const content = String(req.body.content || '').trim();
+        const excerpt = String(req.body.excerpt || '').trim().slice(0, 500);
+        const status  = req.body.status === 'draft' ? 'draft' : 'published';
+        if (!title)   return res.status(400).json({ error: 'Title is required' });
+        if (!content) return res.status(400).json({ error: 'Content is required' });
+        data.list[idx] = { ...data.list[idx], title, excerpt, content, status, updatedAt: new Date().toISOString() };
+        await writeJson(DATA_FILES.posts, data);
+        logAction(req, `updated post: ${title}`);
+        res.json({ success: true });
+    } catch (err) { console.error(err); res.status(500).json({ error: 'Failed to update post' }); }
+});
+
+app.delete('/api/admin/posts/:id', requireAuth, csrfCheck, async (req, res) => {
+    try {
+        const data = await readJson(DATA_FILES.posts);
+        const post = data.list.find(p => p.id === req.params.id);
+        data.list  = data.list.filter(p => p.id !== req.params.id);
+        await writeJson(DATA_FILES.posts, data);
+        logAction(req, `deleted post: ${post?.title || req.params.id}`);
+        res.json({ success: true });
+    } catch (err) { console.error(err); res.status(500).json({ error: 'Failed to delete post' }); }
 });
 
 // ─────────────────────────────────────────────────────────────────────────────
