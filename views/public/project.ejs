@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= project.title %> — Nassr Writes</title>
+    <meta name="description" content="<%= escapeHtml(project.excerpt || project.title) %>">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Radley:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+    <nav id="navbar"></nav>
+
+    <article class="content-article">
+        <header class="content-header fade-in">
+            <% if (project.imageUrl) { %>
+                <div class="content-hero-img">
+                    <img src="<%= escapeHtml(project.imageUrl) %>" alt="<%= escapeHtml(project.title) %>">
+                </div>
+            <% } %>
+            <div class="content-header-inner">
+                <a href="/projects" class="content-back">← All projects</a>
+                <h1 class="content-title"><%= project.title %></h1>
+                <% if (project.excerpt) { %>
+                    <p class="content-lede"><%= project.excerpt %></p>
+                <% } %>
+                <div class="content-meta">
+                    <time datetime="<%= project.createdAt %>"><%= formatDate(project.createdAt) %></time>
+                    <% if (project.url) { %>
+                        <span class="content-meta-sep">·</span>
+                        <a href="<%= escapeHtml(project.url) %>" target="_blank" rel="noopener" class="content-ext-link">↗ Visit project</a>
+                    <% } %>
+                </div>
+            </div>
+        </header>
+
+        <!--
+            contentHtml is the output of renderMarkdown(), which runs through:
+            1. marked (parses Markdown to HTML)
+            2. DOMPurify (strips any XSS)
+            Safe to render with <%- (no escaping needed — already sanitized).
+        -->
+        <div class="content-body prose fade-in">
+            <%- contentHtml %>
+        </div>
+
+        <footer class="content-footer fade-in">
+            <a href="/projects" class="content-back">← Back to Projects</a>
+        </footer>
+    </article>
+
+    <footer id="footer"></footer>
+
+    <script src="/components.js"></script>
+    <script>initPage(() => {});</script>
+</body>
+</html>

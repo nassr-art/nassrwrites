@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= project ? 'Edit' : 'New' %> Project — Nassr Writes CMS</title>
+    <link rel="stylesheet" href="/admin-cms.css">
+</head>
+<body class="cms-body">
+
+<div class="cms-layout">
+    <%- include('../partials/admin-sidebar', { active: 'projects', csrfToken }) %>
+
+    <main class="cms-main">
+        <div class="cms-topbar">
+            <div>
+                <a href="/admin/projects" class="cms-back">← Projects</a>
+                <h1 class="cms-page-title"><%= project ? 'Edit Project' : 'New Project' %></h1>
+            </div>
+            <% if (project) { %>
+                <a href="/projects/<%= project.slug %>" target="_blank" class="btn btn-ghost">View live ↗</a>
+            <% } %>
+        </div>
+
+        <% if (error) { %>
+            <div class="cms-flash cms-flash--error"><%= error %></div>
+        <% } %>
+
+        <form
+            method="POST"
+            action="<%= project ? '/admin/projects/' + project.id : '/admin/projects' %>"
+            class="cms-form"
+            enctype="application/x-www-form-urlencoded"
+        >
+            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+
+            <div class="cms-form-grid">
+                <!-- Left column: main fields -->
+                <div class="cms-form-main">
+                    <div class="form-group">
+                        <label for="title">Title <span class="req">*</span></label>
+                        <input type="text" id="title" name="title" required maxlength="200"
+                               value="<%= project ? escapeHtml(project.title) : '' %>"
+                               placeholder="Project title…">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="excerpt">Short description</label>
+                        <input type="text" id="excerpt" name="excerpt" maxlength="500"
+                               value="<%= project ? escapeHtml(project.excerpt || '') : '' %>"
+                               placeholder="One line that describes the project (used in the list view)">
+                    </div>
+
+                    <!-- Markdown editor with server-side preview -->
+                    <div class="form-group">
+                        <label>Content <span class="req">*</span></label>
+                        <div class="md-editor">
+                            <div class="md-tabs">
+                                <button type="button" class="md-tab active" data-tab="write">Write</button>
+                                <button type="button" class="md-tab" data-tab="preview">Preview</button>
+                                <span class="md-hint">Markdown supported</span>
+                            </div>
+                            <div class="md-pane" id="writePane">
+                                <textarea id="content" name="content" rows="18" required
+                                          placeholder="Write your project description in Markdown…"><%= project ? escapeHtml(project.content || '') : '' %></textarea>
+                            </div>
+                            <div class="md-pane md-pane--hidden prose" id="previewPane">
+                                <div id="previewContent" class="md-preview-body">
+                                    <em class="cms-muted">Click "Preview" to render your Markdown.</em>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right column: meta -->
+                <div class="cms-form-aside">
+                    <div class="cms-aside-card">
+                        <h3>Publish</h3>
+                        <div class="form-group">
+                            <label for="slug">Slug</label>
+                            <input type="text" id="slug" name="slug" maxlength="100"
+                                   value="<%= project ? escapeHtml(project.slug) : '' %>"
+                                   placeholder="auto-generated">
+                            <small>URL: /projects/<strong id="slugPreview"><%= project ? project.slug : '' %></strong></small>
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-block">
+                            <%= project ? 'Save changes' : 'Create project' %>
+                        </button>
+                    </div>
+
+                    <div class="cms-aside-card">
+                        <h3>Links & Image</h3>
+                        <div class="form-group">
+                            <label for="url">Project URL</label>
+                            <input type="url" id="url" name="url"
+                                   value="<%= project ? escapeHtml(project.url || '') : '' %>"
+                                   placeholder="https://…">
+                        </div>
+                        <div class="form-group">
+                            <label for="imageUrl">Image URL</label>
+                            <input type="text" id="imageUrl" name="imageUrl"
+                                   value="<%= project ? escapeHtml(project.imageUrl || '') : '' %>"
+                                   placeholder="/uploads/… or https://…">
+                            <% if (project && project.imageUrl) { %>
+                                <img src="<%= escapeHtml(project.imageUrl) %>" alt="" class="cms-img-preview">
+                            <% } %>
+                        </div>
+                        <!-- Upload widget — posts the file via fetch, fills imageUrl -->
+                        <div class="upload-zone" id="uploadZone">
+                            <input type="file" id="imageFile" accept="image/*" style="display:none">
+                            <button type="button" class="btn btn-sm btn-ghost" onclick="document.getElementById('imageFile').click()">Upload image</button>
+                            <span class="upload-status" id="uploadStatus"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </main>
+</div>
+
+<script>
+// ── Slug auto-generation ──────────────────────────────────────────────────────
+const titleInput = document.getElementById('title');
+const slugInput  = document.getElementById('slug');
+const slugPreview = document.getElementById('slugPreview');
+let slugManuallyEdited = !!(slugInput.value); // treat existing slug as manual
+
+titleInput.addEventListener('input', () => {
+    if (slugManuallyEdited) return;
+    const slug = titleInput.value.toLowerCase().trim()
+        .replace(/[^\w\s-]/g, '').replace(/[\s_]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 100);
+    slugInput.value = slug;
+    slugPreview.textContent = slug;
+});
+slugInput.addEventListener('input', () => {
+    slugManuallyEdited = true;
+    slugPreview.textContent = slugInput.value;
+});
+
+// ── Markdown preview (server-rendered so output matches published exactly) ────
+const writePaneEl   = document.getElementById('writePane');
+const previewPaneEl = document.getElementById('previewPane');
+const previewContent = document.getElementById('previewContent');
+
+document.querySelectorAll('.md-tab').forEach(tab => {
+    tab.addEventListener('click', async () => {
+        document.querySelectorAll('.md-tab').forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+        const which = tab.dataset.tab;
+
+        if (which === 'preview') {
+            writePaneEl.classList.add('md-pane--hidden');
+            previewPaneEl.classList.remove('md-pane--hidden');
+            previewContent.innerHTML = '<em>Rendering…</em>';
+            try {
+                const resp = await fetch('/admin/preview', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'X-XSRF-Token': getCsrfToken() },
+                    body: JSON.stringify({ content: document.getElementById('content').value }),
+                });
+                const { html } = await resp.json();
+                previewContent.innerHTML = html || '<em class="cms-muted">Nothing to preview.</em>';
+            } catch {
+                previewContent.innerHTML = '<em class="cms-muted">Preview failed.</em>';
+            }
+        } else {
+            previewPaneEl.classList.add('md-pane--hidden');
+            writePaneEl.classList.remove('md-pane--hidden');
+        }
+    });
+});
+
+// ── Image upload ──────────────────────────────────────────────────────────────
+document.getElementById('imageFile').addEventListener('change', async e => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const status = document.getElementById('uploadStatus');
+    status.textContent = 'Uploading…';
+    const form = new FormData();
+    form.append('image', file);
+    try {
+        const resp = await fetch('/admin/upload', {
+            method: 'POST',
+            headers: { 'X-XSRF-Token': getCsrfToken() },
+            body: form,
+        });
+        const data = await resp.json();
+        if (data.url) {
+            document.getElementById('imageUrl').value = data.url;
+            status.textContent = '✓ Uploaded';
+            status.style.color = 'var(--cms-success)';
+        } else {
+            status.textContent = data.error || 'Upload failed';
+            status.style.color = 'var(--cms-error)';
+        }
+    } catch {
+        status.textContent = 'Upload failed';
+        status.style.color = 'var(--cms-error)';
+    }
+});
+
+function getCsrfToken() {
+    const m = document.cookie.split('; ').find(c => c.startsWith('XSRF-TOKEN='));
+    return m ? decodeURIComponent(m.split('=')[1]) : '';
+}
+</script>
+</body>
+</html>

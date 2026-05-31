@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blog — Nassr Writes</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Radley:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+    <nav id="navbar"></nav>
+
+    <main>
+        <section class="projects-hero fade-in">
+            <div class="section-header">
+                <span class="section-label">Thoughts</span>
+                <h1 class="section-title">Blog</h1>
+            </div>
+        </section>
+
+        <section class="blog-list-section">
+            <% if (posts.length === 0) { %>
+                <div class="projects-empty fade-in">
+                    <p>No posts yet. Check back soon.</p>
+                </div>
+            <% } else { %>
+                <div class="blog-list">
+                    <% posts.forEach(p => { %>
+                        <article class="blog-row fade-in">
+                            <div class="blog-row-date">
+                                <time datetime="<%= p.createdAt %>"><%= formatDate(p.createdAt) %></time>
+                            </div>
+                            <div class="blog-row-body">
+                                <h2 class="blog-row-title">
+                                    <a href="/blog/<%= escapeHtml(p.slug) %>"><%= p.title %></a>
+                                </h2>
+                                <% if (p.excerpt) { %>
+                                    <p class="blog-row-excerpt"><%= p.excerpt %></p>
+                                <% } %>
+                                <a href="/blog/<%= escapeHtml(p.slug) %>" class="blog-read-more">Read →</a>
+                            </div>
+                        </article>
+                    <% }) %>
+                </div>
+            <% } %>
+        </section>
+    </main>
+
+    <footer id="footer"></footer>
+
+    <script src="/components.js"></script>
+    <script>initPage(() => {});</script>
+</body>
+</html>

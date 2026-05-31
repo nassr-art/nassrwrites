@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= post.title %> — Nassr Writes</title>
+    <meta name="description" content="<%= escapeHtml(post.excerpt || post.title) %>">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Radley:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+    <nav id="navbar"></nav>
+
+    <article class="content-article">
+        <header class="content-header fade-in">
+            <div class="content-header-inner">
+                <a href="/blog" class="content-back">← All posts</a>
+                <h1 class="content-title"><%= post.title %></h1>
+                <% if (post.excerpt) { %>
+                    <p class="content-lede"><%= post.excerpt %></p>
+                <% } %>
+                <div class="content-meta">
+                    <time datetime="<%= post.createdAt %>"><%= formatDate(post.createdAt) %></time>
+                </div>
+            </div>
+        </header>
+
+        <!--
+            contentHtml passed through marked + DOMPurify server-side.
+            Safe to render with <%-  (already sanitized — not raw user content).
+        -->
+        <div class="content-body prose fade-in">
+            <%- contentHtml %>
+        </div>
+
+        <footer class="content-footer fade-in">
+            <a href="/blog" class="content-back">← Back to Blog</a>
+        </footer>
+    </article>
+
+    <footer id="footer"></footer>
+
+    <script src="/components.js"></script>
+    <script>initPage(() => {});</script>
+</body>
+</html>

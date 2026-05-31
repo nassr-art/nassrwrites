@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Projects — Nassr Writes</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Radley:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+    <nav id="navbar"></nav>
+
+    <main>
+        <section class="projects-hero fade-in">
+            <div class="section-header">
+                <span class="section-label">Work</span>
+                <h1 class="section-title">Projects</h1>
+            </div>
+        </section>
+
+        <section class="projects-list-section">
+            <% if (projects.length === 0) { %>
+                <div class="projects-empty fade-in">
+                    <p>No projects published yet. Check back soon.</p>
+                </div>
+            <% } else { %>
+                <div class="projects-grid">
+                    <% projects.forEach((p, i) => { %>
+                        <article class="project-card fade-in">
+                            <% if (p.imageUrl) { %>
+                                <a href="/projects/<%= escapeHtml(p.slug) %>" class="project-card-img-wrap">
+                                    <img src="<%= escapeHtml(p.imageUrl) %>" alt="<%= escapeHtml(p.title) %>" loading="lazy">
+                                </a>
+                            <% } %>
+                            <div class="project-card-body">
+                                <h2 class="project-card-title">
+                                    <a href="/projects/<%= escapeHtml(p.slug) %>"><%= p.title %></a>
+                                </h2>
+                                <% if (p.excerpt) { %>
+                                    <p class="project-card-excerpt"><%= p.excerpt %></p>
+                                <% } %>
+                                <div class="project-card-footer">
+                                    <a href="/projects/<%= escapeHtml(p.slug) %>" class="project-read-more">Read more →</a>
+                                    <% if (p.url) { %>
+                                        <a href="<%= escapeHtml(p.url) %>" target="_blank" rel="noopener" class="project-ext-link">↗ Visit project</a>
+                                    <% } %>
+                                </div>
+                            </div>
+                        </article>
+                    <% }) %>
+                </div>
+            <% } %>
+        </section>
+    </main>
+
+    <footer id="footer"></footer>
+
+    <script src="/components.js"></script>
+    <script>
+        // initPage loads nav + footer from /api/content; content body is already server-rendered
+        initPage(() => {});
+    </script>
+</body>
+</html>

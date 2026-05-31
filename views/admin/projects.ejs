@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Projects — Nassr Writes CMS</title>
+    <link rel="stylesheet" href="/admin-cms.css">
+</head>
+<body class="cms-body">
+
+<div class="cms-layout">
+    <%- include('../partials/admin-sidebar', { active: 'projects', csrfToken }) %>
+
+    <main class="cms-main">
+        <div class="cms-topbar">
+            <h1 class="cms-page-title">Projects</h1>
+            <a href="/admin/projects/new" class="btn btn-primary">+ New Project</a>
+        </div>
+
+        <% if (flash) { %>
+            <div class="cms-flash cms-flash--<%= flash.type %>"><%= flash.msg %></div>
+        <% } %>
+
+        <% if (projects.length === 0) { %>
+            <div class="cms-empty">
+                <p>No projects yet.</p>
+                <a href="/admin/projects/new" class="btn btn-primary">Create your first project →</a>
+            </div>
+        <% } else { %>
+            <div class="cms-table-wrap">
+                <table class="cms-table">
+                    <thead>
+                        <tr>
+                            <th>Title</th>
+                            <th>Slug</th>
+                            <th>URL</th>
+                            <th>Created</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% projects.forEach(p => { %>
+                            <tr>
+                                <td>
+                                    <strong><%= p.title %></strong>
+                                    <% if (p.excerpt) { %>
+                                        <span class="cms-meta"><%= p.excerpt.slice(0, 80) %><%= p.excerpt.length > 80 ? '…' : '' %></span>
+                                    <% } %>
+                                </td>
+                                <td><code class="cms-slug"><%= p.slug %></code></td>
+                                <td>
+                                    <% if (p.url) { %>
+                                        <a href="<%= escapeHtml(p.url) %>" target="_blank" rel="noopener" class="cms-link">↗ link</a>
+                                    <% } else { %>
+                                        <span class="cms-muted">—</span>
+                                    <% } %>
+                                </td>
+                                <td class="cms-date"><%= formatDate(p.createdAt) %></td>
+                                <td class="cms-actions">
+                                    <a href="/admin/projects/<%= p.id %>/edit" class="btn btn-sm">Edit</a>
+                                    <a href="/projects/<%= p.slug %>" target="_blank" class="btn btn-sm btn-ghost">View</a>
+                                    <form method="POST" action="/admin/projects/<%= p.id %>/delete"
+                                          onsubmit="return confirm('Delete “<%= p.title.replace(/"/g, '&quot;') %>”? This cannot be undone.')">
+                                        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                                        <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+                                    </form>
+                                </td>
+                            </tr>
+                        <% }) %>
+                    </tbody>
+                </table>
+            </div>
+        <% } %>
+    </main>
+</div>
+
+</body>
+</html>

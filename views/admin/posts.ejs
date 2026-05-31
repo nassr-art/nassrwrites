@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blog Posts — Nassr Writes CMS</title>
+    <link rel="stylesheet" href="/admin-cms.css">
+</head>
+<body class="cms-body">
+
+<div class="cms-layout">
+    <%- include('../partials/admin-sidebar', { active: 'posts', csrfToken }) %>
+
+    <main class="cms-main">
+        <div class="cms-topbar">
+            <h1 class="cms-page-title">Blog Posts</h1>
+            <a href="/admin/posts/new" class="btn btn-primary">+ New Post</a>
+        </div>
+
+        <% if (flash) { %>
+            <div class="cms-flash cms-flash--<%= flash.type %>"><%= flash.msg %></div>
+        <% } %>
+
+        <% if (posts.length === 0) { %>
+            <div class="cms-empty">
+                <p>No posts yet.</p>
+                <a href="/admin/posts/new" class="btn btn-primary">Write your first post →</a>
+            </div>
+        <% } else { %>
+            <div class="cms-table-wrap">
+                <table class="cms-table">
+                    <thead>
+                        <tr>
+                            <th>Title</th>
+                            <th>Slug</th>
+                            <th>Status</th>
+                            <th>Created</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% posts.forEach(p => { %>
+                            <tr>
+                                <td>
+                                    <strong><%= p.title %></strong>
+                                    <% if (p.excerpt) { %>
+                                        <span class="cms-meta"><%= p.excerpt.slice(0, 80) %><%= p.excerpt.length > 80 ? '…' : '' %></span>
+                                    <% } %>
+                                </td>
+                                <td><code class="cms-slug"><%= p.slug %></code></td>
+                                <td>
+                                    <span class="cms-badge cms-badge--<%= p.status === 'draft' ? 'draft' : 'pub' %>">
+                                        <%= p.status === 'draft' ? 'Draft' : 'Published' %>
+                                    </span>
+                                </td>
+                                <td class="cms-date"><%= formatDate(p.createdAt) %></td>
+                                <td class="cms-actions">
+                                    <a href="/admin/posts/<%= p.id %>/edit" class="btn btn-sm">Edit</a>
+                                    <% if (p.status !== 'draft') { %>
+                                        <a href="/blog/<%= p.slug %>" target="_blank" class="btn btn-sm btn-ghost">View</a>
+                                    <% } %>
+                                    <form method="POST" action="/admin/posts/<%= p.id %>/delete"
+                                          onsubmit="return confirm('Delete this post? This cannot be undone.')">
+                                        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                                        <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+                                    </form>
+                                </td>
+                            </tr>
+                        <% }) %>
+                    </tbody>
+                </table>
+            </div>
+        <% } %>
+    </main>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,56 @@
+<%
+// active: 'projects' | 'posts'  — passed by each page to highlight current section
+const a = locals.active || '';
+%>
+<aside class="cms-sidebar">
+    <div class="cms-sidebar-logo">
+        <span>Nassr Writes</span>
+        <small>CMS</small>
+    </div>
+    <nav class="cms-nav">
+        <a href="/admin" class="cms-nav-item">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+            Full Dashboard
+        </a>
+        <div class="cms-nav-label">Portfolio</div>
+        <a href="/admin/projects" class="cms-nav-item<%= a === 'projects' ? ' active' : '' %>">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+            Projects
+        </a>
+        <a href="/admin/posts" class="cms-nav-item<%= a === 'posts' ? ' active' : '' %>">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+            Blog Posts
+        </a>
+        <div class="cms-nav-label cms-nav-label--gap">Public Pages</div>
+        <a href="/projects" target="_blank" class="cms-nav-item cms-nav-item--external">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+            View Projects ↗
+        </a>
+        <a href="/blog" target="_blank" class="cms-nav-item cms-nav-item--external">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+            View Blog ↗
+        </a>
+    </nav>
+    <div class="cms-sidebar-footer">
+        <form method="POST" action="/api/auth/logout" id="cmsLogoutForm">
+            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+            <button type="submit" class="cms-logout-btn">Log out</button>
+        </form>
+    </div>
+</aside>
+<script>
+// Submit logout via fetch so we can handle the redirect cleanly
+document.getElementById('cmsLogoutForm').addEventListener('submit', async e => {
+    e.preventDefault();
+    await fetch('/api/auth/logout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'X-XSRF-Token': getCsrfToken() },
+        body: new URLSearchParams({ _csrf: document.querySelector('#cmsLogoutForm input[name=_csrf]').value })
+    });
+    window.location.href = '/admin';
+});
+function getCsrfToken() {
+    const m = document.cookie.split('; ').find(c => c.startsWith('XSRF-TOKEN='));
+    return m ? decodeURIComponent(m.split('=')[1]) : '';
+}
+</script>
