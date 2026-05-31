@@ -105,6 +105,26 @@ const DATA_FILES = {
     }
 })();
 
+// ─── One-time admin password reset via env var ────────────────────────────────
+// Set ADMIN_PASSWORD_RESET=<newpass> in Railway Variables, deploy once, then
+// remove the var. The env var is consumed on startup and never stored.
+;(async function applyPasswordReset() {
+    const resetPw = process.env.ADMIN_PASSWORD_RESET;
+    if (!resetPw) return;
+    if (resetPw.length < 8) { console.error('ADMIN_PASSWORD_RESET: too short, skipping'); return; }
+    try {
+        const raw     = fs.readFileSync(DATA_FILES.content, 'utf8');
+        const content = JSON.parse(raw);
+        content.admin.passwordHash = await bcrypt.hash(resetPw, SALT_ROUNDS);
+        const tmp = `${DATA_FILES.content}.tmp.${Date.now()}`;
+        fs.writeFileSync(tmp, JSON.stringify(content, null, 2), 'utf8');
+        fs.renameSync(tmp, DATA_FILES.content);
+        console.log('[STARTUP] Admin password reset applied successfully');
+    } catch (err) {
+        console.error('[STARTUP] Admin password reset failed:', err.message);
+    }
+})();
+
 // ─── Atomic, concurrent-safe JSON write queue (one queue per file) ─────────────
 // Each file gets its own serialised promise chain.  Every write goes to a .tmp
 // file first, then is renamed atomically — a crash can never leave a torn file.
