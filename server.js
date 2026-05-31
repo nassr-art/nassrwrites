@@ -195,6 +195,10 @@ app.use(helmet({
         directives: {
             defaultSrc:     ["'self'"],
             scriptSrc:      ["'self'", "'unsafe-inline'"],
+            // Helmet's default is script-src-attr 'none', which blocks inline
+            // event handlers (onclick=...). The admin panel relies on them, so
+            // allow inline handlers — consistent with scriptSrc 'unsafe-inline'.
+            scriptSrcAttr:  ["'unsafe-inline'"],
             styleSrc:       ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
             fontSrc:        ["'self'", "https://fonts.gstatic.com"],
             imgSrc:         ["'self'", "data:", "blob:"],
