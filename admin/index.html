@@ -223,6 +223,37 @@
             .list-item-content p { max-width: 200px; }
             .card-actions { flex-direction: column; gap: 0.3rem; }
         }
+
+        /* Events gallery admin */
+        .gallery-admin-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 1.25rem;
+        }
+        .gallery-admin-item {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            background: #faf8f3;
+            border: 1px solid var(--border, #e5e0d5);
+            border-radius: 6px;
+            padding: 0.6rem;
+        }
+        .gallery-admin-item img {
+            width: 100%;
+            aspect-ratio: 4/3;
+            object-fit: cover;
+            border-radius: 4px;
+            display: block;
+        }
+        .gallery-caption-input {
+            width: 100%;
+            font-size: 0.8rem;
+            padding: 0.4rem 0.5rem;
+            border: 1px solid var(--border, #e5e0d5);
+            border-radius: 4px;
+            font-family: inherit;
+        }
     </style>
 </head>
 <body>
@@ -550,6 +581,19 @@
                     </div>
                 </form>
                 <div id="eventsList"></div>
+
+                <div class="content-header" style="margin-top:3rem">
+                    <div class="content-header-text">
+                        <h2>Past Events Gallery</h2>
+                        <p>Upload photos from previous events — shown in a gallery on the public Events page</p>
+                    </div>
+                    <label class="btn" style="cursor:pointer;margin:0">
+                        + Upload Photos
+                        <input type="file" id="galleryUpload" accept="image/*" multiple style="display:none" onchange="uploadGalleryImages(this)">
+                    </label>
+                </div>
+                <p id="galleryUploadStatus" style="color:#888;font-size:0.85rem;margin:-0.5rem 0 1rem"></p>
+                <div id="eventsGallery"></div>
             </div>
 
             <!-- Contact -->
@@ -923,6 +967,7 @@ function renderLists() {
     renderWritings();
     renderServices();
     renderEvents();
+    renderEventGallery();
     renderProjects();
     renderPosts();
 }
@@ -1032,6 +1077,72 @@ function renderEvents() {
             </div>
         </div>`).join('') + '</div>';
     initDragDrop();
+}
+
+// ─── Events gallery ───────────────────────────────────────
+function renderEventGallery() {
+    const el = document.getElementById('eventsGallery');
+    if (!el) return;
+    const gallery = content.events?.gallery || [];
+    if (!gallery.length) {
+        el.innerHTML = '<p style="color:#888;font-style:italic;padding:0.5rem 0">No photos yet. Use “Upload Photos” to add images from past events.</p>';
+        return;
+    }
+    el.innerHTML = `<div class="gallery-admin-grid">` + gallery.map(g => `
+        <div class="gallery-admin-item">
+            <img src="${esc(g.url)}" alt="${esc(g.caption || '')}">
+            <input type="text" class="gallery-caption-input" placeholder="Add a caption…" value="${esc(g.caption || '')}"
+                   onchange="updateGalleryCaption('${g.id}', this.value)">
+            <button class="btn btn-small btn-danger" onclick="deleteGalleryImage('${g.id}')">Remove</button>
+        </div>`).join('') + '</div>';
+}
+
+async function uploadGalleryImages(input) {
+    const files = Array.from(input.files || []);
+    if (!files.length) return;
+    const status = document.getElementById('galleryUploadStatus');
+    let done = 0, failed = 0;
+    for (const file of files) {
+        status.textContent = `Uploading ${done + failed + 1} of ${files.length}…`;
+        try {
+            const fd = new FormData();
+            fd.append('image', file);
+            const up = await safeFetch('/admin/upload', {
+                method: 'POST',
+                headers: { 'X-XSRF-Token': getCsrfToken() },
+                body: fd,
+            });
+            if (!up.url) throw new Error(up.error || 'upload failed');
+            const res = await api.post('/api/admin/events/gallery', { url: up.url, caption: '' });
+            if (res.error) throw new Error(res.error);
+            done++;
+        } catch (err) {
+            failed++;
+            console.error('Gallery upload failed:', err);
+        }
+    }
+    input.value = '';
+    status.textContent = failed
+        ? `Uploaded ${done}, ${failed} failed.`
+        : `Uploaded ${done} photo${done === 1 ? '' : 's'}.`;
+    showToast(failed ? `${failed} upload(s) failed` : 'Photos uploaded', failed ? 'error' : 'success');
+    await loadContent();
+}
+
+async function updateGalleryCaption(id, caption) {
+    const res = await api.put(`/api/admin/events/gallery/${id}`, { caption });
+    if (res.error) { showToast(res.error, 'error'); return; }
+    const item = (content.events?.gallery || []).find(g => g.id === id);
+    if (item) item.caption = caption;
+    showToast('Caption saved');
+}
+
+async function deleteGalleryImage(id) {
+    const ok = await showConfirm('Remove photo?', 'This image will be removed from the events gallery.', 'Yes, remove');
+    if (!ok) return;
+    await api.delete(`/api/admin/events/gallery/${id}`);
+    showToast('Photo removed');
+    await loadContent();
 }
 
 // ─── Projects ─────────────────────────────────────────────

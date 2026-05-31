@@ -496,6 +496,45 @@ app.delete('/api/admin/events/:id', requireAuth, csrfCheck, async (req, res) => 
     } catch (err) { console.error(err); res.status(500).json({ error: 'Failed to delete event' }); }
 });
 
+// Events gallery — uploaded photos from past events (events.gallery[])
+app.post('/api/admin/events/gallery', requireAuth, csrfCheck, async (req, res) => {
+    try {
+        const content = await readContent();
+        if (!content.events) content.events = {};
+        if (!Array.isArray(content.events.gallery)) content.events.gallery = [];
+        const { url, caption } = req.body;
+        if (!url) return res.status(400).json({ error: 'Image URL required' });
+        const item = { id: 'g' + Date.now() + Math.floor(Math.random() * 1000), url, caption: caption || '' };
+        content.events.gallery.push(item);
+        await writeContent(content);
+        res.json({ success: true, item });
+    } catch (err) { console.error(err); res.status(500).json({ error: 'Failed to add gallery image' }); }
+});
+
+app.put('/api/admin/events/gallery/:id', requireAuth, csrfCheck, async (req, res) => {
+    try {
+        const content = await readContent();
+        const list = content.events?.gallery;
+        if (!Array.isArray(list)) return res.status(404).json({ error: 'Gallery is empty' });
+        const idx = list.findIndex(g => g.id === req.params.id);
+        if (idx === -1) return res.status(404).json({ error: 'Image not found' });
+        list[idx] = { ...list[idx], ...req.body };
+        await writeContent(content);
+        res.json({ success: true, item: list[idx] });
+    } catch (err) { console.error(err); res.status(500).json({ error: 'Failed to update gallery image' }); }
+});
+
+app.delete('/api/admin/events/gallery/:id', requireAuth, csrfCheck, async (req, res) => {
+    try {
+        const content = await readContent();
+        if (Array.isArray(content.events?.gallery)) {
+            content.events.gallery = content.events.gallery.filter(g => g.id !== req.params.id);
+            await writeContent(content);
+        }
+        res.json({ success: true });
+    } catch (err) { console.error(err); res.status(500).json({ error: 'Failed to delete gallery image' }); }
+});
+
 // Services CRUD
 app.post('/api/admin/services', requireAuth, csrfCheck, async (req, res) => {
     try {
