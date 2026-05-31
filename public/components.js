@@ -23,6 +23,7 @@ function renderNav(content) {
                     <li><a href="${l.href}"${current === l.key ? ' class="active"' : ''}>${l.label}</a></li>
                 `).join('')}
             </ul>
+            <a href="/subscribe" class="nav-subscribe">Subscribe</a>
             <button class="mobile-menu-btn" aria-label="Open menu" aria-expanded="false" aria-controls="mobileMenuOverlay">
                 <span></span><span></span>
             </button>
@@ -56,6 +57,7 @@ function _initMobileMenu(content, current) {
             </ul>
         </nav>
         <div class="mobile-menu-footer">
+            <a href="/subscribe" class="mobile-menu-subscribe">Subscribe to letters →</a>
             ${content.site?.email ? `<a href="mailto:${content.site.email}" class="mobile-menu-email">${content.site.email}</a>` : ''}
         </div>`;
     document.body.appendChild(overlay);

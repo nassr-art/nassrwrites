@@ -34,6 +34,16 @@
         </div>
     </section>
 
+    <!-- Event Calendar -->
+    <section id="home-calendar">
+        <div class="section-header fade-in">
+            <span class="section-label">On the Calendar</span>
+            <h2 class="section-title">Upcoming <em>Events</em></h2>
+        </div>
+        <div class="cal-events-list" id="homeCalendarList"></div>
+        <a href="/events" class="cal-view-all fade-in">View all events →</a>
+    </section>
+
     <!-- Newsletter -->
     <section id="newsletter">
         <div class="newsletter-inner">
@@ -72,6 +82,20 @@
                 </a>`).join('');
 
             document.getElementById('philosophyText').textContent = content.philosophy;
+
+            const calEvents = (content.events?.list || []).slice(0, 3);
+            document.getElementById('homeCalendarList').innerHTML = calEvents.length
+                ? calEvents.map(e => `
+                    <a href="/events" class="cal-event-row fade-in">
+                        <div class="cal-event-date">${e.date}</div>
+                        <div class="cal-event-info">
+                            <span class="cal-event-venue">${e.venue}</span>
+                            <h3 class="cal-event-title">${e.title}</h3>
+                            <p class="cal-event-desc">${e.description}</p>
+                        </div>
+                        <span class="cal-event-arrow">↗</span>
+                    </a>`).join('')
+                : '<p class="cal-empty">No upcoming events at the moment. Check back soon.</p>';
         });
     </script>
 </body>
