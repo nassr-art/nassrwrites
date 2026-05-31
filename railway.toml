@@ -7,3 +7,8 @@ healthcheckPath = "/api/content"
 healthcheckTimeout = 300
 restartPolicyType = "ON_FAILURE"
 restartPolicyMaxRetries = 10
+
+# Required env vars (set these in Railway dashboard → Variables):
+#   SESSION_SECRET  = <64 hex chars>
+#   NODE_ENV        = production
+#   DATA_DIR        = /app/storage   ← mount a Railway Volume here
