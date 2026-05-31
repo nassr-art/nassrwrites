@@ -1,0 +1,9 @@
+node_modules/
+data/
+admin/
+server.js
+package.json
+package-lock.json
+railway.toml
+.gitignore
+README.md

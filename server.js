@@ -8,6 +8,17 @@ const path = require('path');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+// DATA_DIR lets Railway mount a persistent volume so content survives redeploys.
+// Locally it falls back to ./data as before.
+const DATA_DIR  = process.env.DATA_DIR ? path.resolve(process.env.DATA_DIR) : path.join(__dirname, 'data');
+const SEED_PATH = path.join(__dirname, 'data', 'content.json');
+
+// On first boot of a fresh Railway volume, seed from the committed content.json
+if (!fs.existsSync(path.join(DATA_DIR, 'content.json'))) {
+    fs.mkdirSync(DATA_DIR, { recursive: true });
+    if (fs.existsSync(SEED_PATH)) fs.copyFileSync(SEED_PATH, path.join(DATA_DIR, 'content.json'));
+}
+
 // Middleware
 app.use(cors());
 app.use(express.json());
@@ -24,8 +35,8 @@ app.use(session({
     }
 }));
 
-// Data file path
-const dataPath = path.join(__dirname, 'data', 'content.json');
+// Data file path (uses DATA_DIR so Railway volumes work)
+const dataPath = path.join(DATA_DIR, 'content.json');
 
 // Helper functions
 function readContent() {
