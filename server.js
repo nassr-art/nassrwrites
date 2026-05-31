@@ -209,14 +209,27 @@ app.use(helmet({
 
 app.use(morgan(process.env.NODE_ENV === 'production' ? 'combined' : 'dev'));
 
-const ALLOWED_ORIGINS = process.env.ALLOWED_ORIGINS
-    ? process.env.ALLOWED_ORIGINS.split(',').map(s => s.trim()).filter(Boolean)
-    : [];
+// Known-good production origins are always allowed so a stale/misconfigured
+// ALLOWED_ORIGINS env var can never block the same-origin admin login again.
+// Any extra origins from the env var are unioned in. Same-origin requests
+// (no Origin header) are always permitted. CSRF tokens remain the real
+// mutation-safety guarantee on this single-domain app.
+const DEFAULT_ORIGINS = [
+    'https://www.nassrwrites.com',
+    'https://nassrwrites.com',
+];
+const ALLOWED_ORIGINS = [
+    ...DEFAULT_ORIGINS,
+    ...(process.env.ALLOWED_ORIGINS
+        ? process.env.ALLOWED_ORIGINS.split(',').map(s => s.trim()).filter(Boolean)
+        : []),
+];
 
 app.use(cors({
-    // When ALLOWED_ORIGINS is empty (not configured), allow all — CSRF tokens
-    // provide the real mutation-safety guarantee on this single-domain app.
-    origin: (origin, cb) => (!origin || !ALLOWED_ORIGINS.length || ALLOWED_ORIGINS.includes(origin) ? cb(null, true) : cb(new Error('CORS: origin not allowed'))),
+    origin: (origin, cb) =>
+        (!origin || ALLOWED_ORIGINS.includes(origin)
+            ? cb(null, true)
+            : cb(new Error('CORS: origin not allowed'))),
     credentials: true,
 }));
 
