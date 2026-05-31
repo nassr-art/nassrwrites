@@ -228,9 +228,8 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/admin', express.static(path.join(__dirname, 'admin')));
 app.use('/uploads', express.static(UPLOADS_DIR));
 
-// Session
+// Session — MemoryStore (no filesystem dependency; fine for single-admin CMS)
 app.use(session({
-    store: new FileStore({ path: SESSION_DIR, ttl: 86400, retries: 1, reapInterval: 3600 }),
     secret: SESSION_SECRET || 'dev-secret-change-in-production',
     resave: false,
     saveUninitialized: false,
@@ -1013,6 +1012,17 @@ app.get('/admin', (req, res) =>
 // ─────────────────────────────────────────────────────────────────────────────
 //  START
 // ─────────────────────────────────────────────────────────────────────────────
+
+// Global error handler — always returns JSON for /api paths, HTML otherwise
+app.use((err, req, res, next) => {
+    console.error('[ERROR]', err.message || err);
+    if (res.headersSent) return;
+    const status = err.status || err.statusCode || 500;
+    if (req.path.startsWith('/api/') || req.headers['content-type']?.includes('application/json')) {
+        return res.status(status).json({ error: err.message || 'Internal server error' });
+    }
+    res.status(status).send(`<h1>${status} — ${err.message || 'Internal Server Error'}</h1>`);
+});
 
 app.listen(PORT, () => {
     console.log(`NassrWrites CMS running on http://localhost:${PORT}`);
