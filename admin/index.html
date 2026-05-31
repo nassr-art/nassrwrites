@@ -659,11 +659,19 @@ function getCsrfToken() {
     return match ? decodeURIComponent(match.split('=')[1]) : '';
 }
 
+async function safeFetch(url, opts = {}) {
+    const res = await fetch(url, { credentials: 'same-origin', ...opts });
+    const text = await res.text();
+    try { return JSON.parse(text); } catch (_) {
+        return { error: `Server error (${res.status})`, _raw: text.slice(0, 200) };
+    }
+}
+
 const api = {
-    async get(ep) { return (await fetch(ep)).json(); },
-    async post(ep, data) { return (await fetch(ep, { method:'POST', headers:{'Content-Type':'application/json','X-XSRF-Token':getCsrfToken()}, body:JSON.stringify(data) })).json(); },
-    async put(ep, data) { return (await fetch(ep, { method:'PUT', headers:{'Content-Type':'application/json','X-XSRF-Token':getCsrfToken()}, body:JSON.stringify(data) })).json(); },
-    async delete(ep) { return (await fetch(ep, { method:'DELETE', headers:{'X-XSRF-Token':getCsrfToken()} })).json(); }
+    async get(ep) { return safeFetch(ep); },
+    async post(ep, data) { return safeFetch(ep, { method:'POST', headers:{'Content-Type':'application/json','X-XSRF-Token':getCsrfToken()}, body:JSON.stringify(data) }); },
+    async put(ep, data)  { return safeFetch(ep, { method:'PUT',  headers:{'Content-Type':'application/json','X-XSRF-Token':getCsrfToken()}, body:JSON.stringify(data) }); },
+    async delete(ep)     { return safeFetch(ep, { method:'DELETE', headers:{'X-XSRF-Token':getCsrfToken()} }); }
 };
 
 // ─── Toast ────────────────────────────────────────────────
@@ -736,7 +744,7 @@ document.getElementById('loginForm').addEventListener('submit', async e => {
             showToast(result.error || 'Login failed', 'error');
         }
     } catch (err) {
-        showToast('Network error — please try again', 'error');
+        showToast(err?.message || 'Network error — please try again', 'error');
     } finally {
         btn.disabled = false;
         btn.textContent = 'Sign In';

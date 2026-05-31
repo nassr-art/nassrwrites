@@ -336,7 +336,7 @@ app.get('/api/content/:section', async (req, res) => {
 //  AUTH (existing)
 // ─────────────────────────────────────────────────────────────────────────────
 
-app.post('/api/auth/login', loginLimiter, csrfCheck, async (req, res) => {
+app.post('/api/auth/login', loginLimiter, async (req, res) => {
     try {
         const { username, password } = req.body;
         if (!username || !password) return res.status(400).json({ error: 'Username and password required' });
