@@ -626,11 +626,16 @@ let editingId = null;
 let confirmResolve = null;
 
 // ─── API ──────────────────────────────────────────────────
+function getCsrfToken() {
+    const match = document.cookie.split('; ').find(c => c.startsWith('XSRF-TOKEN='));
+    return match ? decodeURIComponent(match.split('=')[1]) : '';
+}
+
 const api = {
     async get(ep) { return (await fetch(ep)).json(); },
-    async post(ep, data) { return (await fetch(ep, { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(data) })).json(); },
-    async put(ep, data) { return (await fetch(ep, { method:'PUT', headers:{'Content-Type':'application/json'}, body:JSON.stringify(data) })).json(); },
-    async delete(ep) { return (await fetch(ep, { method:'DELETE' })).json(); }
+    async post(ep, data) { return (await fetch(ep, { method:'POST', headers:{'Content-Type':'application/json','X-XSRF-Token':getCsrfToken()}, body:JSON.stringify(data) })).json(); },
+    async put(ep, data) { return (await fetch(ep, { method:'PUT', headers:{'Content-Type':'application/json','X-XSRF-Token':getCsrfToken()}, body:JSON.stringify(data) })).json(); },
+    async delete(ep) { return (await fetch(ep, { method:'DELETE', headers:{'X-XSRF-Token':getCsrfToken()} })).json(); }
 };
 
 // ─── Toast ────────────────────────────────────────────────
@@ -1421,10 +1426,11 @@ document.querySelectorAll('.sidebar-nav a').forEach(link => {
 function esc(str) {
     if (!str) return '';
     return String(str)
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;');
+        .replace(/&/g,  '&amp;')
+        .replace(/</g,  '&lt;')
+        .replace(/>/g,  '&gt;')
+        .replace(/"/g,  '&quot;')
+        .replace(/'/g,  '&#x27;');
 }
 
 // ─── Init ─────────────────────────────────────────────────
