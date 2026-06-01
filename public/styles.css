@@ -667,20 +667,34 @@ section {
 .event-image img { width: 100%; height: 100%; object-fit: cover; }
 .event-card:hover .event-image { transform: scale(1.03); }
 
-/* Events gallery */
-.events-gallery { padding-top: 0; }
+/* Events gallery — continuous single-line marquee */
+.events-gallery { padding-top: 0; overflow: hidden; }
 .gallery-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    display: flex;
+    flex-wrap: nowrap;
     gap: 1rem;
+    width: max-content;
+    animation: gallery-marquee 40s linear infinite;
 }
+/* Pause on hover so a visitor can look / click a photo */
+.gallery-grid:hover { animation-play-state: paused; }
 .gallery-item {
+    flex: 0 0 auto;
+    width: 300px;
     margin: 0;
     position: relative;
     overflow: hidden;
     cursor: pointer;
-    aspect-ratio: 1 / 1;
+    aspect-ratio: 4 / 3;
     background: var(--color-sand);
+}
+@keyframes gallery-marquee {
+    from { transform: translateX(0); }
+    to   { transform: translateX(-50%); }
+}
+@media (prefers-reduced-motion: reduce) {
+    .gallery-grid { animation: none; flex-wrap: wrap; width: auto; }
+    .gallery-grid .gallery-item[aria-hidden="true"] { display: none; }
 }
 .gallery-item img {
     width: 100%;

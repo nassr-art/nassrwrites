@@ -65,12 +65,18 @@
             const gallery = content.events.gallery || [];
             if (gallery.length) {
                 document.getElementById('eventsGallerySection').style.display = '';
-                document.getElementById('galleryGrid').innerHTML = gallery.map(g => `
-                    <figure class="gallery-item fade-in"
+                const item = (g, dup) => `
+                    <figure class="gallery-item"${dup ? ' aria-hidden="true"' : ''}
                             onclick="openLightbox('${escHtml(g.url)}', '${escHtml(g.caption).replace(/'/g, "\\'")}')">
                         <img src="${escHtml(g.url)}" alt="${escHtml(g.caption || 'Past event')}" loading="lazy">
                         ${g.caption ? `<figcaption>${escHtml(g.caption)}</figcaption>` : ''}
-                    </figure>`).join('');
+                    </figure>`;
+                // Render the set twice so the marquee can loop seamlessly.
+                const track = document.getElementById('galleryGrid');
+                track.innerHTML = gallery.map(g => item(g, false)).join('')
+                                + gallery.map(g => item(g, true)).join('');
+                // Slow the scroll for larger sets so it stays readable.
+                track.style.animationDuration = Math.max(20, gallery.length * 6) + 's';
             }
         });
 
