@@ -105,6 +105,30 @@ const DATA_FILES = {
     }
 })();
 
+// ─── Storage persistence self-check ───────────────────────────────────────────
+// Content lives in DATA_DIR. On Railway this MUST be a mounted Volume, otherwise
+// every redeploy rebuilds the container and wipes admin edits back to the seed.
+// We persist a boot counter in DATA_DIR: if it keeps resetting to 1 after each
+// deploy, the storage is NOT persistent (no volume mounted at DATA_DIR).
+;(function storageSelfCheck() {
+    const fromEnv = !!process.env.DATA_DIR;
+    const markerPath = path.join(DATA_DIR, '.boot-marker.json');
+    let marker = { boots: 0, firstBoot: new Date().toISOString() };
+    try {
+        if (fs.existsSync(markerPath)) marker = JSON.parse(fs.readFileSync(markerPath, 'utf8'));
+    } catch (_) { /* corrupt/absent — start fresh */ }
+    marker.boots = (marker.boots || 0) + 1;
+    marker.lastBoot = new Date().toISOString();
+    try {
+        fs.writeFileSync(markerPath, JSON.stringify(marker, null, 2), 'utf8');
+    } catch (err) {
+        console.error('[STORAGE] FAILED to write to DATA_DIR — storage may be read-only:', err.message);
+    }
+    console.log(`[STORAGE] DATA_DIR=${DATA_DIR} (source: ${fromEnv ? 'env var' : 'DEFAULT ./data — NOT a Railway volume, edits will NOT persist!'})`);
+    console.log(`[STORAGE] boot #${marker.boots} (first boot ${marker.firstBoot}).` +
+        (marker.boots === 1 ? ' If this stays at #1 after redeploys, NO persistent volume is mounted.' : ' Storage IS persisting across deploys.'));
+})();
+
 // ─── One-time admin password reset via env var ────────────────────────────────
 // Set ADMIN_PASSWORD_RESET=<newpass> in Railway Variables, deploy once, then
 // remove the var. The env var is consumed on startup and never stored.
